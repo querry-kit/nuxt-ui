@@ -1,5 +1,12 @@
 # @querry-kit/nuxt-ui
 
+## 0.1.1
+
+### Patch Changes
+
+- 21de1ff: Improve the package README with status badges, installation guidance, component overview and release documentation.
+- ce71c23: Load Tailwind CSS and Nuxt UI styles in Storybook visual regression snapshots.
+
 ## 0.1.0
 
 ### Minor Changes
