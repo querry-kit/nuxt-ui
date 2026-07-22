@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 1.0.0
+
+### Major Changes
+
+- df6d24a: Make i18n optional, add English text defaults and text overrides, and namespace i18n messages under `@querry-kit.table`.
+
 ## 0.1.2
 
 ### Patch Changes
