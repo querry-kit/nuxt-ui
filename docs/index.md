@@ -36,16 +36,16 @@ features:
     details: Let people reorder, hide and pin columns while your application remains the single owner of the resulting state.
     link: /components/options
     linkText: Manage columns
-  - title: Pagination and locales
+  - title: Pagination and text overrides
     icon: 🌍
-    details: Add a flexible page footer and optional English and German @querry-kit.table messages without replacing application translations.
+    details: Add a flexible page footer with nested `texts` overrides, host-app i18n, and English fallbacks.
     link: /components/pagination
     linkText: Add pagination
 ---
 
 ## Built for application-owned state
 
-`@querry-kit/nuxt-ui` provides framework-neutral, composable table controls for Nuxt UI 4. Public components are collision-safe: every name begins with `QuerryKit`. They emit immutable replacement values, so applications can connect them to any compatible table, query or store.
+`@querry-kit/nuxt-ui` provides framework-neutral, composable table controls for Nuxt UI 4. Public components are collision-safe: every name begins with `Q`. They emit immutable replacement values, so applications can connect them to any compatible table, query or store.
 
 ## Querry Kit Ecosystem
 

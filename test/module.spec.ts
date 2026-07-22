@@ -1,32 +1,51 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const addComponentsDir = vi.fn();
-const addPlugin = vi.fn();
+const addComponent = vi.fn();
 
 vi.mock('@nuxt/kit', () => ({
-  addComponentsDir,
-  addPlugin,
+  addComponent,
   createResolver: () => ({ resolve: (path: string) => `/module/${path}` }),
   defineNuxtModule: <T>(definition: T) => definition,
 }));
 
 describe('Nuxt module registration', () => {
   beforeEach(() => {
-    addComponentsDir.mockClear();
-    addPlugin.mockClear();
+    addComponent.mockClear();
   });
 
-  it('registers collision-safe components and locale integration by default', async () => {
+  it('registers collision-safe components by default', async () => {
     const module = await import('../src/module');
-    (module.default as any).setup({ autoImports: true, locales: true });
-    expect(addComponentsDir).toHaveBeenCalledWith({ path: '/module/runtime/components', pathPrefix: false });
-    expect(addPlugin).toHaveBeenCalledWith('/module/runtime/plugins/locales');
+    (module.default as any).setup({ autoImports: true });
+    expect(addComponent).toHaveBeenCalledWith({
+      name: 'QTableFiltering',
+      filePath: '/module/runtime/components/table/filtering/index.vue',
+      priority: 0,
+    });
+    expect(addComponent).toHaveBeenCalledWith({
+      name: 'QTableOptions',
+      filePath: '/module/runtime/components/table/options/index.vue',
+      priority: 0,
+    });
+    expect(addComponent).toHaveBeenCalledWith({
+      name: 'QTablePagination',
+      filePath: '/module/runtime/components/table/pagination/index.vue',
+      priority: 0,
+    });
+    expect(addComponent).toHaveBeenCalledWith({
+      name: 'QTableSorting',
+      filePath: '/module/runtime/components/table/sorting/index.vue',
+      priority: 0,
+    });
+    expect(addComponent).toHaveBeenCalledWith({
+      name: 'QTableToolbar',
+      filePath: '/module/runtime/components/table/toolbar/index.vue',
+      priority: 0,
+    });
   });
 
   it('leaves both integrations out when consumers disable them', async () => {
     const module = await import('../src/module');
-    (module.default as any).setup({ autoImports: false, locales: false });
-    expect(addComponentsDir).not.toHaveBeenCalled();
-    expect(addPlugin).not.toHaveBeenCalled();
+    (module.default as any).setup({ autoImports: false });
+    expect(addComponent).not.toHaveBeenCalled();
   });
 });

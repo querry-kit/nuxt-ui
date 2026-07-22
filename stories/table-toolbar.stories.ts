@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
-import QTableToolbar from '../src/runtime/components/QTableToolbar.vue';
+import QTableToolbar from '../src/runtime/components/table/toolbar/index.vue';
 import { FilterFieldType, FilteringFieldOperator, FilteringMode } from '../src/runtime/types/table';
 
 const meta: Meta<typeof QTableToolbar> = {

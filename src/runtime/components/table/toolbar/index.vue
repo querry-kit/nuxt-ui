@@ -54,8 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import { useTableI18n } from '../composables/use-table-i18n';
-import type { TableTextOverrides } from '../locales';
+import { useTableI18n } from '../../../composables/use-table-i18n';
+import type { TableTextOverrides } from '../../../texts';
 import type {
   ColumnDefinition,
   ColumnPinning,
@@ -63,7 +63,7 @@ import type {
   Filtering,
   SortingField,
   SortingState,
-} from '../types/table';
+} from '../../../types/table';
 
 const props = defineProps<{
   breadcrumbItems?: Array<Record<string, unknown>>;
@@ -71,7 +71,7 @@ const props = defineProps<{
   filterFields?: FilterField[];
   columnDefinitions?: ColumnDefinition[];
   searchPlaceholder?: string;
-  /** Explicit text overrides. These take precedence over vue-i18n and English defaults. */
+  /** Explicit text overrides. These take precedence over host-app i18n and English defaults. */
   texts?: TableTextOverrides;
   shortcuts?: boolean;
   ui?: { root?: string; primary?: string; secondary?: string };

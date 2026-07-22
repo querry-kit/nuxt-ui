@@ -2,9 +2,9 @@ import UApp from '@nuxt/ui/components/App.vue';
 import nuxtUiPlugin from '@nuxt/ui/vue-plugin';
 import type { Preview } from '@storybook/vue3-vite';
 import { setup } from '@storybook/vue3-vite';
-import QTableFiltering from '../src/runtime/components/QTableFiltering.vue';
-import QTableOptions from '../src/runtime/components/QTableOptions.vue';
-import QTableSorting from '../src/runtime/components/QTableSorting.vue';
+import QTableFiltering from '../src/runtime/components/table/filtering/index.vue';
+import QTableOptions from '../src/runtime/components/table/options/index.vue';
+import QTableSorting from '../src/runtime/components/table/sorting/index.vue';
 import './preview.css';
 
 setup((app) => {

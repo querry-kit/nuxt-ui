@@ -9,12 +9,12 @@ import { useTableI18n } from '../src/runtime/composables/use-table-i18n';
 describe('useTableI18n', () => {
   beforeEach(() => getCurrentInstance.mockReset());
 
-  it('uses a namespaced vue-i18n translation when one is available', () => {
+  it('uses a namespaced host-app translation when one is available', () => {
     getCurrentInstance.mockReturnValue({
       appContext: { config: { globalProperties: { $t: (key: string) => `translated:${key}` } } },
     });
 
-    expect(useTableI18n()('sorting.title')).toBe('translated:@querry-kit.table.sorting.title');
+    expect(useTableI18n()('sorting.title')).toBe('translated:querrykit.table.sorting.title');
   });
 
   it('returns the English fallback without i18n or for an unresolved key', () => {
