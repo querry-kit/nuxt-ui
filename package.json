@@ -51,7 +51,7 @@
   "scripts": {
     "build": "nuxt-module-build build",
     "dev": "nuxt-module-build build --stub",
-    "prepare": "nuxt-module-build build --stub && husky",
+    "prepare": "husky",
     "prepack": "pnpm build",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",

@@ -49,6 +49,13 @@ jobs:
           pnpm build
           pnpm docs:build
 
+      - name: Verify package artifact
+        run: |
+          set -eu
+          PACKAGE_DIRECTORY="$(mktemp -d)"
+          pnpm pack --pack-destination "$PACKAGE_DIRECTORY"
+          tar -tzf "$PACKAGE_DIRECTORY"/*.tgz | grep -q '^package/dist/runtime/components/QTableToolbar.vue$'
+
       - name: Resolve release version
         id: version
         run: |
