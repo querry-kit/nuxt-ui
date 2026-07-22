@@ -52,6 +52,7 @@
     "build": "nuxt-module-build build",
     "dev": "nuxt-module-build build --stub",
     "prepare": "nuxt-module-build build --stub",
+    "prepack": "pnpm build",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
