@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 2.0.0
+
+### Major Changes
+
+- fd84f17: Rename public table components from the `QuerryKit` prefix to the `Q` prefix.
+
 ## 1.0.0
 
 ### Major Changes
