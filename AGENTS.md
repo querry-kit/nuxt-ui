@@ -4,7 +4,7 @@
 
 - This repository publishes `@querry-kit/nuxt-ui`, customizable Nuxt UI table controls for Query Kit applications.
 - Keep the module framework-neutral beyond its declared Nuxt UI peers. Do not import CRM code, application stores, runtime configuration, or layouts.
-- Public component names must keep the `QuerryKit` prefix and user-visible messages must remain under `querryKit`.
+- Public component names must keep the `Q` prefix and user-visible messages must remain under `@querry-kit`.
 - Applications own their table data, state, routes, and translations; this package provides reusable controls and namespaced locale payloads.
 
 ## Change Management

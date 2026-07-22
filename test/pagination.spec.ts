@@ -1,14 +1,14 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import QuerryKitTablePagination from '../src/runtime/components/QuerryKitTablePagination.vue';
+import QTablePagination from '../src/runtime/components/QTablePagination.vue';
 
 const mountPagination = (props = {}) =>
-  mount(QuerryKitTablePagination, {
+  mount(QTablePagination, {
     props: { page: 2, itemsPerPage: 10, totalItems: 42, ...props },
     global: { stubs: { USelect: true, UPagination: true } },
   });
 
-describe('QuerryKitTablePagination', () => {
+describe('QTablePagination', () => {
   it('renders its standalone result summary without a CRM layout dependency', () => {
     const wrapper = mountPagination();
     expect(wrapper.text()).toContain('Showing 11–20 of 42');

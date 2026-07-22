@@ -24,21 +24,21 @@
       </div>
       <div class="flex shrink-0 items-center gap-1">
         <slot name="options" :sorting="sorting" :filtering="filtering" :column-order="columnOrder">
-          <QuerryKitTableSorting
+          <QTableSorting
             v-if="sortableFields?.length && sorting"
             v-model:sorting="sorting"
             :fields="sortableFields"
             :shortcuts="shortcuts"
             :texts="texts"
           />
-          <QuerryKitTableFiltering
+          <QTableFiltering
             v-if="filterFields?.length && filtering"
             v-model:filtering="filtering"
             :fields="filterFields"
             :shortcuts="shortcuts"
             :texts="texts"
           />
-          <QuerryKitTableOptions
+          <QTableOptions
             v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
             v-model:column-order="columnOrder"
             v-model:invisible-columns="invisibleColumns"

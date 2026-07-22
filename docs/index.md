@@ -38,7 +38,7 @@ features:
     linkText: Manage columns
   - title: Pagination and locales
     icon: 🌍
-    details: Add a flexible page footer and optional English and German querryKit.table messages without replacing application translations.
+    details: Add a flexible page footer and optional English and German @querry-kit.table messages without replacing application translations.
     link: /components/pagination
     linkText: Add pagination
 ---

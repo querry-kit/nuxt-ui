@@ -6,7 +6,7 @@ import localesPlugin from '../src/runtime/plugins/locales';
 
 describe('locales', () => {
   it('exports collision-safe English and German table messages', () => {
-    expect(runtime.QuerryKitTablePagination).toBeDefined();
+    expect(runtime.QTablePagination).toBeDefined();
     expect(querryKitLocales.en).toBe(en);
     expect(querryKitLocales.de).toBe(de);
     expect(en['@querry-kit'].table.pagination.summary).toContain('{start}');

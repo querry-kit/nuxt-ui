@@ -56,7 +56,7 @@ export type FilteringField = {
   operator?: FilteringFieldOperator;
   value?: string | number | boolean | Array<string | number>;
 };
-/** Filtering state emitted by `QuerryKitTableFiltering`. */
+/** Filtering state emitted by `QTableFiltering`. */
 export type Filtering = { operator: FilteringMode; filters: FilteringField[] };
 /** A displayable table column and its visibility constraints. */
 export type ColumnDefinition = { id: string; header: string; enableHiding?: boolean; disabled?: boolean };

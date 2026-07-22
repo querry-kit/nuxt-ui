@@ -16,10 +16,10 @@ import {
 
 ## Texts without i18n
 
-`@querry-kit/nuxt-ui` has no i18n runtime dependency. Without vue-i18n, every control uses its bundled English defaults. Pass the optional `texts` prop to any table control, or to `QuerryKitTableToolbar` to forward the same overrides to its default sorting, filtering, and column-option controls.
+`@querry-kit/nuxt-ui` has no i18n runtime dependency. Without vue-i18n, every control uses its bundled English defaults. Pass the optional `texts` prop to any table control, or to `QTableToolbar` to forward the same overrides to its default sorting, filtering, and column-option controls.
 
 ```vue
-<QuerryKitTableToolbar
+<QTableToolbar
   v-model:search="search"
   :texts="{
     search: { placeholder: 'Find projects' },
@@ -29,16 +29,16 @@ import {
 />
 ```
 
-Explicit `texts` values have priority over vue-i18n and the English defaults. `QuerryKitTablePagination` also keeps its `summary` prop for changing only the result-summary template.
+Explicit `texts` values have priority over vue-i18n and the English defaults. `QTablePagination` also keeps its `summary` prop for changing only the result-summary template.
 
 Slots replace a complete display region when a text override is not enough. For example, replace the sorting trigger while retaining its open state and behavior:
 
 ```vue
-<QuerryKitTableSorting v-model:sorting="sorting" :fields="sortableFields">
+<QTableSorting v-model:sorting="sorting" :fields="sortableFields">
   <template #trigger="{ toggle, active }">
     <UButton :color="active ? 'primary' : 'neutral'" label="Order projects" @click="toggle" />
   </template>
-</QuerryKitTableSorting>
+</QTableSorting>
 ```
 
 The toolbar exposes `breadcrumb`, `search`, `options`, and `new`; sorting, filtering, and options expose `trigger`, `header`, `items`, `item`, and `add` where applicable; pagination exposes `left`, `page-size`, `pagination`, and `right`.

@@ -2,16 +2,16 @@ import UApp from '@nuxt/ui/components/App.vue';
 import nuxtUiPlugin from '@nuxt/ui/vue-plugin';
 import type { Preview } from '@storybook/vue3-vite';
 import { setup } from '@storybook/vue3-vite';
-import QuerryKitTableFiltering from '../src/runtime/components/QuerryKitTableFiltering.vue';
-import QuerryKitTableOptions from '../src/runtime/components/QuerryKitTableOptions.vue';
-import QuerryKitTableSorting from '../src/runtime/components/QuerryKitTableSorting.vue';
+import QTableFiltering from '../src/runtime/components/QTableFiltering.vue';
+import QTableOptions from '../src/runtime/components/QTableOptions.vue';
+import QTableSorting from '../src/runtime/components/QTableSorting.vue';
 import './preview.css';
 
 setup((app) => {
   app.use(nuxtUiPlugin);
-  app.component('QuerryKitTableFiltering', QuerryKitTableFiltering);
-  app.component('QuerryKitTableOptions', QuerryKitTableOptions);
-  app.component('QuerryKitTableSorting', QuerryKitTableSorting);
+  app.component('QTableFiltering', QTableFiltering);
+  app.component('QTableOptions', QTableOptions);
+  app.component('QTableSorting', QTableSorting);
 });
 
 const preview: Preview = {

@@ -100,10 +100,10 @@ pnpm add @querry-kit/nuxt-ui
 
 ## 🧩 Usage
 
-`QuerryKitTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
+`QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
 ```vue
-<QuerryKitTableToolbar
+<QTableToolbar
   v-model:search="search"
   v-model:sorting="sorting"
   v-model:filtering="filtering"
@@ -131,13 +131,13 @@ See [Types and locales](https://querry-kit.github.io/nuxt-ui/api/types) for the 
 
 ## 🧱 Components
 
-| Component                  | Purpose                                                       | Documentation                                                             |
-| -------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `QuerryKitTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/nuxt-ui/components/toolbar)  |
-| `QuerryKitTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/nuxt-ui/components/sorting)        |
-| `QuerryKitTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/nuxt-ui/components/filtering)    |
-| `QuerryKitTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/nuxt-ui/components/options) |
-| `QuerryKitTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/nuxt-ui/components/pagination)  |
+| Component          | Purpose                                                       | Documentation                                                             |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `QTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/nuxt-ui/components/toolbar)  |
+| `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/nuxt-ui/components/sorting)        |
+| `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/nuxt-ui/components/filtering)    |
+| `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/nuxt-ui/components/options) |
+| `QTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/nuxt-ui/components/pagination)  |
 
 Public state types such as `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui`.
 

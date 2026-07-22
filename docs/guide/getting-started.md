@@ -25,7 +25,7 @@ Set either option to `false` when the application registers the corresponding in
 All state remains in the consuming application. Bind only the models needed by the controls you render.
 
 ```vue
-<QuerryKitTableToolbar
+<QTableToolbar
   v-model:search="search"
   v-model:sorting="sorting"
   v-model:filtering="filtering"

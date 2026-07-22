@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h, markRaw, nextTick } from 'vue';
-import QuerryKitTableFiltering from '../src/runtime/components/QuerryKitTableFiltering.vue';
-import QuerryKitTableOptions from '../src/runtime/components/QuerryKitTableOptions.vue';
-import QuerryKitTableSorting from '../src/runtime/components/QuerryKitTableSorting.vue';
-import QuerryKitTableToolbar from '../src/runtime/components/QuerryKitTableToolbar.vue';
+import QTableFiltering from '../src/runtime/components/QTableFiltering.vue';
+import QTableOptions from '../src/runtime/components/QTableOptions.vue';
+import QTableSorting from '../src/runtime/components/QTableSorting.vue';
+import QTableToolbar from '../src/runtime/components/QTableToolbar.vue';
 import { FilterFieldType, FilteringMode } from '../src/runtime/types/table';
 
 const stubs = {
@@ -19,9 +19,9 @@ const stubs = {
   USeparator: true,
   USwitch: true,
   UBreadcrumb: true,
-  QuerryKitTableSorting: true,
-  QuerryKitTableFiltering: true,
-  QuerryKitTableOptions: true,
+  QTableSorting: true,
+  QTableFiltering: true,
+  QTableOptions: true,
 };
 
 const mounted: Array<{ unmount: () => void }> = [];
@@ -37,7 +37,7 @@ afterEach(() => {
 describe('table controls', () => {
   it('mounts sorting with its existing v-model contract and fields', async () => {
     const wrapper = track(
-      mount(QuerryKitTableSorting, {
+      mount(QTableSorting, {
         props: {
           sorting: [{ id: 'name', desc: false }],
           fields: [
@@ -73,7 +73,7 @@ describe('table controls', () => {
 
   it('adds a selected sort through the default control', async () => {
     const wrapper = track(
-      mount(QuerryKitTableSorting, {
+      mount(QTableSorting, {
         props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
         global: { stubs },
       }),
@@ -88,7 +88,7 @@ describe('table controls', () => {
 
   it('mounts filtering with Query Kit AND/OR state and field definitions', async () => {
     const wrapper = track(
-      mount(QuerryKitTableFiltering, {
+      mount(QTableFiltering, {
         props: {
           filtering: {
             operator: FilteringMode.Intersect,
@@ -135,7 +135,7 @@ describe('table controls', () => {
 
   it('adds a selected filter through the default control', async () => {
     const wrapper = track(
-      mount(QuerryKitTableFiltering, {
+      mount(QTableFiltering, {
         props: {
           filtering: { operator: FilteringMode.Intersect, filters: [] },
           fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
@@ -156,7 +156,7 @@ describe('table controls', () => {
   it('renders each default filter editor variant', () => {
     const customEditor = markRaw({ template: '<button>Custom editor</button>' });
     const wrapper = track(
-      mount(QuerryKitTableFiltering, {
+      mount(QTableFiltering, {
         props: {
           filtering: {
             operator: FilteringMode.Intersect,
@@ -196,7 +196,7 @@ describe('table controls', () => {
 
   it('mounts options with order, visibility and pinning models', async () => {
     const wrapper = track(
-      mount(QuerryKitTableOptions, {
+      mount(QTableOptions, {
         props: {
           columns: [{ id: 'name', header: 'Name' }],
           columnOrder: ['name'],
@@ -230,7 +230,7 @@ describe('table controls', () => {
 
   it('uses default options controls for visibility, pinning, and reordering', async () => {
     const wrapper = track(
-      mount(QuerryKitTableOptions, {
+      mount(QTableOptions, {
         props: {
           columns: [
             { id: 'name', header: 'Name' },
@@ -264,7 +264,7 @@ describe('table controls', () => {
 
   it('passes all public toolbar models to consumer slots', () => {
     const wrapper = track(
-      mount(QuerryKitTableToolbar, {
+      mount(QTableToolbar, {
         props: {
           search: 'Ada',
           sorting: [],
@@ -286,7 +286,7 @@ describe('table controls', () => {
 
   it('does not open controls while a consumer is typing', async () => {
     const wrapper = track(
-      mount(QuerryKitTableSorting, {
+      mount(QTableSorting, {
         props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
         global: { stubs },
       }),

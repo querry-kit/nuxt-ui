@@ -1,6 +1,6 @@
 <template>
   <UApp>
-    <QuerryKitTableToolbar
+    <QTableToolbar
       v-model:column-order="columnOrder"
       v-model:column-pinning="columnPinning"
       v-model:filtering="filtering"
@@ -12,11 +12,11 @@
       :sortable-fields="sortFields"
     >
       <template #new><UButton label="Create" /></template>
-    </QuerryKitTableToolbar>
+    </QTableToolbar>
     <UTable :columns="columns" :data="rows" />
-    <QuerryKitTablePagination v-model:items-per-page="itemsPerPage" v-model:page="page" :total-items="rows.length">
+    <QTablePagination v-model:items-per-page="itemsPerPage" v-model:page="page" :total-items="rows.length">
       <template #right><span class="text-muted text-xs">Custom footer</span></template>
-    </QuerryKitTablePagination>
+    </QTablePagination>
   </UApp>
 </template>
 
