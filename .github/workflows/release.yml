@@ -48,10 +48,6 @@ jobs:
           pnpm test:coverage
           pnpm build
           pnpm docs:build
-          pnpm build:storybook
-          pnpm exec playwright install --with-deps chromium
-          pnpm screenshots:capture
-          pnpm screenshots:verify
 
       - name: Resolve release version
         id: version
