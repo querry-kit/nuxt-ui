@@ -1,6 +1,6 @@
 {
   "name": "@querry-kit/nuxt-ui",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Customizable Nuxt UI table components for Query Kit",
   "keywords": [
     "nuxt",
