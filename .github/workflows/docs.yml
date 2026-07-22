@@ -6,12 +6,6 @@ on:
       - main
     paths:
       - docs/**
-      - src/runtime/**
-      - stories/**
-      - test/screenshots.spec.ts
-      - playwright.config.ts
-      - scripts/verify-screenshots.mjs
-      - .storybook/**
       - .github/workflows/docs.yml
       - package.json
       - pnpm-lock.yaml
@@ -19,12 +13,6 @@ on:
   pull_request:
     paths:
       - docs/**
-      - src/runtime/**
-      - stories/**
-      - test/screenshots.spec.ts
-      - playwright.config.ts
-      - scripts/verify-screenshots.mjs
-      - .storybook/**
       - .github/workflows/docs.yml
       - package.json
       - pnpm-lock.yaml
@@ -60,15 +48,6 @@ jobs:
 
       - name: Build docs
         run: pnpm docs:build
-
-      - name: Build Storybook
-        run: pnpm build:storybook
-
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Run visual regression tests
-        run: pnpm screenshots:capture && pnpm screenshots:verify
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

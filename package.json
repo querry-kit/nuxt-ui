@@ -51,7 +51,7 @@
   "scripts": {
     "build": "nuxt-module-build build",
     "dev": "nuxt-module-build build --stub",
-    "prepare": "nuxt-module-build build --stub",
+    "prepare": "nuxt-module-build build --stub && husky",
     "prepack": "pnpm build",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
@@ -63,6 +63,8 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "screenshots:capture": "playwright test -c playwright.config.ts",
+    "screenshots:check": "pnpm build:storybook && pnpm screenshots:capture && pnpm screenshots:verify",
+    "screenshots:update": "pnpm build:storybook && pnpm exec playwright test -c playwright.config.ts --update-snapshots && pnpm screenshots:verify",
     "screenshots:verify": "node scripts/verify-screenshots.mjs"
   },
   "peerDependencies": {
@@ -102,6 +104,7 @@
     "eslint-plugin-vue": "^10.0.0",
     "happy-dom": "^18.0.0",
     "http-server": "^14.1.1",
+    "husky": "^9.1.7",
     "nuxt": "^4.4.0",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^4.0.0",
