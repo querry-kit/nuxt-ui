@@ -1,5 +1,5 @@
 import { getCurrentInstance } from 'vue';
-import { defaultTableTexts, type TableTextKey, type TableTextOverrides } from '../locales';
+import { defaultTableTexts, type TableTextKey, type TableTextOverrides } from '../texts';
 
 type Translate = (key: string, values?: Record<string, unknown>) => unknown;
 type TextValues = Record<string, string | number>;
@@ -15,14 +15,14 @@ const getDefaultText = (key: TableTextKey) => getText(defaultTableTexts, key) as
 const interpolate = (text: string, values: TextValues) =>
   text.replace(/\{([^}]+)\}/g, (placeholder, name: string) => String(values[name] ?? placeholder));
 
-/** Resolves explicit component text, optional vue-i18n text, and English defaults in that order. */
+/** Resolves explicit component text, host-app i18n text, and English defaults in that order. */
 export function useTableI18n(texts?: TableTextOverrides) {
   const translate = getCurrentInstance()?.appContext.config.globalProperties.$t as Translate | undefined;
   return (key: TableTextKey, values: TextValues = {}) => {
     const override = getText(texts, key);
     if (typeof override === 'string') return interpolate(override, values);
 
-    const i18nKey = `@querry-kit.table.${key}`;
+    const i18nKey = `querrykit.table.${key}`;
     const result = translate?.(i18nKey, values);
     return typeof result === 'string' && result !== i18nKey ? result : interpolate(getDefaultText(key), values);
   };

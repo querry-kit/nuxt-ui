@@ -9,25 +9,21 @@
         :start="rowStart"
         :end="rowEnd"
       >
-        <span v-if="totalItems" class="text-muted hidden text-sm sm:block">{{
-          summary ??
-          t('pagination.summary', {
-            start: rowStart,
-            end: rowEnd,
-            total: totalItems,
-          })
-        }}</span>
+        <PaginationSummary
+          :total-items="totalItems"
+          :start="rowStart"
+          :end="rowEnd"
+          :summary="summary"
+          :texts="texts"
+        />
       </slot>
     </div>
     <div class="flex items-center gap-1.5" :class="ui?.right">
       <slot name="page-size" :items-per-page="itemsPerPage" :set-items-per-page="setItemsPerPage">
-        <USelect
-          class="w-24"
-          size="sm"
-          value-key="value"
-          :model-value="itemsPerPage"
+        <PaginationPageSize
+          :items-per-page="itemsPerPage"
           :items="pageSizeItems"
-          @update:model-value="(value: number | string) => setItemsPerPage(Number(value))"
+          :set-items-per-page="setItemsPerPage"
         />
       </slot>
       <slot
@@ -39,11 +35,11 @@
         :next="next"
         :last="last"
       >
-        <UPagination
+        <PaginationControls
           :page="page"
           :items-per-page="itemsPerPage"
-          :total="totalItems"
-          @update:page="(value: number) => (page = value)"
+          :total-items="totalItems"
+          :set-page="(value) => (page = value)"
         />
       </slot>
       <slot name="right" :page="page" :page-count="pageCount" />
@@ -53,9 +49,11 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
-import { useTableI18n } from '../composables/use-table-i18n';
-import type { TableTextOverrides } from '../locales';
-import { canHandleTableShortcut } from '../utils/keyboard';
+import type { TableTextOverrides } from '../../../texts';
+import { canHandleTableShortcut } from '../../../utils/keyboard';
+import PaginationPageSize from './page-size.vue';
+import PaginationControls from './pagination.vue';
+import PaginationSummary from './summary.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -70,7 +68,6 @@ const props = withDefaults(
 );
 const page = defineModel<number>('page', { required: true });
 const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
-const t = useTableI18n(props.texts);
 const pageCount = computed(() => Math.max(1, Math.ceil(props.totalItems / itemsPerPage.value)));
 const rowStart = computed(() => (props.totalItems === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1));
 const rowEnd = computed(() => Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems));

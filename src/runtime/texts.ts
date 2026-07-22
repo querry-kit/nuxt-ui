@@ -1,4 +1,4 @@
-/** English defaults used when an application does not provide vue-i18n. */
+/** English fallback strings used when neither `texts` nor host-app i18n provides a value. */
 export const defaultTableTexts = {
   search: { placeholder: 'Search' },
   sorting: {
@@ -55,9 +55,5 @@ type DeepTextOverrides<Value> = {
   [Key in keyof Value]?: Value[Key] extends string ? string : DeepTextOverrides<Value[Key]>;
 };
 
+/** Nested text overrides accepted by every public table component. */
 export type TableTextOverrides = DeepTextOverrides<TableTexts>;
-
-/** vue-i18n payload with a collision-safe package namespace. */
-export default {
-  '@querry-kit': { table: defaultTableTexts },
-} as const;

@@ -6,19 +6,16 @@
 pnpm add @querry-kit/nuxt @querry-kit/nuxt-ui @nuxt/ui
 ```
 
-Register Nuxt UI before this module. Components are auto-imported and work without i18n, using bundled English defaults. If the application provides vue-i18n, English and German messages are merged under `@querry-kit.table` by default.
+Register Nuxt UI before this module. Components read the host application's `querrykit.table.*` i18n keys when present and otherwise use English fallback strings.
 
 ```ts
 export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@querry-kit/nuxt-ui'],
-  querryKitUi: {
-    autoImports: true,
-    locales: true,
-  },
+  querryKitUi: { autoImports: true },
 });
 ```
 
-Set either option to `false` when the application registers the corresponding integration itself. The module never installs or requires an i18n provider; with `locales: true` it only merges messages when an application provides vue-i18n.
+Set `autoImports` to `false` when the application registers the components itself. The module never installs, configures, or ships an i18n provider.
 
 ## Compose a table toolbar
 

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import QTablePagination from '../src/runtime/components/QTablePagination.vue';
+import QTablePagination from '../src/runtime/components/table/pagination/index.vue';
 
 const mountPagination = (props = {}) =>
   mount(QTablePagination, {

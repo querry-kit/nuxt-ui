@@ -16,7 +16,7 @@
 [![changesets](https://img.shields.io/github/actions/workflow/status/querry-kit/nuxt-ui/changesets.yml?branch=main&label=changesets&logo=changesets&logoColor=white&style=for-the-badge)](https://github.com/querry-kit/nuxt-ui/actions/workflows/changesets.yml)
 [![npm publish](https://img.shields.io/github/actions/workflow/status/querry-kit/nuxt-ui/release.yml?branch=main&label=npm%20publish&logo=githubactions&logoColor=white&style=for-the-badge)](https://github.com/querry-kit/nuxt-ui/actions/workflows/release.yml)
 
-Composable Nuxt UI table controls for Query Kit applications: toolbar, sorting, filtering, column preferences, pagination, keyboard shortcuts and optional English/German locale messages. Every public component begins with `QuerryKit`, and the package does not depend on application stores, layouts or runtime configuration.
+Composable Nuxt UI table controls for Query Kit applications: toolbar, sorting, filtering, column preferences, pagination and keyboard shortcuts. Every public component begins with `Q`, and the package does not depend on application stores, layouts or runtime configuration.
 
 📖 Documentation: https://querry-kit.github.io/nuxt-ui/
 
@@ -46,19 +46,16 @@ It also contains the complete Workboard API-and-web-app example, which shows the
 pnpm add @querry-kit/nuxt @querry-kit/nuxt-ui @nuxt/ui
 ```
 
-Register Nuxt UI before this module. Components are auto-imported and work without an i18n dependency, using bundled English defaults. When an application provides vue-i18n, the module can merge its English and German messages under the `@querry-kit.table` namespace.
+Register Nuxt UI before this module. Components use the host application's `querrykit.table.*` i18n keys when available and otherwise fall back to English strings.
 
 ```ts
 export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@querry-kit/nuxt-ui'],
-  querryKitUi: {
-    autoImports: true,
-    locales: true,
-  },
+  querryKitUi: { autoImports: true },
 });
 ```
 
-Set either option to `false` when the application registers the corresponding integration itself. The package never installs or requires an i18n provider. Pass a `texts` prop for explicit component text overrides, or replace display regions with the documented slots.
+Set `autoImports` to `false` when the application registers the components itself. The package never installs, configures, or ships an i18n provider. Pass a `texts` prop for explicit component text overrides, or replace display regions with the documented slots.
 
 The current package version is published on npm. npm is the primary distribution channel.
 
@@ -118,16 +115,7 @@ pnpm add @querry-kit/nuxt-ui
 
 Use `:shortcuts="false"` on an individual component to disable its keyboard listener. The toolbar and individual controls can also be customized through slots without duplicating their state logic.
 
-For manual locale integration, import the payloads without using the module plugin:
-
-```ts
-import { querryKitLocales } from '@querry-kit/nuxt-ui/locales';
-
-i18n.global.mergeLocaleMessage('en', querryKitLocales.en);
-i18n.global.mergeLocaleMessage('de', querryKitLocales.de);
-```
-
-See [Types and locales](https://querry-kit.github.io/nuxt-ui/api/types) for the complete JSON message list, text-prop examples, and slot customization.
+See [Types and text customization](https://querry-kit.github.io/nuxt-ui/api/types) for the complete key list, `texts` examples, and slot customization.
 
 ## 🧱 Components
 
@@ -149,7 +137,7 @@ Public state types such as `SortingState`, `Filtering`, `ColumnDefinition` and `
 - [Filtering](https://querry-kit.github.io/nuxt-ui/components/filtering)
 - [Column Options](https://querry-kit.github.io/nuxt-ui/components/options)
 - [Pagination](https://querry-kit.github.io/nuxt-ui/components/pagination)
-- [Types and Locales](https://querry-kit.github.io/nuxt-ui/api/types)
+- [Types and text customization](https://querry-kit.github.io/nuxt-ui/api/types)
 
 Run the VitePress documentation locally:
 

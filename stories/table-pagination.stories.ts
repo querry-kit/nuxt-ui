@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
-import QTablePagination from '../src/runtime/components/QTablePagination.vue';
+import QTablePagination from '../src/runtime/components/table/pagination/index.vue';
 
 const meta: Meta<typeof QTablePagination> = { title: 'Table/Pagination', component: QTablePagination };
 export default meta;

@@ -16,7 +16,7 @@ import {
 
 ## Texts without i18n
 
-`@querry-kit/nuxt-ui` has no i18n runtime dependency. Without vue-i18n, every control uses its bundled English defaults. Pass the optional `texts` prop to any table control, or to `QTableToolbar` to forward the same overrides to its default sorting, filtering, and column-option controls.
+`@querry-kit/nuxt-ui` has no i18n runtime dependency. Every text is resolved in this order: nested `texts` override, host-app i18n key, then an English fallback. Pass the optional `texts` prop to any table control, or to `QTableToolbar` to forward the same overrides to its default sorting, filtering, and column-option controls.
 
 ```vue
 <QTableToolbar
@@ -29,7 +29,7 @@ import {
 />
 ```
 
-Explicit `texts` values have priority over vue-i18n and the English defaults. `QTablePagination` also keeps its `summary` prop for changing only the result-summary template.
+Explicit `texts` values have priority over host-app i18n and English defaults. `QTablePagination` also keeps its `summary` prop for changing only the result-summary template.
 
 Slots replace a complete display region when a text override is not enough. For example, replace the sorting trigger while retaining its open state and behavior:
 
@@ -43,7 +43,7 @@ Slots replace a complete display region when a text override is not enough. For 
 
 The toolbar exposes `breadcrumb`, `search`, `options`, and `new`; sorting, filtering, and options expose `trigger`, `header`, `items`, `item`, and `add` where applicable; pagination exposes `left`, `page-size`, `pagination`, and `right`.
 
-## Texts with vue-i18n
+## Host-app i18n keys
 
 Install and configure an i18n provider only when the application needs translations:
 
@@ -51,31 +51,21 @@ Install and configure an i18n provider only when the application needs translati
 pnpm add @nuxtjs/i18n vue-i18n
 ```
 
-Register it before `@querry-kit/nuxt-ui`. With the default `querryKitUi.locales: true`, the package merges its English and German payloads into the provider when it is available. It never installs or requires the provider itself.
+Register it before `@querry-kit/nuxt-ui`. The package does not merge messages or ship locale payloads; define the keys in the host application's locale files.
 
 ```ts
-export default defineNuxtConfig({
-  modules: ['@nuxt/ui', '@nuxtjs/i18n', '@querry-kit/nuxt-ui'],
-  querryKitUi: { locales: true },
-});
+export default defineNuxtConfig({ modules: ['@nuxt/ui', '@nuxtjs/i18n', '@querry-kit/nuxt-ui'] });
 ```
 
-All package keys are namespaced below `@querry-kit.table`, avoiding collisions with application messages. To manage the messages yourself, disable the automatic merge and import the payloads:
-
-```ts
-import { querryKitLocales } from '@querry-kit/nuxt-ui/locales';
-
-i18n.global.mergeLocaleMessage('en', querryKitLocales.en);
-i18n.global.mergeLocaleMessage('de', querryKitLocales.de);
-```
+All package keys are namespaced below `querrykit.table`, avoiding collisions with application messages.
 
 ## Complete message JSON
 
-Use this complete shape in an application locale file. It is also the shape accepted by the `texts` prop without the outer `@querry-kit.table` wrapper.
+Use this complete shape in an application locale file. The `texts` prop accepts the same nested shape without the outer `querrykit.table` wrapper.
 
 ```json
 {
-  "@querry-kit": {
+  "querrykit": {
     "table": {
       "search": {
         "placeholder": "Search"
