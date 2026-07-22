@@ -11,7 +11,7 @@
       >
         <span v-if="totalItems" class="text-muted hidden text-sm sm:block">{{
           summary ??
-          t('pagination.summary', `Showing ${rowStart}–${rowEnd} of ${totalItems}`, {
+          t('pagination.summary', {
             start: rowStart,
             end: rowEnd,
             total: totalItems,
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
+import type { TableTextOverrides } from '../locales';
 import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
@@ -61,6 +62,7 @@ const props = withDefaults(
     totalItems?: number;
     pageSizes?: number[];
     summary?: string;
+    texts?: TableTextOverrides;
     shortcuts?: boolean;
     ui?: { root?: string; left?: string; right?: string };
   }>(),
@@ -68,7 +70,7 @@ const props = withDefaults(
 );
 const page = defineModel<number>('page', { required: true });
 const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
-const t = useTableI18n();
+const t = useTableI18n(props.texts);
 const pageCount = computed(() => Math.max(1, Math.ceil(props.totalItems / itemsPerPage.value)));
 const rowStart = computed(() => (props.totalItems === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1));
 const rowEnd = computed(() => Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems));

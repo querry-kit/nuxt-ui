@@ -1,28 +1,33 @@
 <template>
-  <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
+  <span ref="trigger">
     <slot name="trigger" :open="open" :toggle="toggle" :active="hasSorting">
       <UButton
         variant="ghost"
-        :aria-label="t('sorting.title', 'Sort')"
+        :aria-label="t('sorting.title')"
         :color="hasSorting ? 'primary' : 'neutral'"
         :icon="icon"
         @click="toggle"
       />
     </slot>
+  </span>
+  <UPopover
+    v-model:open="open"
+    :reference="trigger"
+    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :modal="false"
+  >
     <template #content>
       <div class="w-80 p-2.5" :class="ui?.content">
         <slot name="header" :sorting="sorting" :clear="clear">
           <div class="mb-4 flex items-center justify-between gap-2">
-            <span class="flex items-center gap-2"
-              ><UIcon name="i-tabler-arrows-sort" />{{ t('sorting.title', 'Sort') }}</span
-            >
+            <span class="flex items-center gap-2"><UIcon name="i-tabler-arrows-sort" />{{ t('sorting.title') }}</span>
             <UButton
               v-if="hasSorting"
               color="error"
               icon="i-tabler-cancel"
               size="xs"
               variant="outline"
-              :aria-label="t('sorting.clear', 'Clear sorting')"
+              :aria-label="t('sorting.clear')"
               @click="clear"
             />
           </div>
@@ -42,7 +47,7 @@
                   color="neutral"
                   size="sm"
                   variant="soft"
-                  :aria-label="t('sorting.toggle', 'Toggle sort direction')"
+                  :aria-label="t('sorting.toggle')"
                   :icon="sort.desc ? 'i-tabler-sort-descending' : 'i-tabler-sort-ascending'"
                   @click="toggleDirection(sort.id)"
                 />
@@ -51,7 +56,7 @@
                   icon="i-tabler-x"
                   size="sm"
                   variant="outline"
-                  :aria-label="t('sorting.remove', 'Remove sort')"
+                  :aria-label="t('sorting.remove')"
                   @click="remove(sort.id)"
                 />
               </slot>
@@ -67,12 +72,12 @@
               size="sm"
               value-key="value"
               :items="availableFields"
-              :placeholder="t('sorting.field', 'Select field')"
+              :placeholder="t('sorting.field')"
             />
             <UButton
               icon="i-tabler-plus"
               size="sm"
-              :aria-label="t('sorting.add', 'Add sort')"
+              :aria-label="t('sorting.add')"
               :disabled="!selected"
               @click="addSelected"
             />
@@ -86,17 +91,25 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
+import type { TableTextOverrides } from '../locales';
 import type { SortingField, SortingState } from '../types/table';
 import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
-  defineProps<{ fields: SortingField[]; icon?: string; shortcuts?: boolean; ui?: { content?: string } }>(),
+  defineProps<{
+    fields: SortingField[];
+    icon?: string;
+    shortcuts?: boolean;
+    texts?: TableTextOverrides;
+    ui?: { content?: string };
+  }>(),
   { icon: 'i-tabler-arrows-sort', shortcuts: true },
 );
 const sorting = defineModel<SortingState>('sorting', { required: true });
+const trigger = ref<HTMLElement>();
 const open = ref(false);
 const selected = ref<string>();
-const t = useTableI18n();
+const t = useTableI18n(props.texts);
 const hasSorting = computed(() => sorting.value.length > 0);
 const availableFields = computed(() =>
   props.fields.filter((field) => !field.disabled && !sorting.value.some((sort) => sort.id === field.value)),

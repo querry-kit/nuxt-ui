@@ -1,18 +1,20 @@
 <template>
-  <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
+  <span ref="trigger">
     <slot name="trigger" :open="open" :toggle="toggle"
-      ><UButton
-        color="neutral"
-        variant="ghost"
-        :aria-label="t('options.title', 'Table options')"
-        :icon="icon"
-        @click="toggle"
+      ><UButton color="neutral" variant="ghost" :aria-label="t('options.title')" :icon="icon" @click="toggle"
     /></slot>
+  </span>
+  <UPopover
+    v-model:open="open"
+    :reference="trigger"
+    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :modal="false"
+  >
     <template #content>
       <div class="min-w-80 p-2.5" :class="ui?.content">
         <slot name="header" :columns="orderedColumns"
           ><div class="mb-4 flex items-center gap-2">
-            <UIcon name="i-tabler-adjustments" />{{ t('options.title', 'Table options') }}
+            <UIcon name="i-tabler-adjustments" />{{ t('options.title') }}
           </div></slot
         >
         <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
@@ -42,27 +44,27 @@
                     icon="i-tabler-pin"
                     size="xs"
                     variant="ghost"
-                    :aria-label="t('options.pin', 'Pin column')" /><template #content
+                    :aria-label="t('options.pin')" /><template #content
                     ><div class="flex p-1">
                       <UButton
                         size="xs"
                         variant="ghost"
-                        :label="t('options.left', 'Left')"
+                        :label="t('options.left')"
                         @click="pin(column.id, 'left')"
                       /><UButton
                         size="xs"
                         variant="ghost"
-                        :label="t('options.center', 'Unpin')"
+                        :label="t('options.center')"
                         @click="pin(column.id, 'center')"
                       /><UButton
                         size="xs"
                         variant="ghost"
-                        :label="t('options.right', 'Right')"
+                        :label="t('options.right')"
                         @click="pin(column.id, 'right')"
                       /></div></template
                 ></UPopover>
                 <USwitch
-                  :aria-label="t('options.visibility', 'Toggle column visibility')"
+                  :aria-label="t('options.visibility')"
                   :disabled="column.enableHiding === false"
                   :model-value="!invisibleColumns.includes(column.id)"
                   @update:model-value="toggleVisibility(column.id)"
@@ -79,18 +81,26 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
+import type { TableTextOverrides } from '../locales';
 import type { ColumnDefinition, ColumnPinning } from '../types/table';
 import { canHandleTableShortcut } from '../utils/keyboard';
 
 type PinSide = 'left' | 'center' | 'right';
 const props = withDefaults(
-  defineProps<{ columns: ColumnDefinition[]; icon?: string; shortcuts?: boolean; ui?: { content?: string } }>(),
+  defineProps<{
+    columns: ColumnDefinition[];
+    icon?: string;
+    shortcuts?: boolean;
+    texts?: TableTextOverrides;
+    ui?: { content?: string };
+  }>(),
   { icon: 'i-tabler-adjustments', shortcuts: true },
 );
 const columnOrder = defineModel<string[]>('columnOrder', { required: true });
 const invisibleColumns = defineModel<string[]>('invisibleColumns', { required: true });
 const columnPinning = defineModel<ColumnPinning>('columnPinning', { required: true });
-const t = useTableI18n();
+const t = useTableI18n(props.texts);
+const trigger = ref<HTMLElement>();
 const open = ref(false);
 const draggedIndex = ref(0);
 const orderedColumns = computed(() =>

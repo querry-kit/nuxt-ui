@@ -17,7 +17,7 @@
             v-if="search !== undefined"
             icon="i-tabler-search"
             :model-value="search"
-            :placeholder="searchPlaceholder ?? t('search.placeholder', 'Search')"
+            :placeholder="searchPlaceholder ?? t('search.placeholder')"
             @update:model-value="setSearch"
           />
         </slot>
@@ -29,12 +29,14 @@
             v-model:sorting="sorting"
             :fields="sortableFields"
             :shortcuts="shortcuts"
+            :texts="texts"
           />
           <QuerryKitTableFiltering
             v-if="filterFields?.length && filtering"
             v-model:filtering="filtering"
             :fields="filterFields"
             :shortcuts="shortcuts"
+            :texts="texts"
           />
           <QuerryKitTableOptions
             v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
@@ -43,6 +45,7 @@
             v-model:column-pinning="columnPinning"
             :columns="columnDefinitions"
             :shortcuts="shortcuts"
+            :texts="texts"
           />
         </slot>
       </div>
@@ -52,6 +55,7 @@
 
 <script setup lang="ts">
 import { useTableI18n } from '../composables/use-table-i18n';
+import type { TableTextOverrides } from '../locales';
 import type {
   ColumnDefinition,
   ColumnPinning,
@@ -61,12 +65,14 @@ import type {
   SortingState,
 } from '../types/table';
 
-defineProps<{
+const props = defineProps<{
   breadcrumbItems?: Array<Record<string, unknown>>;
   sortableFields?: SortingField[];
   filterFields?: FilterField[];
   columnDefinitions?: ColumnDefinition[];
   searchPlaceholder?: string;
+  /** Explicit text overrides. These take precedence over vue-i18n and English defaults. */
+  texts?: TableTextOverrides;
   shortcuts?: boolean;
   ui?: { root?: string; primary?: string; secondary?: string };
 }>();
@@ -76,6 +82,6 @@ const filtering = defineModel<Filtering>('filtering');
 const columnOrder = defineModel<string[]>('columnOrder');
 const invisibleColumns = defineModel<string[]>('invisibleColumns');
 const columnPinning = defineModel<ColumnPinning>('columnPinning');
-const t = useTableI18n();
+const t = useTableI18n(props.texts);
 const setSearch = (value: string | number | undefined) => (search.value = value == null ? undefined : String(value));
 </script>

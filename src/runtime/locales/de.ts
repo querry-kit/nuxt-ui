@@ -1,5 +1,5 @@
 export default {
-  querryKit: {
+  '@querry-kit': {
     table: {
       search: { placeholder: 'Suchen' },
       sorting: {

@@ -46,7 +46,7 @@ It also contains the complete Workboard API-and-web-app example, which shows the
 pnpm add @querry-kit/nuxt @querry-kit/nuxt-ui @nuxt/ui
 ```
 
-Register Nuxt UI before this module. Components are auto-imported, and the package can merge its English and German `querryKit.table` messages when `@nuxtjs/i18n` is present.
+Register Nuxt UI before this module. Components are auto-imported and work without an i18n dependency, using bundled English defaults. When an application provides vue-i18n, the module can merge its English and German messages under the `@querry-kit.table` namespace.
 
 ```ts
 export default defineNuxtConfig({
@@ -58,7 +58,7 @@ export default defineNuxtConfig({
 });
 ```
 
-Set either option to `false` when the application registers the corresponding integration itself. The package never installs an i18n provider; it only merges its own namespaced messages when one is available.
+Set either option to `false` when the application registers the corresponding integration itself. The package never installs or requires an i18n provider. Pass a `texts` prop for explicit component text overrides, or replace display regions with the documented slots.
 
 The current package version is published on npm. npm is the primary distribution channel.
 
@@ -118,7 +118,7 @@ pnpm add @querry-kit/nuxt-ui
 
 Use `:shortcuts="false"` on an individual component to disable its keyboard listener. The toolbar and individual controls can also be customized through slots without duplicating their state logic.
 
-For manual locale integration, import the payloads without installing the module plugin:
+For manual locale integration, import the payloads without using the module plugin:
 
 ```ts
 import { querryKitLocales } from '@querry-kit/nuxt-ui/locales';
@@ -126,6 +126,8 @@ import { querryKitLocales } from '@querry-kit/nuxt-ui/locales';
 i18n.global.mergeLocaleMessage('en', querryKitLocales.en);
 i18n.global.mergeLocaleMessage('de', querryKitLocales.de);
 ```
+
+See [Types and locales](https://querry-kit.github.io/nuxt-ui/api/types) for the complete JSON message list, text-prop examples, and slot customization.
 
 ## 🧱 Components
 

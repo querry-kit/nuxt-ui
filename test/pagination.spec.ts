@@ -14,6 +14,12 @@ describe('QuerryKitTablePagination', () => {
     expect(wrapper.text()).toContain('Showing 11–20 of 42');
   });
 
+  it('accepts an explicit text override without requiring i18n', () => {
+    const wrapper = mountPagination({ texts: { pagination: { summary: 'Rows {start}–{end} / {total}' } } });
+
+    expect(wrapper.text()).toContain('Rows 11–20 / 42');
+  });
+
   it('moves between pages with the documented keyboard shortcuts', async () => {
     const wrapper = mountPagination();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', shiftKey: true }));

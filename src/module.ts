@@ -4,7 +4,7 @@ import type { NuxtModule } from '@nuxt/schema';
 export interface QuerryKitNuxtUiOptions {
   /** Register collision-safe QuerryKit table components for Nuxt auto-imports. */
   autoImports?: boolean;
-  /** Merge English and German `querryKit.table` messages into vue-i18n, when present. */
+  /** Merge bundled `@querry-kit.table` messages into vue-i18n when an application provides it. */
   locales?: boolean;
 }
 

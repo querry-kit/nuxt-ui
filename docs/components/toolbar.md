@@ -15,7 +15,7 @@
 | `invisible-columns` | Hidden column IDs.                                     |
 | `column-pinning`    | Left and right pinned column IDs.                      |
 
-Pass `sortable-fields`, `filter-fields` and `column-definitions` to enable the corresponding default controls. `breadcrumb-items` and `search-placeholder` customize the default leading region.
+Pass `sortable-fields`, `filter-fields` and `column-definitions` to enable the corresponding default controls. `breadcrumb-items` and `search-placeholder` customize the default leading region. Pass `texts` to override individual strings in the toolbar and its default controls without installing i18n.
 
 ## Slots
 

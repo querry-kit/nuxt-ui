@@ -1,27 +1,32 @@
 <template>
-  <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
+  <span ref="trigger">
     <slot name="trigger" :open="open" :toggle="toggle" :active="hasFilters">
       <UButton
         variant="ghost"
-        :aria-label="t('filtering.title', 'Filter')"
+        :aria-label="t('filtering.title')"
         :color="hasFilters ? 'primary' : 'neutral'"
         :icon="icon"
         @click="toggle"
       />
     </slot>
+  </span>
+  <UPopover
+    v-model:open="open"
+    :reference="trigger"
+    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :modal="false"
+  >
     <template #content>
       <div class="min-w-80 p-2.5" :class="ui?.content">
         <slot name="header" :filtering="filtering" :clear="clear" :toggle-mode="toggleMode">
           <div class="mb-4 flex items-center justify-between gap-2">
-            <span class="flex items-center gap-2"
-              ><UIcon name="i-tabler-filter-2" />{{ t('filtering.title', 'Filter') }}</span
-            >
+            <span class="flex items-center gap-2"><UIcon name="i-tabler-filter-2" />{{ t('filtering.title') }}</span>
             <div class="flex gap-1">
               <UButton
                 color="neutral"
                 size="xs"
                 variant="outline"
-                :aria-label="t('filtering.mode', 'Toggle filter mode')"
+                :aria-label="t('filtering.mode')"
                 :icon="
                   filtering.operator === FilteringMode.Intersect
                     ? 'i-tabler-layers-intersect-2'
@@ -35,7 +40,7 @@
                 icon="i-tabler-cancel"
                 size="xs"
                 variant="outline"
-                :aria-label="t('filtering.clear', 'Clear filters')"
+                :aria-label="t('filtering.clear')"
                 @click="clear"
               />
             </div>
@@ -123,7 +128,7 @@
                   icon="i-tabler-x"
                   size="sm"
                   variant="outline"
-                  :aria-label="t('filtering.remove', 'Remove filter')"
+                  :aria-label="t('filtering.remove')"
                   @click="remove(filter.id)"
                 />
               </slot>
@@ -139,11 +144,11 @@
               size="sm"
               value-key="value"
               :items="availableFields"
-              :placeholder="t('filtering.field', 'Select field')"
+              :placeholder="t('filtering.field')"
             /><UButton
               icon="i-tabler-plus"
               size="sm"
-              :aria-label="t('filtering.add', 'Add filter')"
+              :aria-label="t('filtering.add')"
               :disabled="!selected"
               @click="addSelected"
             />
@@ -157,6 +162,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
+import type { TableTextOverrides } from '../locales';
 import {
   FilterFieldType,
   FilteringFieldOperator,
@@ -171,13 +177,20 @@ import { createFilter } from '../utils/filtering';
 import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
-  defineProps<{ fields: FilterField[]; icon?: string; shortcuts?: boolean; ui?: { content?: string } }>(),
+  defineProps<{
+    fields: FilterField[];
+    icon?: string;
+    shortcuts?: boolean;
+    texts?: TableTextOverrides;
+    ui?: { content?: string };
+  }>(),
   { icon: 'i-tabler-filter', shortcuts: true },
 );
 const filtering = defineModel<Filtering>('filtering', { required: true });
+const trigger = ref<HTMLElement>();
 const open = ref(false);
 const selected = ref<string>();
-const t = useTableI18n();
+const t = useTableI18n(props.texts);
 const hasFilters = computed(() => filtering.value.filters.length > 0);
 const availableFields = computed(() => props.fields.filter((field) => !field.disabled));
 const numberOperators = [
