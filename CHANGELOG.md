@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 0.1.2
+
+### Patch Changes
+
+- fa4fb3a: Standardize the English README and contributor guidance.
+
 ## 0.1.1
 
 ### Patch Changes
