@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 2.0.1
+
+### Patch Changes
+
+- a4cdae6: Publish the table runtime components in the npm package.
+
 ## 2.0.0
 
 ### Major Changes
