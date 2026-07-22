@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.0.0
+
+### Major Changes
+
+- b16a56f: Split table controls into internal components, retain `QTable*` as the public Nuxt component names, and replace bundled locale payloads with host-app `querrykit.table.*` keys, nested `texts` overrides, and English fallbacks.
+
 ## 2.0.1
 
 ### Patch Changes
