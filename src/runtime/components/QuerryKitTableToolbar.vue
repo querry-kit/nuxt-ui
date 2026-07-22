@@ -15,8 +15,8 @@
         <slot name="search" :search="search" :set-search="setSearch">
           <UInput
             v-if="search !== undefined"
-            :model-value="search"
             icon="i-tabler-search"
+            :model-value="search"
             :placeholder="searchPlaceholder ?? t('search.placeholder', 'Search')"
             @update:model-value="setSearch"
           />

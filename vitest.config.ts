@@ -13,7 +13,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/runtime/**/*.{ts,vue}'],
-      thresholds: { lines: 100 },
+      thresholds: { lines: 100, statements: 100, branches: 80, functions: 50 },
     },
   },
 });

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { h, markRaw, nextTick } from 'vue';
 import QuerryKitTableFiltering from '../src/runtime/components/QuerryKitTableFiltering.vue';
 import QuerryKitTableOptions from '../src/runtime/components/QuerryKitTableOptions.vue';
@@ -24,33 +24,45 @@ const stubs = {
   QuerryKitTableOptions: true,
 };
 
+const mounted: Array<{ unmount: () => void }> = [];
+const track = <T extends { unmount: () => void }>(wrapper: T): T => {
+  mounted.push(wrapper);
+  return wrapper;
+};
+
+afterEach(() => {
+  mounted.splice(0).forEach((wrapper) => wrapper.unmount());
+});
+
 describe('table controls', () => {
   it('mounts sorting with its existing v-model contract and fields', async () => {
-    const wrapper = mount(QuerryKitTableSorting, {
-      props: {
-        sorting: [{ id: 'name', desc: false }],
-        fields: [
-          { value: 'name', label: 'Name' },
-          { value: 'createdAt', label: 'Created' },
-        ],
-      },
-      slots: {
-        add: ({ add }) => h('button', { onClick: () => add('createdAt') }, 'Add'),
-        items: ({ move, remove, toggleDirection }) =>
-          h(
-            'button',
-            {
-              onClick: () => {
-                toggleDirection('name');
-                move(0, 0);
-                remove('missing');
+    const wrapper = track(
+      mount(QuerryKitTableSorting, {
+        props: {
+          sorting: [{ id: 'name', desc: false }],
+          fields: [
+            { value: 'name', label: 'Name' },
+            { value: 'createdAt', label: 'Created' },
+          ],
+        },
+        slots: {
+          add: ({ add }) => h('button', { onClick: () => add('createdAt') }, 'Add'),
+          items: ({ move, remove, toggleDirection }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  toggleDirection('name');
+                  move(0, 0);
+                  remove('missing');
+                },
               },
-            },
-            'Items',
-          ),
-      },
-      global: { stubs },
-    });
+              'Items',
+            ),
+        },
+        global: { stubs },
+      }),
+    );
     expect(wrapper.text()).toContain('Sort');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 's', shiftKey: true }));
     await wrapper.vm.$nextTick();
@@ -60,10 +72,12 @@ describe('table controls', () => {
   });
 
   it('adds a selected sort through the default control', async () => {
-    const wrapper = mount(QuerryKitTableSorting, {
-      props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
-      global: { stubs },
-    });
+    const wrapper = track(
+      mount(QuerryKitTableSorting, {
+        props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
+        global: { stubs },
+      }),
+    );
 
     await wrapper.findComponent({ name: 'USelect' }).vm.$emit('update:modelValue', 'name');
     await nextTick();
@@ -73,41 +87,43 @@ describe('table controls', () => {
   });
 
   it('mounts filtering with Query Kit AND/OR state and field definitions', async () => {
-    const wrapper = mount(QuerryKitTableFiltering, {
-      props: {
-        filtering: {
-          operator: FilteringMode.Intersect,
-          filters: [{ id: 'active', field: 'active', type: FilterFieldType.Boolean, value: true }],
+    const wrapper = track(
+      mount(QuerryKitTableFiltering, {
+        props: {
+          filtering: {
+            operator: FilteringMode.Intersect,
+            filters: [{ id: 'active', field: 'active', type: FilterFieldType.Boolean, value: true }],
+          },
+          fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
         },
-        fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
-      },
-      slots: {
-        header: ({ clear, toggleMode }) =>
-          h(
-            'button',
-            {
-              onClick: () => {
-                toggleMode();
-                clear();
+        slots: {
+          header: ({ clear, toggleMode }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  toggleMode();
+                  clear();
+                },
               },
-            },
-            'Header',
-          ),
-        add: ({ add }) => h('button', { onClick: () => add('active') }, 'Add'),
-        items: ({ remove, update }) =>
-          h(
-            'button',
-            {
-              onClick: () => {
-                update('active', { value: false });
-                remove('active');
+              'Header',
+            ),
+          add: ({ add }) => h('button', { onClick: () => add('active') }, 'Add'),
+          items: ({ remove, update }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  update('active', { value: false });
+                  remove('active');
+                },
               },
-            },
-            'Items',
-          ),
-      },
-      global: { stubs },
-    });
+              'Items',
+            ),
+        },
+        global: { stubs },
+      }),
+    );
     expect(wrapper.text()).toContain('Header');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'f', shiftKey: true }));
     await wrapper.vm.$nextTick();
@@ -118,13 +134,15 @@ describe('table controls', () => {
   });
 
   it('adds a selected filter through the default control', async () => {
-    const wrapper = mount(QuerryKitTableFiltering, {
-      props: {
-        filtering: { operator: FilteringMode.Intersect, filters: [] },
-        fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
-      },
-      global: { stubs },
-    });
+    const wrapper = track(
+      mount(QuerryKitTableFiltering, {
+        props: {
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+        },
+        global: { stubs },
+      }),
+    );
 
     await wrapper.findComponent({ name: 'USelect' }).vm.$emit('update:modelValue', 'active');
     await nextTick();
@@ -137,67 +155,71 @@ describe('table controls', () => {
 
   it('renders each default filter editor variant', () => {
     const customEditor = markRaw({ template: '<button>Custom editor</button>' });
-    const wrapper = mount(QuerryKitTableFiltering, {
-      props: {
-        filtering: {
-          operator: FilteringMode.Intersect,
-          filters: [
-            { id: 'boolean', field: 'active', type: FilterFieldType.Boolean, value: true },
-            { id: 'number', field: 'rank', type: FilterFieldType.Number, value: 3 },
-            { id: 'enum-menu', field: 'status', type: FilterFieldType.Enum, value: ['open'] },
-            { id: 'enum-component', field: 'priority', type: FilterFieldType.Enum, value: ['high'] },
-            { id: 'select', field: 'owner', type: FilterFieldType.Select, value: ['ada'] },
+    const wrapper = track(
+      mount(QuerryKitTableFiltering, {
+        props: {
+          filtering: {
+            operator: FilteringMode.Intersect,
+            filters: [
+              { id: 'boolean', field: 'active', type: FilterFieldType.Boolean, value: true },
+              { id: 'number', field: 'rank', type: FilterFieldType.Number, value: 3 },
+              { id: 'enum-menu', field: 'status', type: FilterFieldType.Enum, value: ['open'] },
+              { id: 'enum-component', field: 'priority', type: FilterFieldType.Enum, value: ['high'] },
+              { id: 'select', field: 'owner', type: FilterFieldType.Select, value: ['ada'] },
+            ],
+          },
+          fields: [
+            { value: 'active', label: 'Active', type: FilterFieldType.Boolean },
+            { value: 'rank', label: 'Rank', type: FilterFieldType.Number },
+            {
+              value: 'status',
+              label: 'Status',
+              type: FilterFieldType.Enum,
+              values: [{ value: 'open', label: 'Open' }],
+            },
+            {
+              value: 'priority',
+              label: 'Priority',
+              type: FilterFieldType.Enum,
+              values: [],
+              component: customEditor,
+            },
+            { value: 'owner', label: 'Owner', type: FilterFieldType.Select, component: customEditor },
           ],
         },
-        fields: [
-          { value: 'active', label: 'Active', type: FilterFieldType.Boolean },
-          { value: 'rank', label: 'Rank', type: FilterFieldType.Number },
-          {
-            value: 'status',
-            label: 'Status',
-            type: FilterFieldType.Enum,
-            values: [{ value: 'open', label: 'Open' }],
-          },
-          {
-            value: 'priority',
-            label: 'Priority',
-            type: FilterFieldType.Enum,
-            values: [],
-            component: customEditor,
-          },
-          { value: 'owner', label: 'Owner', type: FilterFieldType.Select, component: customEditor },
-        ],
-      },
-      global: { stubs },
-    });
+        global: { stubs },
+      }),
+    );
 
     expect(wrapper.text()).toContain('Custom editor');
   });
 
   it('mounts options with order, visibility and pinning models', async () => {
-    const wrapper = mount(QuerryKitTableOptions, {
-      props: {
-        columns: [{ id: 'name', header: 'Name' }],
-        columnOrder: ['name'],
-        invisibleColumns: [],
-        columnPinning: {},
-      },
-      slots: {
-        items: ({ move }) => h('button', { onClick: () => move(0, 0) }, 'Move'),
-        item: ({ column, pin, toggleVisibility }) =>
-          h(
-            'button',
-            {
-              onClick: () => {
-                pin('left');
-                toggleVisibility();
+    const wrapper = track(
+      mount(QuerryKitTableOptions, {
+        props: {
+          columns: [{ id: 'name', header: 'Name' }],
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        slots: {
+          items: ({ move }) => h('button', { onClick: () => move(0, 0) }, 'Move'),
+          item: ({ column, pin, toggleVisibility }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  pin('left');
+                  toggleVisibility();
+                },
               },
-            },
-            column.header,
-          ),
-      },
-      global: { stubs },
-    });
+              column.header,
+            ),
+        },
+        global: { stubs },
+      }),
+    );
     expect(wrapper.text()).toContain('Table options');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'o', shiftKey: true }));
     await wrapper.vm.$nextTick();
@@ -207,19 +229,21 @@ describe('table controls', () => {
   });
 
   it('uses default options controls for visibility, pinning, and reordering', async () => {
-    const wrapper = mount(QuerryKitTableOptions, {
-      props: {
-        columns: [
-          { id: 'name', header: 'Name' },
-          { id: 'email', header: 'Email' },
-          { id: 'fixed', header: 'Fixed', enableHiding: false },
-        ],
-        columnOrder: ['name', 'email', 'fixed'],
-        invisibleColumns: [],
-        columnPinning: {},
-      },
-      global: { stubs },
-    });
+    const wrapper = track(
+      mount(QuerryKitTableOptions, {
+        props: {
+          columns: [
+            { id: 'name', header: 'Name' },
+            { id: 'email', header: 'Email' },
+            { id: 'fixed', header: 'Fixed', enableHiding: false },
+          ],
+          columnOrder: ['name', 'email', 'fixed'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        global: { stubs },
+      }),
+    );
 
     await wrapper.findComponent({ name: 'USwitch' }).vm.$emit('update:modelValue', false);
     await wrapper.setProps({ invisibleColumns: ['name'] });
@@ -239,22 +263,40 @@ describe('table controls', () => {
   });
 
   it('passes all public toolbar models to consumer slots', () => {
-    const wrapper = mount(QuerryKitTableToolbar, {
-      props: {
-        search: 'Ada',
-        sorting: [],
-        filtering: { operator: FilteringMode.Intersect, filters: [] },
-        columnOrder: ['name'],
-        invisibleColumns: [],
-        columnPinning: {},
-        sortableFields: [{ value: 'name', label: 'Name' }],
-        filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
-        columnDefinitions: [{ id: 'name', header: 'Name' }],
-        breadcrumbItems: [{ label: 'People' }],
-      },
-      slots: { new: '<span>Create</span>' },
-      global: { stubs },
-    });
+    const wrapper = track(
+      mount(QuerryKitTableToolbar, {
+        props: {
+          search: 'Ada',
+          sorting: [],
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+          sortableFields: [{ value: 'name', label: 'Name' }],
+          filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+          columnDefinitions: [{ id: 'name', header: 'Name' }],
+          breadcrumbItems: [{ label: 'People' }],
+        },
+        slots: { new: '<span>Create</span>' },
+        global: { stubs },
+      }),
+    );
     expect(wrapper.text()).toContain('Create');
+  });
+
+  it('does not open controls while a consumer is typing', async () => {
+    const wrapper = track(
+      mount(QuerryKitTableSorting, {
+        props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
+        global: { stubs },
+      }),
+    );
+    const input = document.createElement('input');
+    document.body.append(input);
+
+    input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 's', shiftKey: true }));
+    await nextTick();
+
+    expect(wrapper.text()).not.toContain('Clear sorting');
   });
 });

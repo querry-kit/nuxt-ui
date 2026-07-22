@@ -22,11 +22,11 @@
     <div class="flex items-center gap-1.5" :class="ui?.right">
       <slot name="page-size" :items-per-page="itemsPerPage" :set-items-per-page="setItemsPerPage">
         <USelect
-          :model-value="itemsPerPage"
           class="w-24"
-          :items="pageSizeItems"
           size="sm"
           value-key="value"
+          :model-value="itemsPerPage"
+          :items="pageSizeItems"
           @update:model-value="(value: number | string) => setItemsPerPage(Number(value))"
         />
       </slot>
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
+import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
   defineProps<{
@@ -81,7 +82,7 @@ const setItemsPerPage = (value: number) => {
   page.value = Math.min(page.value, Math.max(1, Math.ceil(props.totalItems / value)));
 };
 const onKeydown = (event: KeyboardEvent) => {
-  if (!props.shortcuts || !event.shiftKey) return;
+  if (!canHandleTableShortcut(event) || !props.shortcuts || !event.shiftKey) return;
   if (event.ctrlKey && event.key === 'ArrowLeft') first();
   else if (event.ctrlKey && event.key === 'ArrowRight') last();
   else if (event.key === 'ArrowLeft') previous();

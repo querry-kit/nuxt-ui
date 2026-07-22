@@ -2,10 +2,10 @@
   <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
     <slot name="trigger" :open="open" :toggle="toggle" :active="hasFilters">
       <UButton
+        variant="ghost"
         :aria-label="t('filtering.title', 'Filter')"
         :color="hasFilters ? 'primary' : 'neutral'"
         :icon="icon"
-        variant="ghost"
         @click="toggle"
       />
     </slot>
@@ -18,24 +18,24 @@
             >
             <div class="flex gap-1">
               <UButton
-                :aria-label="t('filtering.mode', 'Toggle filter mode')"
                 color="neutral"
+                size="xs"
+                variant="outline"
+                :aria-label="t('filtering.mode', 'Toggle filter mode')"
                 :icon="
                   filtering.operator === FilteringMode.Intersect
                     ? 'i-tabler-layers-intersect-2'
                     : 'i-tabler-layers-union'
                 "
-                size="xs"
-                variant="outline"
                 @click="toggleMode"
               />
               <UButton
                 v-if="hasFilters"
-                :aria-label="t('filtering.clear', 'Clear filters')"
                 color="error"
                 icon="i-tabler-cancel"
                 size="xs"
                 variant="outline"
+                :aria-label="t('filtering.clear', 'Clear filters')"
                 @click="clear"
               />
             </div>
@@ -59,19 +59,19 @@
                 />
                 <template v-else-if="filter.type === FilterFieldType.Number">
                   <USelect
-                    :model-value="filter.operator"
                     class="w-16"
-                    :items="numberOperators"
                     size="sm"
                     value-key="value"
+                    :model-value="filter.operator"
+                    :items="numberOperators"
                     @update:model-value="
                       (operator: string) => update(filter.id, { operator: operator as FilteringFieldOperator })
                     "
                   />
                   <UInputNumber
-                    :model-value="Number(filter.value)"
                     class="w-28"
                     size="sm"
+                    :model-value="Number(filter.value)"
                     @update:model-value="
                       (value: number | undefined) => update(filter.id, { value: value ?? undefined })
                     "
@@ -79,51 +79,51 @@
                 </template>
                 <template v-else>
                   <USelect
-                    :model-value="filter.operator"
                     class="w-16"
-                    :items="setOperators"
                     size="sm"
                     value-key="value"
+                    :model-value="filter.operator"
+                    :items="setOperators"
                     @update:model-value="
                       (operator: string) => update(filter.id, { operator: operator as FilteringFieldOperator })
                     "
                   />
                   <component
-                    v-if="fieldFor(filter.field)?.type === FilterFieldType.Select"
                     :is="(fieldFor(filter.field) as FilterFieldSelect).component"
-                    :model-value="filter.value"
+                    v-if="fieldFor(filter.field)?.type === FilterFieldType.Select"
                     class="w-48"
-                    multiple
                     size="sm"
+                    :model-value="filter.value"
+                    multiple
                     @update:model-value="(value: string[] | number[]) => update(filter.id, { value })"
                   />
                   <component
-                    v-else-if="(fieldFor(filter.field) as FilterFieldEnum | undefined)?.component"
                     :is="(fieldFor(filter.field) as FilterFieldEnum).component"
-                    :model-value="filter.value"
+                    v-else-if="(fieldFor(filter.field) as FilterFieldEnum | undefined)?.component"
                     class="w-48"
-                    multiple
                     size="sm"
+                    :model-value="filter.value"
+                    multiple
                     @update:model-value="(value: string[] | number[]) => update(filter.id, { value })"
                   />
                   <USelectMenu
                     v-else
-                    :model-value="filter.value"
                     class="w-48"
-                    :items="(fieldFor(filter.field) as FilterFieldEnum | undefined)?.values ?? []"
                     label-key="label"
-                    multiple
                     size="sm"
                     value-key="value"
+                    :model-value="filter.value"
+                    :items="(fieldFor(filter.field) as FilterFieldEnum | undefined)?.values ?? []"
+                    multiple
                     @update:model-value="(value: string[] | number[]) => update(filter.id, { value })"
                   />
                 </template>
                 <UButton
-                  :aria-label="t('filtering.remove', 'Remove filter')"
                   color="error"
                   icon="i-tabler-x"
                   size="sm"
                   variant="outline"
+                  :aria-label="t('filtering.remove', 'Remove filter')"
                   @click="remove(filter.id)"
                 />
               </slot>
@@ -136,15 +136,15 @@
             <USelect
               v-model="selected"
               class="w-full"
-              :items="availableFields"
-              :placeholder="t('filtering.field', 'Select field')"
               size="sm"
               value-key="value"
+              :items="availableFields"
+              :placeholder="t('filtering.field', 'Select field')"
             /><UButton
-              :aria-label="t('filtering.add', 'Add filter')"
-              :disabled="!selected"
               icon="i-tabler-plus"
               size="sm"
+              :aria-label="t('filtering.add', 'Add filter')"
+              :disabled="!selected"
               @click="addSelected"
             />
           </div>
@@ -168,6 +168,7 @@ import {
   type FilteringField,
 } from '../types/table';
 import { createFilter } from '../utils/filtering';
+import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
   defineProps<{ fields: FilterField[]; icon?: string; shortcuts?: boolean; ui?: { content?: string } }>(),
@@ -215,7 +216,7 @@ const update = (id: string, patch: Partial<FilteringField>) =>
     filters: filtering.value.filters.map((filter) => (filter.id === id ? { ...filter, ...patch } : filter)),
   });
 const onKeydown = (event: KeyboardEvent) => {
-  if (props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'f') {
+  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'f') {
     event.preventDefault();
     toggle();
   }

@@ -2,10 +2,10 @@
   <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
     <slot name="trigger" :open="open" :toggle="toggle" :active="hasSorting">
       <UButton
+        variant="ghost"
         :aria-label="t('sorting.title', 'Sort')"
         :color="hasSorting ? 'primary' : 'neutral'"
         :icon="icon"
-        variant="ghost"
         @click="toggle"
       />
     </slot>
@@ -18,11 +18,11 @@
             >
             <UButton
               v-if="hasSorting"
-              :aria-label="t('sorting.clear', 'Clear sorting')"
               color="error"
               icon="i-tabler-cancel"
               size="xs"
               variant="outline"
+              :aria-label="t('sorting.clear', 'Clear sorting')"
               @click="clear"
             />
           </div>
@@ -39,19 +39,19 @@
                 :toggle-direction="() => toggleDirection(sort.id)"
               >
                 <UButton
-                  :aria-label="t('sorting.toggle', 'Toggle sort direction')"
                   color="neutral"
-                  :icon="sort.desc ? 'i-tabler-sort-descending' : 'i-tabler-sort-ascending'"
                   size="sm"
                   variant="soft"
+                  :aria-label="t('sorting.toggle', 'Toggle sort direction')"
+                  :icon="sort.desc ? 'i-tabler-sort-descending' : 'i-tabler-sort-ascending'"
                   @click="toggleDirection(sort.id)"
                 />
                 <UButton
-                  :aria-label="t('sorting.remove', 'Remove sort')"
                   color="error"
                   icon="i-tabler-x"
                   size="sm"
                   variant="outline"
+                  :aria-label="t('sorting.remove', 'Remove sort')"
                   @click="remove(sort.id)"
                 />
               </slot>
@@ -64,16 +64,16 @@
             <USelect
               v-model="selected"
               class="w-full"
-              :items="availableFields"
-              :placeholder="t('sorting.field', 'Select field')"
               size="sm"
               value-key="value"
+              :items="availableFields"
+              :placeholder="t('sorting.field', 'Select field')"
             />
             <UButton
-              :aria-label="t('sorting.add', 'Add sort')"
-              :disabled="!selected"
               icon="i-tabler-plus"
               size="sm"
+              :aria-label="t('sorting.add', 'Add sort')"
+              :disabled="!selected"
               @click="addSelected"
             />
           </div>
@@ -87,6 +87,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
 import type { SortingField, SortingState } from '../types/table';
+import { canHandleTableShortcut } from '../utils/keyboard';
 
 const props = withDefaults(
   defineProps<{ fields: SortingField[]; icon?: string; shortcuts?: boolean; ui?: { content?: string } }>(),
@@ -120,7 +121,7 @@ const move = (from: number, to: number) => {
   sorting.value = next;
 };
 const onKeydown = (event: KeyboardEvent) => {
-  if (props.shortcuts && event.shiftKey && event.key.toLowerCase() === 's') {
+  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 's') {
     event.preventDefault();
     toggle();
   }

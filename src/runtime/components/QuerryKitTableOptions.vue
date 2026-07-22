@@ -2,10 +2,10 @@
   <UPopover v-model:open="open" :content="{ align: 'start', side: 'bottom', sideOffset: 8 }" :modal="false">
     <slot name="trigger" :open="open" :toggle="toggle"
       ><UButton
-        :aria-label="t('options.title', 'Table options')"
         color="neutral"
-        :icon="icon"
         variant="ghost"
+        :aria-label="t('options.title', 'Table options')"
+        :icon="icon"
         @click="toggle"
     /></slot>
     <template #content>
@@ -38,26 +38,26 @@
               >
                 <UPopover
                   ><UButton
-                    :aria-label="t('options.pin', 'Pin column')"
                     color="neutral"
                     icon="i-tabler-pin"
                     size="xs"
-                    variant="ghost" /><template #content
+                    variant="ghost"
+                    :aria-label="t('options.pin', 'Pin column')" /><template #content
                     ><div class="flex p-1">
                       <UButton
-                        :label="t('options.left', 'Left')"
                         size="xs"
                         variant="ghost"
+                        :label="t('options.left', 'Left')"
                         @click="pin(column.id, 'left')"
                       /><UButton
-                        :label="t('options.center', 'Unpin')"
                         size="xs"
                         variant="ghost"
+                        :label="t('options.center', 'Unpin')"
                         @click="pin(column.id, 'center')"
                       /><UButton
-                        :label="t('options.right', 'Right')"
                         size="xs"
                         variant="ghost"
+                        :label="t('options.right', 'Right')"
                         @click="pin(column.id, 'right')"
                       /></div></template
                 ></UPopover>
@@ -80,6 +80,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../composables/use-table-i18n';
 import type { ColumnDefinition, ColumnPinning } from '../types/table';
+import { canHandleTableShortcut } from '../utils/keyboard';
 
 type PinSide = 'left' | 'center' | 'right';
 const props = withDefaults(
@@ -119,7 +120,7 @@ const move = (from: number, to: number) => {
   columnOrder.value = next;
 };
 const onKeydown = (event: KeyboardEvent) => {
-  if (props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'o') {
+  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'o') {
     event.preventDefault();
     toggle();
   }

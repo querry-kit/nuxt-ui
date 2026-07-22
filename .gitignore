@@ -4,6 +4,7 @@ node_modules
 dist
 coverage
 docs/.vitepress/cache
+docs/.vitepress/.temp
 docs/.vitepress/dist
 storybook-static
 test-results
