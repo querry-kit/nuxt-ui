@@ -127,7 +127,7 @@ See [Types and text customization](https://querry-kit.github.io/nuxt-ui/api/type
 | `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/nuxt-ui/components/options) |
 | `QTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/nuxt-ui/components/pagination)  |
 
-Public state types such as `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui`.
+Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
 
 ## 📖 Documentation
 

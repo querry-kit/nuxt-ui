@@ -10,4 +10,4 @@ allowBuilds:
   vue-demi: true
 
 minimumReleaseAgeExclude:
-  - '@querry-kit/nuxt@0.0.2'
+  - '@querry-kit/nuxt@0.0.2 || 0.1.1'

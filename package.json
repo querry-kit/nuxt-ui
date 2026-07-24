@@ -37,6 +37,10 @@
     ".": {
       "types": "./dist/module.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./types": {
+      "types": "./dist/runtime/types/table.d.ts",
+      "import": "./dist/runtime/types/table.js"
     }
   },
   "main": "./dist/module.mjs",
@@ -65,7 +69,7 @@
   },
   "peerDependencies": {
     "@nuxt/ui": "^4.0.0",
-    "@querry-kit/nuxt": "^0.0.2",
+    "@querry-kit/nuxt": "^0.2.0",
     "@tanstack/table-core": "^8.0.0",
     "@vueuse/core": "^14.0.0",
     "nuxt": "^4.0.0",
@@ -78,7 +82,7 @@
     "@nuxt/schema": "^4.4.0",
     "@playwright/test": "^1.58.2",
     "@nuxt/ui": "^4.10.0",
-    "@querry-kit/nuxt": "^0.0.2",
+    "@querry-kit/nuxt": "link:../nuxt",
     "@vitejs/plugin-vue": "^6.0.0",
     "@storybook/addon-a11y": "^10.5.2",
     "@storybook/addon-docs": "^10.5.2",
