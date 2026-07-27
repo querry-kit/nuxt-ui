@@ -82,7 +82,7 @@
     "@nuxt/schema": "^4.4.0",
     "@playwright/test": "^1.58.2",
     "@nuxt/ui": "^4.10.0",
-    "@querry-kit/nuxt": "link:../nuxt",
+    "@querry-kit/nuxt": "^0.2.0",
     "@vitejs/plugin-vue": "^6.0.0",
     "@storybook/addon-a11y": "^10.5.2",
     "@storybook/addon-docs": "^10.5.2",
