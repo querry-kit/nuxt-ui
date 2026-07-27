@@ -1,5 +1,15 @@
 # @querry-kit/nuxt-ui
 
+## 3.1.0
+
+### Minor Changes
+
+- 699c3cf: Build table filtering and sorting types on the shared `@querry-kit/nuxt` contracts.
+
+### Patch Changes
+
+- 38952fc: Use the published Nuxt package during CI builds.
+
 ## 3.0.0
 
 ### Major Changes
