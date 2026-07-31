@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.1.2
+
+### Patch Changes
+
+- 00c23f7: Add security reporting and repository maintenance configuration.
+
 ## 3.1.1
 
 ### Patch Changes
