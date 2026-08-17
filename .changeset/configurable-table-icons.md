@@ -2,4 +2,4 @@
 '@querry-kit/nuxt-ui': minor
 ---
 
-Add nested `icons` overrides for all built-in table-control icons.
+Add nested table-icon overrides through component props and host `app.config.ts`.

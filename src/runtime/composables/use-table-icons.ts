@@ -1,3 +1,4 @@
+import { useAppConfig } from '#app';
 import { defaultTableIcons, type TableIconKey, type TableIconOverrides } from '../icons';
 
 const getIcon = (icons: TableIconOverrides | typeof defaultTableIcons, key: TableIconKey) =>
@@ -6,10 +7,15 @@ const getIcon = (icons: TableIconOverrides | typeof defaultTableIcons, key: Tabl
     return (value as Record<string, unknown>)[segment];
   }, icons);
 
-/** Resolves an explicit nested icon override with the package default as fallback. */
+/** Resolves component and app-config icon overrides with the package default as fallback. */
 export function useTableIcons(icons?: TableIconOverrides) {
+  const appIcons = useAppConfig().querryKit?.table?.icons;
+
   return (key: TableIconKey) => {
-    const override = icons && getIcon(icons, key);
-    return typeof override === 'string' ? override : (getIcon(defaultTableIcons, key) as string);
+    const componentIcon = icons && getIcon(icons, key);
+    if (typeof componentIcon === 'string') return componentIcon;
+
+    const appIcon = appIcons && getIcon(appIcons, key);
+    return typeof appIcon === 'string' ? appIcon : (getIcon(defaultTableIcons, key) as string);
   };
 }

@@ -58,6 +58,21 @@ Set `autoImports` to `false` when the application registers the components itsel
 
 When overriding icons, install the matching Iconify collection in the host application. For example, install Lucide with `pnpm add @iconify-json/lucide` before passing `i-lucide-*` values. See [types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types) for Lucide and Tabler examples.
 
+Configure table-wide icon defaults in the host application's `app.config.ts`. A component's `icons` prop overrides this configuration, while the existing flat `icon` prop remains authoritative for an individual trigger:
+
+```ts
+export default defineAppConfig({
+  querryKit: {
+    table: {
+      icons: {
+        sorting: { trigger: 'i-lucide-arrow-up-down' },
+        filtering: { trigger: 'i-lucide-list-filter' },
+      },
+    },
+  },
+});
+```
+
 The current package version is published on npm. npm is the primary distribution channel.
 
 GitHub release tags remain available as a fallback:
