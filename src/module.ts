@@ -1,5 +1,24 @@
 import { addComponent, createResolver, defineNuxtModule } from '@nuxt/kit';
 import type { NuxtModule } from '@nuxt/schema';
+import type { TableIconOverrides } from './runtime/icons';
+
+export interface QuerryKitAppConfig {
+  table?: {
+    icons?: TableIconOverrides;
+  };
+}
+
+declare module '@nuxt/schema' {
+  interface CustomAppConfig {
+    querryKit?: QuerryKitAppConfig;
+  }
+
+  interface AppConfig {
+    querryKit?: {
+      table?: QuerryKitAppConfig['table'];
+    };
+  }
+}
 
 export interface QuerryKitNuxtUiOptions {
   /** Register collision-safe QuerryKit table components for Nuxt auto-imports. */

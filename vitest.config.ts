@@ -8,7 +8,6 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     include: ['test/**/*.spec.ts'],
-    exclude: ['test/screenshots.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],

@@ -4,17 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: [
-      'node_modules/**',
-      '.nuxt/**',
-      '.output/**',
-      'dist/**',
-      'coverage/**',
-      'docs/.vitepress/cache/**',
-      'docs/.vitepress/.temp/**',
-      'docs/.vitepress/dist/**',
-      'storybook-static/**',
-    ],
+    ignores: ['node_modules/**', '.nuxt/**', '.output/**', 'dist/**', 'coverage/**'],
   },
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/base'],

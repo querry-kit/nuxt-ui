@@ -1,7 +1,13 @@
 <template>
   <span ref="trigger">
     <slot name="trigger" :open="open" :toggle="toggle">
-      <UButton color="neutral" variant="ghost" :aria-label="t('options.title')" :icon="icon" @click="toggle" />
+      <UButton
+        color="neutral"
+        variant="ghost"
+        :aria-label="t('options.title')"
+        :icon="icon ?? tableIcon('options.trigger')"
+        @click="toggle"
+      />
     </slot>
   </span>
   <UPopover
@@ -13,12 +19,13 @@
     <template #content>
       <div class="min-w-80 p-2.5" :class="ui?.content">
         <slot name="header" :columns="orderedColumns">
-          <OptionsHeader :texts="texts" />
+          <OptionsHeader :texts="texts" :icons="icons" />
         </slot>
         <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
           <OptionsItems
             :columns="orderedColumns"
             :invisible-columns="invisibleColumns"
+            :icons="icons"
             :move="move"
             :pin="pin"
             :toggle-visibility="toggleVisibility"
@@ -29,6 +36,7 @@
                   :column="itemProps.column"
                   :visible="itemProps.visible"
                   :texts="texts"
+                  :icons="icons"
                   :pin="itemProps.pin"
                   :toggle-visibility="itemProps.toggleVisibility"
                 />
@@ -44,6 +52,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import type { ColumnDefinition, ColumnPinning } from '../../../types/table';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
@@ -59,14 +69,16 @@ const props = withDefaults(
     icon?: string;
     shortcuts?: boolean;
     texts?: TableTextOverrides;
+    icons?: TableIconOverrides;
     ui?: { content?: string };
   }>(),
-  { icon: 'i-tabler-adjustments', shortcuts: true },
+  { shortcuts: true },
 );
 const columnOrder = defineModel<string[]>('columnOrder', { required: true });
 const invisibleColumns = defineModel<string[]>('invisibleColumns', { required: true });
 const columnPinning = defineModel<ColumnPinning>('columnPinning', { required: true });
 const t = useTableI18n(props.texts);
+const tableIcon = useTableIcons(props.icons);
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const orderedColumns = computed(() =>

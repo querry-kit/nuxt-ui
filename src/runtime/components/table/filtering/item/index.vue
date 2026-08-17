@@ -11,9 +11,9 @@
   <FilteringItemEnum v-else :filter="filter" :field="field as FilterFieldEnum | undefined" :update="update" />
   <UButton
     color="error"
-    icon="i-tabler-x"
     size="sm"
     variant="outline"
+    :icon="icon('filtering.remove')"
     :aria-label="t('filtering.remove')"
     @click="remove"
   />
@@ -21,6 +21,8 @@
 
 <script setup lang="ts">
 import { useTableI18n } from '../../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../../icons';
 import type { TableTextOverrides } from '../../../../texts';
 import {
   FilterFieldType,
@@ -38,8 +40,10 @@ const props = defineProps<{
   filter: FilteringField;
   field?: FilterField;
   texts?: TableTextOverrides;
+  icons?: TableIconOverrides;
   remove: () => void;
   update: (patch: Partial<FilteringField>) => void;
 }>();
 const t = useTableI18n(props.texts);
+const icon = useTableIcons(props.icons);
 </script>

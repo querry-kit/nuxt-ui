@@ -1,7 +1,7 @@
 <template>
   <div class="mb-4 flex items-center justify-between gap-2">
     <span class="flex items-center gap-2">
-      <UIcon name="i-tabler-filter-2" />
+      <UIcon :name="icon('filtering.header')" />
       {{ t('filtering.title') }}
     </span>
     <div class="flex gap-1">
@@ -9,16 +9,16 @@
         color="neutral"
         size="xs"
         variant="outline"
+        :icon="filtering.operator === FilteringMode.Intersect ? icon('filtering.intersect') : icon('filtering.union')"
         :aria-label="t('filtering.mode')"
-        :icon="filtering.operator === FilteringMode.Intersect ? 'i-tabler-layers-intersect-2' : 'i-tabler-layers-union'"
         @click="toggleMode"
       />
       <UButton
         v-if="hasFilters"
         color="error"
-        icon="i-tabler-cancel"
         size="xs"
         variant="outline"
+        :icon="icon('filtering.clear')"
         :aria-label="t('filtering.clear')"
         @click="clear"
       />
@@ -28,6 +28,8 @@
 
 <script setup lang="ts">
 import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import { FilteringMode, type Filtering } from '../../../types/table';
 
@@ -35,8 +37,10 @@ const props = defineProps<{
   filtering: Filtering;
   hasFilters: boolean;
   texts?: TableTextOverrides;
+  icons?: TableIconOverrides;
   clear: () => void;
   toggleMode: () => void;
 }>();
 const t = useTableI18n(props.texts);
+const icon = useTableIcons(props.icons);
 </script>

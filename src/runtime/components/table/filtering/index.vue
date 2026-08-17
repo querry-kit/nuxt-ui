@@ -5,7 +5,7 @@
         variant="ghost"
         :aria-label="t('filtering.title')"
         :color="hasFilters ? 'primary' : 'neutral'"
-        :icon="icon"
+        :icon="icon ?? tableIcon('filtering.trigger')"
         @click="toggle"
       />
     </slot>
@@ -23,6 +23,7 @@
             :filtering="filtering"
             :has-filters="hasFilters"
             :texts="texts"
+            :icons="icons"
             :clear="clear"
             :toggle-mode="toggleMode"
           />
@@ -41,6 +42,7 @@
                   :filter="itemProps.filter"
                   :field="itemProps.field"
                   :texts="texts"
+                  :icons="icons"
                   :remove="itemProps.remove"
                   :update="itemProps.update"
                 />
@@ -50,7 +52,7 @@
         </slot>
         <USeparator v-if="hasFilters" class="my-2" />
         <slot name="add" :fields="availableFields" :add="add">
-          <FilteringAdd :fields="availableFields" :texts="texts" :add="add" />
+          <FilteringAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
         </slot>
       </div>
     </template>
@@ -60,6 +62,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import { FilteringMode, type FilterField, type Filtering, type FilteringField } from '../../../types/table';
 import { createFilter } from '../../../utils/filtering';
@@ -75,14 +79,16 @@ const props = withDefaults(
     icon?: string;
     shortcuts?: boolean;
     texts?: TableTextOverrides;
+    icons?: TableIconOverrides;
     ui?: { content?: string };
   }>(),
-  { icon: 'i-tabler-filter', shortcuts: true },
+  { shortcuts: true },
 );
 const filtering = defineModel<Filtering>('filtering', { required: true });
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(props.texts);
+const tableIcon = useTableIcons(props.icons);
 const hasFilters = computed(() => filtering.value.filters.length > 0);
 const availableFields = computed(() => props.fields.filter((field) => !field.disabled));
 const toggle = () => (open.value = !open.value);

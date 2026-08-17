@@ -19,15 +19,15 @@
 - Everything exported from `src/index.ts` and configured package subpaths is public API.
 - Preserve both ESM and CommonJS compatibility.
 - Use strict TypeScript, named exports, and `unknown` for unconstrained values.
-- Add or change public exports only with matching JSDoc, tests, README, and VitePress updates.
+- Add or change public exports only with matching JSDoc, tests, README, and central Querry Kit documentation updates.
 - Keep components independent of application stores, authentication state, runtime configuration, and layouts.
 
 ## Testing and Verification
 
 - Aim for 100% runtime line coverage; exclude only type-only and generated modules, never executable runtime code.
 - For code changes, run `pnpm lint`, `pnpm typecheck`, `pnpm build`, and `pnpm test:coverage`.
-- For documentation changes, run `pnpm docs:build`.
-- For visual component changes, run `pnpm screenshots:check`; update baselines only after reviewing the changed PNG files.
+- For documentation changes, update and verify the central documentation app in `/mnt/projects/querry-kit/querry-kit`.
+- For visual component changes, update the central documentation demo when applicable and verify it in a browser.
 - For package export changes, verify the built ESM and CommonJS entrypoints.
 - If a verification command cannot be run, report that explicitly.
 
@@ -46,6 +46,6 @@
 
 ## Documentation
 
-- Keep the English README and VitePress documentation aligned with public APIs, components, installation, examples, and the release workflow.
-- Keep navigation, sidebar entries, and linked pages in sync for VitePress changes.
+- Keep the English README and central Querry Kit documentation aligned with public APIs, components, installation, examples, and the release workflow.
+- Keep central navigation, linked pages, and Nuxt UI demos in sync for documentation changes.
 - Documentation examples must use the published `@querry-kit/nuxt-ui` package name and remain practical.

@@ -5,7 +5,7 @@
         variant="ghost"
         :aria-label="t('sorting.title')"
         :color="hasSorting ? 'primary' : 'neutral'"
-        :icon="icon"
+        :icon="icon ?? tableIcon('sorting.trigger')"
         @click="toggle"
       />
     </slot>
@@ -19,7 +19,7 @@
     <template #content>
       <div class="w-80 p-2.5" :class="ui?.content">
         <slot name="header" :sorting="sorting" :clear="clear">
-          <SortingHeader :has-sorting="hasSorting" :texts="texts" :clear="clear" />
+          <SortingHeader :has-sorting="hasSorting" :texts="texts" :icons="icons" :clear="clear" />
         </slot>
         <slot name="items" :sorting="sorting" :remove="remove" :toggle-direction="toggleDirection" :move="move">
           <SortingItems
@@ -34,6 +34,7 @@
                   :sort="itemProps.sort"
                   :fields="fields"
                   :texts="texts"
+                  :icons="icons"
                   :remove="itemProps.remove"
                   :toggle-direction="itemProps.toggleDirection"
                 />
@@ -43,7 +44,7 @@
         </slot>
         <USeparator v-if="hasSorting && availableFields.length" class="my-2" />
         <slot name="add" :available-fields="availableFields" :add="add">
-          <SortingAdd :fields="availableFields" :texts="texts" :add="add" />
+          <SortingAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
         </slot>
       </div>
     </template>
@@ -53,6 +54,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import type { SortingField, SortingState } from '../../../types/table';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
@@ -67,14 +70,16 @@ const props = withDefaults(
     icon?: string;
     shortcuts?: boolean;
     texts?: TableTextOverrides;
+    icons?: TableIconOverrides;
     ui?: { content?: string };
   }>(),
-  { icon: 'i-tabler-arrows-sort', shortcuts: true },
+  { shortcuts: true },
 );
 const sorting = defineModel<SortingState>('sorting', { required: true });
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(props.texts);
+const tableIcon = useTableIcons(props.icons);
 const hasSorting = computed(() => sorting.value.length > 0);
 const availableFields = computed(() =>
   props.fields.filter((field) => !field.disabled && !sorting.value.some((sort) => sort.id === field.value)),
