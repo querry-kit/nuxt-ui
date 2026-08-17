@@ -1,5 +1,15 @@
 # @querry-kit/nuxt-ui
 
+## 3.2.0
+
+### Minor Changes
+
+- 4041ec4: Add nested table-icon overrides through component props and host `app.config.ts`.
+
+### Patch Changes
+
+- a822796: Update transitive dependencies to resolve security alerts.
+
 ## 3.1.2
 
 ### Patch Changes
