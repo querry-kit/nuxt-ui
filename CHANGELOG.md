@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.2.1
+
+### Patch Changes
+
+- 16e8284: Keep the central documentation changelog in sync after releases.
+
 ## 3.2.0
 
 ### Minor Changes
