@@ -83,7 +83,7 @@ pnpm add github:querry-kit/nuxt-ui#v0.0.1
 
 ## 🚀 Release Workflow
 
-Releases are driven by Changesets and GitHub Actions. The `main` branch contains source, documentation, screenshot baselines and workflow configuration; published package files are built in CI.
+Releases are driven by Changesets and GitHub Actions. The `main` branch contains source, documentation and workflow configuration; published package files are built in CI.
 
 Package-visible changes should include a changeset:
 
@@ -168,8 +168,4 @@ pnpm build
 
 `pnpm test:coverage` collects all source files, prints the coverage summary, and writes HTML and LCOV reports to `coverage/`. GitHub Actions runs the same command and retains the report as a workflow artifact.
 
-When updating visual component output, regenerate the test baselines locally and review the changed PNG files before committing:
-
-```sh
-pnpm screenshots:update
-```
+Verify visual component changes through the corresponding live demo in the central documentation.

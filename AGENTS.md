@@ -27,7 +27,7 @@
 - Aim for 100% runtime line coverage; exclude only type-only and generated modules, never executable runtime code.
 - For code changes, run `pnpm lint`, `pnpm typecheck`, `pnpm build`, and `pnpm test:coverage`.
 - For documentation changes, update and verify the central documentation app in `/mnt/projects/querry-kit/querry-kit`.
-- For visual component changes, run `pnpm screenshots:check`; update baselines only after reviewing the changed PNG files.
+- For visual component changes, update the central documentation demo when applicable and verify it in a browser.
 - For package export changes, verify the built ESM and CommonJS entrypoints.
 - If a verification command cannot be run, report that explicitly.
 
