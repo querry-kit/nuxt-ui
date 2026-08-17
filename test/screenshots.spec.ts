@@ -8,6 +8,11 @@ test('captures the composed table toolbar with real Nuxt UI controls', async ({ 
   await expect(page.locator('#storybook-root')).toHaveScreenshot('table-toolbar-default.png', screenshotOptions);
 });
 
+test('captures nested toolbar icon overrides', async ({ page }) => {
+  await page.goto('/iframe.html?id=table-toolbar--custom-icons&viewMode=story');
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('table-toolbar-custom-icons.png', screenshotOptions);
+});
+
 test('captures the open sorting popover', async ({ page }) => {
   await page.goto('/iframe.html?id=table-toolbar--default&viewMode=story');
   await page.getByRole('button', { name: 'Sort' }).click();

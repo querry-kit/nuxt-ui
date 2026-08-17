@@ -8,5 +8,6 @@ export { default as QTablePagination } from './components/table/pagination/index
 export { default as QTableSorting } from './components/table/sorting/index.vue';
 /** Composite search, breadcrumb and table-controls toolbar. */
 export { default as QTableToolbar } from './components/table/toolbar/index.vue';
+export type { TableIconKey, TableIconOverrides, TableIcons } from './icons';
 export type { TableTextKey, TableTextOverrides, TableTexts } from './texts';
 export * from './types/table';

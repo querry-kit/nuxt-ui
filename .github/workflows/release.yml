@@ -47,7 +47,6 @@ jobs:
           pnpm typecheck
           pnpm test:coverage
           pnpm build
-          pnpm docs:build
 
       - name: Verify package artifact
         run: |

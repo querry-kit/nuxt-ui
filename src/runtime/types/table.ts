@@ -9,6 +9,8 @@ import type {
 } from '@querry-kit/nuxt/types';
 import type { Component } from 'vue';
 
+export type { TableIconKey, TableIconOverrides, TableIcons } from '../icons';
+
 /** Ordered sort instructions; `desc: false` represents ascending order. */
 export type SortingState = SortingRule[];
 /** A selectable field in the sorting control. */

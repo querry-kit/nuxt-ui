@@ -15,7 +15,7 @@
         <slot name="search" :search="search" :set-search="setSearch">
           <UInput
             v-if="search !== undefined"
-            icon="i-tabler-search"
+            :icon="icon('search.input')"
             :model-value="search"
             :placeholder="searchPlaceholder ?? t('search.placeholder')"
             @update:model-value="setSearch"
@@ -30,6 +30,7 @@
             :fields="sortableFields"
             :shortcuts="shortcuts"
             :texts="texts"
+            :icons="icons"
           />
           <QTableFiltering
             v-if="filterFields?.length && filtering"
@@ -37,6 +38,7 @@
             :fields="filterFields"
             :shortcuts="shortcuts"
             :texts="texts"
+            :icons="icons"
           />
           <QTableOptions
             v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
@@ -46,6 +48,7 @@
             :columns="columnDefinitions"
             :shortcuts="shortcuts"
             :texts="texts"
+            :icons="icons"
           />
         </slot>
       </div>
@@ -55,6 +58,8 @@
 
 <script setup lang="ts">
 import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableIcons } from '../../../composables/use-table-icons';
+import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import type {
   ColumnDefinition,
@@ -73,6 +78,8 @@ const props = defineProps<{
   searchPlaceholder?: string;
   /** Explicit text overrides. These take precedence over host-app i18n and English defaults. */
   texts?: TableTextOverrides;
+  /** Explicit nested icon overrides forwarded to the default child controls. */
+  icons?: TableIconOverrides;
   shortcuts?: boolean;
   ui?: { root?: string; primary?: string; secondary?: string };
 }>();
@@ -83,5 +90,6 @@ const columnOrder = defineModel<string[]>('columnOrder');
 const invisibleColumns = defineModel<string[]>('invisibleColumns');
 const columnPinning = defineModel<ColumnPinning>('columnPinning');
 const t = useTableI18n(props.texts);
+const icon = useTableIcons(props.icons);
 const setSearch = (value: string | number | undefined) => (search.value = value == null ? undefined : String(value));
 </script>

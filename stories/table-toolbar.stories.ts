@@ -102,6 +102,42 @@ export const SortingConfigured: Story = {
   }),
 };
 
+export const CustomIcons: Story = {
+  render: () => ({
+    components: { QTableToolbar },
+    setup: () => ({
+      search: ref(''),
+      sorting: ref([]),
+      filtering: ref({ operator: FilteringMode.Intersect, filters: [] }),
+      columnOrder: ref(columns.map((column) => column.id)),
+      invisibleColumns: ref([]),
+      columnPinning: ref({}),
+      columns,
+      sortableFields: columns.map((column) => ({ value: column.id, label: column.header })),
+      filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+      icons: {
+        search: { input: 'i-lucide-search' },
+        sorting: { trigger: 'i-lucide-arrow-up-down', add: 'i-lucide-plus' },
+        filtering: { trigger: 'i-lucide-list-filter', intersect: 'i-lucide-list-filter-plus' },
+        options: { trigger: 'i-lucide-settings-2', pin: 'i-lucide-pin' },
+      },
+    }),
+    template: `
+      <QTableToolbar
+        v-model:search="search"
+        v-model:sorting="sorting"
+        v-model:filtering="filtering"
+        v-model:column-order="columnOrder"
+        v-model:invisible-columns="invisibleColumns"
+        v-model:column-pinning="columnPinning"
+        :column-definitions="columns"
+        :sortable-fields="sortableFields"
+        :filter-fields="filterFields"
+        :icons="icons"
+      />`,
+  }),
+};
+
 export const FilteringConfigured: Story = {
   render: () => ({
     components: { QTableToolbar },
