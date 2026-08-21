@@ -86,7 +86,7 @@
     "nuxt": "^4.4.0",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^4.0.0",
-    "prettier-plugin-tailwindcss": "^0.6.0",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.0.0",
     "vite": "^8.2.1",
