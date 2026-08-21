@@ -32,7 +32,7 @@ importers:
         version: 4.10.0(5d49abbfd21cf69bcdf404bb1e405d12)
       '@querry-kit/nuxt':
         specifier: ^0.2.0
-        version: 0.2.1(@tanstack/table-core@8.21.3)(@vueuse/core@14.4.0(vue@3.5.41(typescript@5.9.3)))(@vueuse/router@14.4.0(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3))
+        version: 0.2.3(@tanstack/table-core@8.21.3)(@vueuse/core@14.4.0(vue@3.5.41(typescript@5.9.3)))(@vueuse/router@14.4.0(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3))
       '@tanstack/table-core':
         specifier: ^8.21.3
         version: 8.21.3
@@ -1016,8 +1016,8 @@ packages:
   '@poppinss/exception@1.2.3':
     resolution: {integrity: sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==}
 
-  '@querry-kit/nuxt@0.2.1':
-    resolution: {integrity: sha512-++UFIeVazoNMwsT5fjMNhc42uTsNz0eJf59YxOOwnp7/D/WM5o5Kc3BCaiDCGz/m2nQMHOWMI0ImaiGDJFTl9g==}
+  '@querry-kit/nuxt@0.2.3':
+    resolution: {integrity: sha512-gKZMOQqn4IsfZXdWPWyvCZqo6d7U3sXPNn8gGhXodlDGPJ2upRspOGVADTY21SLwugqgxEPiz61Xo8IdIjo9ZA==}
     engines: {node: '>=24'}
     peerDependencies:
       '@tanstack/table-core': ^8.21.3
@@ -7058,7 +7058,7 @@ snapshots:
 
   '@poppinss/exception@1.2.3': {}
 
-  '@querry-kit/nuxt@0.2.1(@tanstack/table-core@8.21.3)(@vueuse/core@14.4.0(vue@3.5.41(typescript@5.9.3)))(@vueuse/router@14.4.0(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3))':
+  '@querry-kit/nuxt@0.2.3(@tanstack/table-core@8.21.3)(@vueuse/core@14.4.0(vue@3.5.41(typescript@5.9.3)))(@vueuse/router@14.4.0(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3)))(vue@3.5.41(typescript@5.9.3))':
     dependencies:
       '@tanstack/table-core': 8.21.3
       '@vueuse/core': 14.4.0(vue@3.5.41(typescript@5.9.3))
