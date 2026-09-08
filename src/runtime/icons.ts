@@ -23,7 +23,10 @@ export const defaultTableIcons = {
     trigger: 'i-tabler-adjustments',
     header: 'i-tabler-adjustments',
     pin: 'i-tabler-pin',
+    unpin: 'i-tabler-pin-off',
     drag: 'i-tabler-grip-vertical',
+    visible: 'i-tabler-eye',
+    hidden: 'i-tabler-eye-off',
   },
 } as const;
 
@@ -48,7 +51,10 @@ export type TableIconKey =
   | 'options.trigger'
   | 'options.header'
   | 'options.pin'
-  | 'options.drag';
+  | 'options.unpin'
+  | 'options.drag'
+  | 'options.visible'
+  | 'options.hidden';
 
 type DeepIconOverrides<Value> = {
   [Key in keyof Value]?: Value[Key] extends string ? string : DeepIconOverrides<Value[Key]>;

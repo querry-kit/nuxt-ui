@@ -1,13 +1,15 @@
 <template>
   <span ref="trigger">
     <slot name="trigger" :open="open" :toggle="toggle">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        :aria-label="t('options.title')"
-        :icon="icon ?? tableIcon('options.trigger')"
-        @click="toggle"
-      />
+      <UTooltip :text="t('options.title')">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          :aria-label="t('options.title')"
+          :icon="icon ?? tableIcon('options.trigger')"
+          @click="toggle"
+        />
+      </UTooltip>
     </slot>
   </span>
   <UPopover
@@ -23,12 +25,12 @@
         </slot>
         <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
           <OptionsItems
-            :columns="orderedColumns"
-            :invisible-columns="invisibleColumns"
+            v-model:column-order="columnOrder"
+            v-model:invisible-columns="invisibleColumns"
+            v-model:column-pinning="columnPinning"
+            :columns="columns"
+            :texts="texts"
             :icons="icons"
-            :move="move"
-            :pin="pin"
-            :toggle-visibility="toggleVisibility"
           >
             <template #item="itemProps">
               <slot name="item" v-bind="itemProps">
@@ -37,7 +39,7 @@
                   :visible="itemProps.visible"
                   :texts="texts"
                   :icons="icons"
-                  :pin="itemProps.pin"
+                  :show-drag-handle="columns.length > 1"
                   :toggle-visibility="itemProps.toggleVisibility"
                 />
               </slot>

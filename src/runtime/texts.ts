@@ -20,8 +20,8 @@ export const defaultTableTexts = {
   options: {
     title: 'Table options',
     pin: 'Pin column',
-    left: 'Left',
-    right: 'Right',
+    left: 'Pin left',
+    right: 'Pin right',
     center: 'Unpin',
     visibility: 'Toggle column visibility',
   },

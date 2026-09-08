@@ -23,7 +23,7 @@
         </slot>
         <slot name="items" :sorting="sorting" :remove="remove" :toggle-direction="toggleDirection" :move="move">
           <SortingItems
-            :sorting="sorting"
+            v-model:sorting="sorting"
             :has-sorting="hasSorting"
             :remove="remove"
             :toggle-direction="toggleDirection"
@@ -37,6 +37,7 @@
                   :icons="icons"
                   :remove="itemProps.remove"
                   :toggle-direction="itemProps.toggleDirection"
+                  :show-drag-handle="itemProps.showDragHandle"
                 />
               </slot>
             </template>
