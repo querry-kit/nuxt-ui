@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.0
+
+### Minor Changes
+
+- 50f0deb: Align sorting and column options with drag-and-drop pinning controls.
+
 ## 3.2.1
 
 ### Patch Changes
