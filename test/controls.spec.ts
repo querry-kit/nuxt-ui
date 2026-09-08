@@ -18,7 +18,14 @@ const stubs = {
   USelectMenu: true,
   USeparator: true,
   USwitch: true,
+  UTooltip: { template: '<span><slot /></span>' },
   UBreadcrumb: true,
+  VueDraggable: {
+    name: 'VueDraggable',
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+    template: '<ul><slot /></ul>',
+  },
   QTableSorting: true,
   QTableFiltering: true,
   QTableOptions: true,
@@ -84,6 +91,36 @@ describe('table controls', () => {
     await wrapper.get('button[aria-label="Add sort"]').trigger('click');
 
     expect(wrapper.emitted('update:sorting')?.[0]).toEqual([[{ id: 'name', desc: false }]]);
+  });
+
+  it('reorders sorting rules through the drag list', async () => {
+    const wrapper = track(
+      mount(QTableSorting, {
+        props: {
+          sorting: [
+            { id: 'name', desc: false },
+            { id: 'createdAt', desc: true },
+          ],
+          fields: [
+            { value: 'name', label: 'Name' },
+            { value: 'createdAt', label: 'Created' },
+          ],
+        },
+        global: { stubs },
+      }),
+    );
+
+    await wrapper.findComponent({ name: 'VueDraggable' }).vm.$emit('update:modelValue', [
+      { id: 'createdAt', desc: true },
+      { id: 'name', desc: false },
+    ]);
+
+    expect(wrapper.emitted('update:sorting')?.at(-1)).toEqual([
+      [
+        { id: 'createdAt', desc: true },
+        { id: 'name', desc: false },
+      ],
+    ]);
   });
 
   it('resolves nested sorting icons and keeps the flat trigger icon authoritative', async () => {
@@ -281,7 +318,20 @@ describe('table controls', () => {
           columnPinning: {},
         },
         slots: {
-          items: ({ move }) => h('button', { onClick: () => move(0, 0) }, 'Move'),
+          items: ({ move, pin, toggleVisibility }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  move(0, 0);
+                  pin('name', 'left');
+                  pin('name', 'right');
+                  pin('name', 'center');
+                  toggleVisibility('name');
+                },
+              },
+              'Move',
+            ),
           item: ({ column, pin, toggleVisibility }) =>
             h(
               'button',
@@ -300,8 +350,15 @@ describe('table controls', () => {
     expect(wrapper.text()).toContain('Table options');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'o', shiftKey: true }));
     await wrapper.vm.$nextTick();
-    await wrapper.findAll('button').at(-1)?.trigger('click');
-    await wrapper.findAll('button').at(-2)?.trigger('click');
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text() === 'Move')
+      ?.trigger('click');
+    await wrapper.setProps({ invisibleColumns: ['name'] });
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text() === 'Move')
+      ?.trigger('click');
     expect(wrapper.text()).toContain('Move');
   });
 
@@ -323,28 +380,75 @@ describe('table controls', () => {
     );
 
     await wrapper.findComponent({ name: 'USwitch' }).vm.$emit('update:modelValue', false);
+    await wrapper.findAllComponents({ name: 'USwitch' }).at(2)?.vm.$emit('update:modelValue', false);
     await wrapper.setProps({ invisibleColumns: ['name'] });
     await wrapper.findComponent({ name: 'USwitch' }).vm.$emit('update:modelValue', true);
-    await wrapper.get('button').trigger('click');
-    const rows = wrapper.findAll('li');
-    await rows[1]!.trigger('dragstart');
-    await rows[0]!.trigger('drop');
-    await wrapper
-      .findAll('button')
-      .find((button) => button.text() === 'Left')
-      ?.trigger('click');
+    await wrapper.findComponent({ name: 'VueDraggable' }).vm.$emit('update:modelValue', [
+      { type: 'placeholder', id: '__options-placeholder-left', side: 'left' },
+      { type: 'item', id: 'email', header: 'Email' },
+      { type: 'separator', id: '__options-separator-left' },
+      { type: 'placeholder', id: '__options-placeholder-center', side: 'center' },
+      { type: 'item', id: 'name', header: 'Name' },
+      { type: 'item', id: 'fixed', header: 'Fixed', enableHiding: false },
+      { type: 'separator', id: '__options-separator-right' },
+      { type: 'placeholder', id: '__options-placeholder-right', side: 'right' },
+    ]);
+    await nextTick();
 
     expect(wrapper.emitted('update:invisibleColumns')).toBeTruthy();
-    expect(wrapper.emitted('update:columnOrder')).toBeTruthy();
-    expect(wrapper.emitted('update:columnPinning')).toBeTruthy();
+    expect(wrapper.emitted('update:columnOrder')?.at(-1)).toEqual([['email', 'name', 'fixed']]);
+    expect(wrapper.emitted('update:columnPinning')?.at(-1)).toEqual([{ left: ['email'], right: [] }]);
+  });
+
+  it('supports pinning and unpinning from a customized column item', async () => {
+    const wrapper = track(
+      mount(QTableOptions, {
+        props: {
+          columns: [{ id: 'name', header: 'Name' }],
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        slots: {
+          item: ({ pin, toggleVisibility }) =>
+            h('div', [
+              h('button', { onClick: () => pin('left') }, 'Pin left'),
+              h('button', { onClick: () => pin('right') }, 'Pin right'),
+              h('button', { onClick: () => pin('center') }, 'Unpin'),
+              h('button', { onClick: toggleVisibility }, 'Toggle visibility'),
+            ]),
+        },
+        global: { stubs },
+      }),
+    );
+
+    for (const label of ['Pin left', 'Pin right', 'Unpin', 'Toggle visibility']) {
+      await wrapper
+        .findAll('button')
+        .find((button) => button.text() === label)
+        ?.trigger('click');
+    }
+    await wrapper.setProps({ invisibleColumns: ['name'], columnPinning: { left: ['name'] } });
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text() === 'Toggle visibility')
+      ?.trigger('click');
+    await wrapper.setProps({ columnPinning: { left: ['name'], right: [] } });
+
+    expect(wrapper.text()).toContain('Unpin');
+    expect(wrapper.emitted('update:columnPinning')).toHaveLength(3);
+    expect(wrapper.emitted('update:invisibleColumns')).toHaveLength(2);
   });
 
   it('resolves nested options icons', () => {
     const wrapper = track(
       mount(QTableOptions, {
         props: {
-          columns: [{ id: 'name', header: 'Name' }],
-          columnOrder: ['name'],
+          columns: [
+            { id: 'name', header: 'Name' },
+            { id: 'email', header: 'Email' },
+          ],
+          columnOrder: ['name', 'email'],
           invisibleColumns: [],
           columnPinning: {},
           icons: {
