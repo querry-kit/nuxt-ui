@@ -2,7 +2,10 @@ packages:
   - .
 
 overrides:
+  '@tiptap/core@<3.30.5': ^3.30.5
   esbuild@0.27.7: 0.28.2
+  qs@<6.16.0: ^6.16.0
+  svgo@>=4.0.0 <4.1.0: ^4.1.0
 
 onlyBuiltDependencies:
   - esbuild
@@ -14,3 +17,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@querry-kit/nuxt'
+  - qs@6.15.4 || 6.16.0
+  - '@tiptap/core@3.30.4 || 3.30.5'
+  - svgo@4.1.0
