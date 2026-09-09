@@ -1,5 +1,13 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.1
+
+### Patch Changes
+
+- 374b90e: Fix the automated version pull request workflow for Changesets v2.
+- 7295381: Resolve vulnerable transitive editor, query parser, and SVG optimizer versions.
+- cc821a8: Align the responsive table toolbar layout and popover sizing with dashboard toolbars.
+
 ## 3.3.0
 
 ### Minor Changes
