@@ -16,10 +16,11 @@
     v-model:open="open"
     :reference="trigger"
     :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :ui="{ content: 'qk-table-options-popover' }"
     :modal="false"
   >
     <template #content>
-      <div class="min-w-80 p-2.5" :class="ui?.content">
+      <div class="p-2.5" :class="ui?.content">
         <slot name="header" :columns="orderedColumns">
           <OptionsHeader :texts="texts" :icons="icons" />
         </slot>
@@ -118,3 +119,9 @@ const onKeydown = (event: KeyboardEvent) => {
 onMounted(() => document.addEventListener('keydown', onKeydown));
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
+
+<style>
+.qk-table-options-popover {
+  min-width: min(20rem, calc(100vw - 1rem));
+}
+</style>

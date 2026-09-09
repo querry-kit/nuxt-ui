@@ -17,6 +17,10 @@ const eventStub = (name: string, events: string[]) => ({
 const stubs = {
   UButton: { props: ['label'], template: '<button v-bind="$attrs">{{ label }}<slot /></button>' },
   UCheckbox: eventStub('UCheckbox', ['update:modelValue']),
+  UDashboardToolbar: {
+    name: 'UDashboardToolbar',
+    template: '<section><slot name="left" /><slot name="right" /></section>',
+  },
   UIcon: true,
   UInput: eventStub('UInput', ['update:modelValue']),
   UInputNumber: eventStub('UInputNumber', ['update:modelValue']),
