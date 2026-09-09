@@ -1,62 +1,93 @@
 <template>
-  <div class="flex flex-col gap-2" :class="ui?.root">
-    <div class="flex min-w-0 items-center justify-between gap-2" :class="ui?.primary">
-      <div class="min-w-0 overflow-x-auto whitespace-nowrap">
-        <slot name="breadcrumb" :items="breadcrumbItems">
-          <UBreadcrumb v-if="breadcrumbItems?.length" :items="breadcrumbItems" />
-        </slot>
-      </div>
-      <div class="flex shrink-0 items-center gap-1.5">
+  <DefineBreadcrumb>
+    <slot name="breadcrumb" :items="breadcrumbItems">
+      <UBreadcrumb v-if="breadcrumbItems?.length" :items="breadcrumbItems" />
+    </slot>
+  </DefineBreadcrumb>
+
+  <DefineSearch>
+    <slot name="search" :search="search" :set-search="setSearch">
+      <UInput
+        v-if="search !== undefined"
+        class="qk-table-toolbar-search"
+        :icon="icon('search.input')"
+        :model-value="search"
+        :placeholder="searchPlaceholder ?? t('search.placeholder')"
+        @update:model-value="setSearch"
+      />
+    </slot>
+  </DefineSearch>
+
+  <DefineOptions>
+    <slot name="options" :sorting="sorting" :filtering="filtering" :column-order="columnOrder">
+      <QTableSorting
+        v-if="sortableFields?.length && sorting"
+        v-model:sorting="sorting"
+        :fields="sortableFields"
+        :shortcuts="shortcuts"
+        :texts="texts"
+        :icons="icons"
+      />
+      <QTableFiltering
+        v-if="filterFields?.length && filtering"
+        v-model:filtering="filtering"
+        :fields="filterFields"
+        :shortcuts="shortcuts"
+        :texts="texts"
+        :icons="icons"
+      />
+      <QTableOptions
+        v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
+        v-model:column-order="columnOrder"
+        v-model:invisible-columns="invisibleColumns"
+        v-model:column-pinning="columnPinning"
+        :columns="columnDefinitions"
+        :shortcuts="shortcuts"
+        :texts="texts"
+        :icons="icons"
+      />
+    </slot>
+  </DefineOptions>
+
+  <div :class="ui?.root">
+    <template v-if="isSmall">
+      <UDashboardToolbar
+        :class="ui?.primary"
+        :ui="{ left: 'qk-table-toolbar-breadcrumb', right: 'qk-table-toolbar-actions' }"
+      >
+        <template #left>
+          <Breadcrumb />
+        </template>
+        <template #right>
+          <slot name="new" />
+        </template>
+      </UDashboardToolbar>
+      <UDashboardToolbar class="qk-table-toolbar-scrollbar-none" :class="ui?.secondary">
+        <template #left>
+          <Search />
+        </template>
+        <template #right>
+          <Options />
+        </template>
+      </UDashboardToolbar>
+    </template>
+
+    <UDashboardToolbar v-else :class="[ui?.primary, ui?.secondary]">
+      <template #left>
+        <Breadcrumb />
+      </template>
+      <template #right>
+        <Search />
+        <Options />
         <slot name="new" />
-      </div>
-    </div>
-    <div class="flex flex-wrap items-center justify-between gap-2" :class="ui?.secondary">
-      <div class="min-w-48 grow">
-        <slot name="search" :search="search" :set-search="setSearch">
-          <UInput
-            v-if="search !== undefined"
-            :icon="icon('search.input')"
-            :model-value="search"
-            :placeholder="searchPlaceholder ?? t('search.placeholder')"
-            @update:model-value="setSearch"
-          />
-        </slot>
-      </div>
-      <div class="flex shrink-0 items-center gap-1">
-        <slot name="options" :sorting="sorting" :filtering="filtering" :column-order="columnOrder">
-          <QTableSorting
-            v-if="sortableFields?.length && sorting"
-            v-model:sorting="sorting"
-            :fields="sortableFields"
-            :shortcuts="shortcuts"
-            :texts="texts"
-            :icons="icons"
-          />
-          <QTableFiltering
-            v-if="filterFields?.length && filtering"
-            v-model:filtering="filtering"
-            :fields="filterFields"
-            :shortcuts="shortcuts"
-            :texts="texts"
-            :icons="icons"
-          />
-          <QTableOptions
-            v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
-            v-model:column-order="columnOrder"
-            v-model:invisible-columns="invisibleColumns"
-            v-model:column-pinning="columnPinning"
-            :columns="columnDefinitions"
-            :shortcuts="shortcuts"
-            :texts="texts"
-            :icons="icons"
-          />
-        </slot>
-      </div>
-    </div>
+      </template>
+    </UDashboardToolbar>
   </div>
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, createReusableTemplate, useBreakpoints, useMounted } from '@vueuse/core';
+import { computed } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
@@ -69,6 +100,13 @@ import type {
   SortingField,
   SortingState,
 } from '../../../types/table';
+
+const mounted = useMounted();
+const smallBreakpoint = useBreakpoints(breakpointsTailwind).smaller('sm');
+const isSmall = computed(() => mounted.value && smallBreakpoint.value);
+const [DefineBreadcrumb, Breadcrumb] = createReusableTemplate();
+const [DefineSearch, Search] = createReusableTemplate();
+const [DefineOptions, Options] = createReusableTemplate();
 
 const props = defineProps<{
   breadcrumbItems?: Array<Record<string, unknown>>;
@@ -93,3 +131,39 @@ const t = useTableI18n(props.texts);
 const icon = useTableIcons(props.icons);
 const setSearch = (value: string | number | undefined) => (search.value = value == null ? undefined : String(value));
 </script>
+
+<style>
+.qk-table-toolbar-breadcrumb {
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.qk-table-toolbar-actions {
+  flex-shrink: 0 !important;
+}
+
+.qk-table-toolbar-scrollbar-none {
+  scrollbar-width: none;
+}
+
+.qk-table-toolbar-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.qk-table-toolbar-search {
+  max-width: 8rem;
+}
+
+@media (min-width: 40rem) {
+  .qk-table-toolbar-search {
+    max-width: 10rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .qk-table-toolbar-search {
+    max-width: none;
+  }
+}
+</style>

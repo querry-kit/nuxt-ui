@@ -10,10 +10,14 @@ import { FilterFieldType, FilteringMode, type TableIconOverrides } from '../src/
 const stubs = {
   UButton: { props: ['label'], template: '<button v-bind="$attrs">{{ label }}<slot /></button>' },
   UCheckbox: { template: '<input type="checkbox" v-bind="$attrs" />' },
+  UDashboardToolbar: {
+    name: 'UDashboardToolbar',
+    template: '<section><div><slot name="left" /></div><div><slot name="right" /></div></section>',
+  },
   UIcon: true,
   UInput: true,
   UInputNumber: true,
-  UPopover: { template: '<div><slot /><slot name="content" /></div>' },
+  UPopover: { name: 'UPopover', props: ['ui'], template: '<div><slot /><slot name="content" /></div>' },
   USelect: true,
   USelectMenu: true,
   USeparator: true,
@@ -42,6 +46,45 @@ afterEach(() => {
 });
 
 describe('table controls', () => {
+  it('sets minimum widths on the toolbar control popovers', () => {
+    const sorting = track(
+      mount(QTableSorting, {
+        props: { sorting: [], fields: [{ value: 'name', label: 'Name' }] },
+        global: { stubs },
+      }),
+    );
+    const filtering = track(
+      mount(QTableFiltering, {
+        props: {
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          fields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+        },
+        global: { stubs },
+      }),
+    );
+    const options = track(
+      mount(QTableOptions, {
+        props: {
+          columns: [{ id: 'name', header: 'Name' }],
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        global: { stubs },
+      }),
+    );
+
+    expect(sorting.findComponent({ name: 'UPopover' }).props('ui')).toEqual({
+      content: 'qk-table-sorting-popover',
+    });
+    expect(filtering.findComponent({ name: 'UPopover' }).props('ui')).toEqual({
+      content: 'qk-table-filtering-popover',
+    });
+    expect(options.findComponent({ name: 'UPopover' }).props('ui')).toEqual({
+      content: 'qk-table-options-popover',
+    });
+  });
+
   it('mounts sorting with its existing v-model contract and fields', async () => {
     const wrapper = track(
       mount(QTableSorting, {
@@ -490,6 +533,47 @@ describe('table controls', () => {
       }),
     );
     expect(wrapper.text()).toContain('Create');
+    expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(1);
+  });
+
+  it('splits the toolbar into two rows below the small breakpoint', async () => {
+    const matchMedia = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      dispatchEvent: () => true,
+    })) as typeof window.matchMedia;
+
+    try {
+      const wrapper = track(
+        mount(QTableToolbar, {
+          props: {
+            sorting: [],
+            filtering: { operator: FilteringMode.Intersect, filters: [] },
+            columnOrder: ['name'],
+            invisibleColumns: [],
+            columnPinning: {},
+            sortableFields: [{ value: 'name', label: 'Name' }],
+            filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+            columnDefinitions: [{ id: 'name', header: 'Name' }],
+          },
+          slots: { new: '<span>Create</span>' },
+          global: { stubs },
+        }),
+      );
+      await nextTick();
+      await nextTick();
+
+      expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(2);
+      expect(wrapper.text()).toContain('Create');
+    } finally {
+      window.matchMedia = matchMedia;
+    }
   });
 
   it('forwards nested icons to the default toolbar controls', () => {

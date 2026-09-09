@@ -14,10 +14,11 @@
     v-model:open="open"
     :reference="trigger"
     :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :ui="{ content: 'qk-table-sorting-popover' }"
     :modal="false"
   >
     <template #content>
-      <div class="w-80 p-2.5" :class="ui?.content">
+      <div class="p-2.5" :class="ui?.content">
         <slot name="header" :sorting="sorting" :clear="clear">
           <SortingHeader :has-sorting="hasSorting" :texts="texts" :icons="icons" :clear="clear" />
         </slot>
@@ -108,3 +109,9 @@ const onKeydown = (event: KeyboardEvent) => {
 onMounted(() => document.addEventListener('keydown', onKeydown));
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
+
+<style>
+.qk-table-sorting-popover {
+  min-width: min(20rem, calc(100vw - 1rem));
+}
+</style>
