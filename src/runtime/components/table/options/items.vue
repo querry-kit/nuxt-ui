@@ -105,9 +105,7 @@ const items = computed<Item[]>({
       .filter((index) => index >= 0);
     if (separators.length !== 2) return;
 
-    const leftEnd = separators[0];
-    const centerEnd = separators[1];
-    if (leftEnd === undefined || centerEnd === undefined) return;
+    const [leftEnd, centerEnd] = separators as [number, number];
     const groups = [value.slice(0, leftEnd), value.slice(leftEnd + 1, centerEnd), value.slice(centerEnd + 1)];
     const ids = groups.map((group) => group.filter((item) => item.type === 'item').map((item) => item.id));
     const [left = [], center = [], right = []] = ids;
