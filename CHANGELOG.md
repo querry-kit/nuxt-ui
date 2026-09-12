@@ -1,5 +1,12 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.2
+
+### Patch Changes
+
+- 214d153: Update the development Vue version to 3.5.42.
+- 56656d9: Update Vue Test Utils to 2.5.0.
+
 ## 3.3.1
 
 ### Patch Changes
