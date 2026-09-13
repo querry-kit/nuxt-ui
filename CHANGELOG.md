@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.3
+
+### Patch Changes
+
+- 15affc2: Update the Nuxt UI development dependency baseline.
+
 ## 3.3.2
 
 ### Patch Changes
