@@ -9,7 +9,7 @@
   />
   <component
     :is="field?.component"
-    class="w-48"
+    class="qk-table-filtering-value"
     size="sm"
     :model-value="filter.value"
     multiple

@@ -310,8 +310,8 @@ describe('table controls', () => {
     expect(wrapper.html()).toContain('custom-filter-union');
   });
 
-  it('renders each default filter editor variant', () => {
-    const customEditor = markRaw({ template: '<button>Custom editor</button>' });
+  it('renders each default filter editor variant with bounded value selects', () => {
+    const customEditor = markRaw({ name: 'CustomEditor', template: '<button>Custom editor</button>' });
     const wrapper = track(
       mount(QTableFiltering, {
         props: {
@@ -349,6 +349,11 @@ describe('table controls', () => {
     );
 
     expect(wrapper.text()).toContain('Custom editor');
+    expect(wrapper.findComponent({ name: 'USelectMenu' }).classes()).toContain('qk-table-filtering-value');
+    expect(wrapper.findAllComponents({ name: 'CustomEditor' })).toHaveLength(2);
+    for (const editor of wrapper.findAllComponents({ name: 'CustomEditor' })) {
+      expect(editor.classes()).toContain('qk-table-filtering-value');
+    }
   });
 
   it('mounts options with order, visibility and pinning models', async () => {
