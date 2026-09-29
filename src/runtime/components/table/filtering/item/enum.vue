@@ -10,7 +10,7 @@
   <component
     :is="field?.component"
     v-if="field?.component"
-    class="w-48"
+    class="qk-table-filtering-value"
     size="sm"
     :model-value="filter.value"
     multiple
@@ -18,7 +18,7 @@
   />
   <USelectMenu
     v-else
-    class="w-48"
+    class="qk-table-filtering-value"
     label-key="label"
     size="sm"
     value-key="value"

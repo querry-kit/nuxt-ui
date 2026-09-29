@@ -124,4 +124,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 .qk-table-filtering-popover {
   min-width: min(30rem, calc(100vw - 1rem));
 }
+
+.qk-table-filtering-value {
+  width: 12rem;
+  min-width: 12rem;
+  max-width: 12rem;
+}
 </style>
