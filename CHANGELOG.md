@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.4
+
+### Patch Changes
+
+- 26f4088: Keep multi-select filter controls at a stable width as values are selected.
+
 ## 3.3.3
 
 ### Patch Changes
