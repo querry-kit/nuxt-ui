@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.5
+
+### Patch Changes
+
+- aaa692e: Give table control popovers, field selectors, search inputs and filter editors accessible names.
+
 ## 3.3.4
 
 ### Patch Changes
