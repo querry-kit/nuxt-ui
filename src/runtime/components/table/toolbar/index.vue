@@ -13,6 +13,7 @@
         :icon="icon('search.input')"
         :model-value="search"
         :placeholder="searchPlaceholder ?? t('search.placeholder')"
+        :aria-label="searchPlaceholder ?? t('search.placeholder')"
         @update:model-value="setSearch"
       />
     </slot>

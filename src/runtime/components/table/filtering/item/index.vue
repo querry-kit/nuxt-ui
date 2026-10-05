@@ -1,14 +1,31 @@
 <template>
   <span class="text-muted grow truncate text-sm">{{ field?.label ?? filter.field }}</span>
-  <FilteringItemBoolean v-if="filter.type === FilterFieldType.Boolean" :filter="filter" :update="update" />
-  <FilteringItemNumber v-else-if="filter.type === FilterFieldType.Number" :filter="filter" :update="update" />
+  <FilteringItemBoolean
+    v-if="filter.type === FilterFieldType.Boolean"
+    :filter="filter"
+    :label="field?.label ?? filter.field"
+    :update="update"
+  />
+  <FilteringItemNumber
+    v-else-if="filter.type === FilterFieldType.Number"
+    :filter="filter"
+    :label="field?.label ?? filter.field"
+    :update="update"
+  />
   <FilteringItemSelect
     v-else-if="field?.type === FilterFieldType.Select"
     :filter="filter"
+    :label="field?.label ?? filter.field"
     :field="field as FilterFieldSelect | undefined"
     :update="update"
   />
-  <FilteringItemEnum v-else :filter="filter" :field="field as FilterFieldEnum | undefined" :update="update" />
+  <FilteringItemEnum
+    v-else
+    :filter="filter"
+    :label="field?.label ?? filter.field"
+    :field="field as FilterFieldEnum | undefined"
+    :update="update"
+  />
   <UButton
     color="error"
     size="sm"

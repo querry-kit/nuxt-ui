@@ -7,6 +7,7 @@
       value-key="value"
       :items="fields"
       :placeholder="t('sorting.field')"
+      :aria-label="t('sorting.field')"
     />
     <UButton
       size="sm"

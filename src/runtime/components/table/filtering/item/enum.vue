@@ -3,6 +3,7 @@
     class="w-16"
     size="sm"
     value-key="value"
+    :aria-label="label ?? filter.field"
     :model-value="filter.operator"
     :items="operators"
     @update:model-value="(operator: string) => update({ operator: operator as FilteringFieldOperator })"
@@ -12,6 +13,7 @@
     v-if="field?.component"
     class="qk-table-filtering-value"
     size="sm"
+    :aria-label="label ?? filter.field"
     :model-value="filter.value"
     multiple
     @update:model-value="(value: string[] | number[]) => update({ value })"
@@ -22,6 +24,7 @@
     label-key="label"
     size="sm"
     value-key="value"
+    :aria-label="label ?? filter.field"
     :model-value="filter.value"
     :items="field?.values ?? []"
     multiple
@@ -34,6 +37,7 @@ import { FilteringFieldOperator, type FilterFieldEnum, type FilteringField } fro
 
 defineProps<{
   filter: FilteringField;
+  label?: string;
   field?: FilterFieldEnum;
   update: (patch: Partial<FilteringField>) => void;
 }>();

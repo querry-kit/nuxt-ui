@@ -7,6 +7,7 @@
       value-key="value"
       :items="fields"
       :placeholder="t('filtering.field')"
+      :aria-label="t('filtering.field')"
     />
     <UButton
       size="sm"

@@ -17,7 +17,7 @@ const stubs = {
   UIcon: true,
   UInput: true,
   UInputNumber: true,
-  UPopover: { name: 'UPopover', props: ['ui'], template: '<div><slot /><slot name="content" /></div>' },
+  UPopover: { name: 'UPopover', props: ['ui', 'content'], template: '<div><slot /><slot name="content" /></div>' },
   USelect: true,
   USelectMenu: true,
   USeparator: true,
@@ -74,6 +74,11 @@ describe('table controls', () => {
       }),
     );
 
+    expect(sorting.findComponent({ name: 'UPopover' }).props('content')).toMatchObject({ 'aria-label': 'Sort' });
+    expect(filtering.findComponent({ name: 'UPopover' }).props('content')).toMatchObject({ 'aria-label': 'Filter' });
+    expect(options.findComponent({ name: 'UPopover' }).props('content')).toMatchObject({
+      'aria-label': 'Table options',
+    });
     expect(sorting.findComponent({ name: 'UPopover' }).props('ui')).toEqual({
       content: 'qk-table-sorting-popover',
     });

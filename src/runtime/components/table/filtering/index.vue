@@ -13,7 +13,7 @@
   <UPopover
     v-model:open="open"
     :reference="trigger"
-    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :content="popoverContent"
     :ui="{ content: 'qk-table-filtering-popover' }"
     :modal="false"
   >
@@ -89,6 +89,12 @@ const filtering = defineModel<Filtering>('filtering', { required: true });
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(props.texts);
+const popoverContent = computed(() => ({
+  align: 'start' as const,
+  side: 'bottom' as const,
+  sideOffset: 8,
+  'aria-label': t('filtering.title'),
+}));
 const tableIcon = useTableIcons(props.icons);
 const hasFilters = computed(() => filtering.value.filters.length > 0);
 const availableFields = computed(() => props.fields.filter((field) => !field.disabled));

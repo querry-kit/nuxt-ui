@@ -15,7 +15,7 @@
   <UPopover
     v-model:open="open"
     :reference="trigger"
-    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :content="popoverContent"
     :ui="{ content: 'qk-table-options-popover' }"
     :modal="false"
   >
@@ -81,6 +81,12 @@ const columnOrder = defineModel<string[]>('columnOrder', { required: true });
 const invisibleColumns = defineModel<string[]>('invisibleColumns', { required: true });
 const columnPinning = defineModel<ColumnPinning>('columnPinning', { required: true });
 const t = useTableI18n(props.texts);
+const popoverContent = computed(() => ({
+  align: 'start' as const,
+  side: 'bottom' as const,
+  sideOffset: 8,
+  'aria-label': t('options.title'),
+}));
 const tableIcon = useTableIcons(props.icons);
 const trigger = ref<HTMLElement>();
 const open = ref(false);

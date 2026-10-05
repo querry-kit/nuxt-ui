@@ -13,7 +13,7 @@
   <UPopover
     v-model:open="open"
     :reference="trigger"
-    :content="{ align: 'start', side: 'bottom', sideOffset: 8 }"
+    :content="popoverContent"
     :ui="{ content: 'qk-table-sorting-popover' }"
     :modal="false"
   >
@@ -81,6 +81,12 @@ const sorting = defineModel<SortingState>('sorting', { required: true });
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(props.texts);
+const popoverContent = computed(() => ({
+  align: 'start' as const,
+  side: 'bottom' as const,
+  sideOffset: 8,
+  'aria-label': t('sorting.title'),
+}));
 const tableIcon = useTableIcons(props.icons);
 const hasSorting = computed(() => sorting.value.length > 0);
 const availableFields = computed(() =>
