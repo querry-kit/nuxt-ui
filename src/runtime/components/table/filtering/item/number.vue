@@ -3,6 +3,7 @@
     class="w-16"
     size="sm"
     value-key="value"
+    :aria-label="label ?? filter.field"
     :model-value="filter.operator"
     :items="operators"
     @update:model-value="(operator: string) => update({ operator: operator as FilteringFieldOperator })"
@@ -10,6 +11,7 @@
   <UInputNumber
     class="w-28"
     size="sm"
+    :aria-label="label ?? filter.field"
     :model-value="Number(filter.value)"
     @update:model-value="(value: number | undefined) => update({ value: value ?? undefined })"
   />
@@ -20,6 +22,7 @@ import { FilteringFieldOperator, type FilteringField } from '../../../../types/t
 
 defineProps<{
   filter: FilteringField;
+  label?: string;
   update: (patch: Partial<FilteringField>) => void;
 }>();
 const operators = [
