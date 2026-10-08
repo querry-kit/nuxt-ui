@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.6
+
+### Patch Changes
+
+- f4bc73a: Resolve vulnerable transitive development dependencies.
+
 ## 3.3.5
 
 ### Patch Changes
