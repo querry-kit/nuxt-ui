@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.7
+
+### Patch Changes
+
+- 93b7581: Refresh dependencies within their supported version ranges.
+
 ## 3.3.6
 
 ### Patch Changes
