@@ -169,3 +169,5 @@ pnpm build
 `pnpm test:coverage` collects all source files, prints the coverage summary, and writes HTML and LCOV reports to `coverage/`. GitHub Actions runs the same command and retains the report as a workflow artifact.
 
 Verify visual component changes through the corresponding live demo in the central documentation.
+
+Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges.
