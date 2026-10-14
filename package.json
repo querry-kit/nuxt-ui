@@ -24,7 +24,7 @@
     "url": "https://github.com/querry-kit/nuxt-ui/issues"
   },
   "author": {
-    "name": "Tobias Wälde",
+    "name": "Tobias W\u00e4lde",
     "email": "business@tobiaswaelde.com",
     "url": "https://tobiaswaelde.com"
   },
@@ -61,7 +61,6 @@
   "peerDependencies": {
     "@nuxt/ui": "^4.0.0",
     "@querry-kit/nuxt": "^0.2.0",
-    "@tanstack/table-core": "^8.0.0",
     "@vueuse/core": "^14.0.0",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"
@@ -73,7 +72,6 @@
     "@nuxt/schema": "^4.6.1",
     "@nuxt/ui": "^4.11.3",
     "@querry-kit/nuxt": "^0.2.6",
-    "@tanstack/table-core": "^8.21.3",
     "@types/node": "^26.6.5",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vitest/coverage-v8": "^5.0.4",
