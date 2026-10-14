@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.8
+
+### Patch Changes
+
+- 6024d61: Remove the unused direct TanStack Table peer so consuming table renderers can manage their own dependency.
+
 ## 3.3.7
 
 ### Patch Changes
