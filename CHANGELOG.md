@@ -1,5 +1,11 @@
 # @querry-kit/nuxt-ui
 
+## 3.3.10
+
+### Patch Changes
+
+- 2d79dac: Declare tested VueUse 15 compatibility alongside existing VueUse 14 support. Update development serializer tooling to patched serialize-javascript 7.1.4.
+
 ## 3.3.9
 
 ### Patch Changes
