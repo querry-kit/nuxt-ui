@@ -12,6 +12,8 @@ overrides:
   simple-git@>=3.15.0 <4.0.1: 4.0.2
   source-map-js@>=1.0.0 <1.2.2: 1.2.2
   svgo@>=4.0.0 <4.1.0: ^4.1.0
+  node-forge@<=1.4.0: 1.4.1
+  follow-redirects@>=1.16.0 <1.16.2: 1.16.2
 
 onlyBuiltDependencies:
   - esbuild
@@ -29,4 +31,3 @@ minimumReleaseAgeExclude:
 
 patchedDependencies:
   braces@3.0.3: patches/braces@3.0.3.patch
-  node-forge@1.4.0: patches/node-forge@1.4.0.patch

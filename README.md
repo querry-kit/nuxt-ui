@@ -135,8 +135,8 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 
 ## 🧱 Components
 
-| Component          | Purpose                                                       | Documentation                                                             |
-| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Component          | Purpose                                                       | Documentation                                                                             |
+| ------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `QTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/toolbar)  |
 | `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/sorting)        |
 | `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)    |
@@ -173,3 +173,7 @@ Verify visual component changes through the corresponding live demo in the centr
 Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges.
 
 TanStack Table is not a direct peer dependency of this package. Table controls use Query Kit types; a consuming table renderer owns its TanStack version.
+
+## Development toolchain
+
+Use Node.js 26.13.0 LTS and the package manager pinned in `package.json`. Published library runtime compatibility remains unchanged. Builds use TypeScript 7; ESLint and compiler-API consumers use the TypeScript 6 compatibility package. Dependency overrides, where present, pin security fixes for transitive packages; validate tests and documentation builds when changing them.
