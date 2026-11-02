@@ -1,6 +1,6 @@
 {
   "name": "@querry-kit/nuxt-ui",
-  "version": "3.3.9",
+  "version": "3.3.10",
   "description": "Customizable Nuxt UI table components for Query Kit",
   "keywords": [
     "nuxt",
@@ -71,7 +71,7 @@
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.6.3",
     "@nuxt/ui": "^4.12.0",
-    "@querry-kit/nuxt": "^0.2.9",
+    "@querry-kit/nuxt": "^0.2.10",
     "@types/node": "^26.6.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-vue": "^6.0.10",
