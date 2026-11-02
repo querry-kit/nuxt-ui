@@ -25,9 +25,6 @@ importers:
 
   .:
     dependencies:
-      '@vueuse/core':
-        specifier: ^14.4.0
-        version: 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
       vue-draggable-plus:
         specifier: ^0.6.1
         version: 0.6.1(@types/sortablejs@1.15.9)
@@ -49,7 +46,7 @@ importers:
         version: 4.12.0(4e8ecda6612a2de1d9ffa5143c74958b)
       '@querry-kit/nuxt':
         specifier: ^0.2.9
-        version: 0.2.9(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
+        version: 0.2.9(@vueuse/core@15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@15.0.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
       '@types/node':
         specifier: ^26.6.6
         version: 26.6.6
@@ -65,6 +62,12 @@ importers:
       '@vue/test-utils':
         specifier: ^2.5.1
         version: 2.5.1(@vue/compiler-dom@3.5.44)(@vue/server-renderer@3.5.44)(vue@3.5.44(@typescript/typescript6@6.0.2))
+      '@vueuse/core':
+        specifier: ^15.0.0
+        version: 15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))
+      '@vueuse/router':
+        specifier: ^15.0.0
+        version: 15.0.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
       eslint:
         specifier: ^10.14.0
         version: 10.14.0(jiti@2.7.0)(supports-color@10.2.2)
@@ -2237,6 +2240,12 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
+  '@vueuse/core@15.0.0':
+    resolution: {integrity: sha512-Zv67h5mrk7YHDJsRObx+DXaCBz6RKBUpxqLesJ+3xZNPG6yuQs7ja7kg3veFrrouYLWAqydQ7CwGEbLVxB43Ng==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vue: ^3.5.0
+
   '@vueuse/integrations@14.4.0':
     resolution: {integrity: sha512-oJz9qTgczvA7L1nXQFRU7h8tQbOCoiceqvMMhT9XYMyOGTqLJ2rEa09PON+nD2t48sZUfeOmg4eaWJXV4sZb/w==}
     peerDependencies:
@@ -2285,8 +2294,13 @@ packages:
   '@vueuse/metadata@14.4.0':
     resolution: {integrity: sha512-swx/255R6JyHZFJhx845iz5CRWDZdCfvkZOpACWc5+c5WHcG24mv8gUT1WIdFQaHt6dq79rvILd9QnCWiyVm9g==}
 
-  '@vueuse/router@14.4.0':
-    resolution: {integrity: sha512-q+dRUKI6xYGT4vNPq2t3fujrXPw2KBFV5Jxhw38liTFzwzGXBYcf8Qdjk7AiQpjEH2xLSin6WVTvj85EEIpo9w==}
+  '@vueuse/metadata@15.0.0':
+    resolution: {integrity: sha512-sfWE5LADAKJ0KnjtGliMdSN8Ij/L7uP6rXIZlgPloAI4zvvefbw6H5Lt7KJA6RqQOYgVqWF5Guj50HHMIzygBg==}
+    engines: {node: '>=22'}
+
+  '@vueuse/router@15.0.0':
+    resolution: {integrity: sha512-+JqXjJs9+3Nu6GjaybYup0dFK7JbNJu1kvNlLmgXp1GTm5bYZZAUWOayCN69ld4gfPy/J4EA+/DImyEsW3QepQ==}
+    engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.5.0
       vue-router: ^4.0.0 || ^5.0.0
@@ -2296,6 +2310,12 @@ packages:
 
   '@vueuse/shared@14.4.0':
     resolution: {integrity: sha512-JRgY90Sz8DDtPMsaDflvPMp9xYk69JZAmbuDvAquUVXKr2gEjqtzGNTTthLfckH0BzBqvnu31gb4a8TGLRe79g==}
+    peerDependencies:
+      vue: ^3.5.0
+
+  '@vueuse/shared@15.0.0':
+    resolution: {integrity: sha512-vbNXhGrbV53xPOMSyOzMHQRvhMgZf7oNDw2RChUetVxwTIEkInQ1joZ9JbT0G3z2n2AJNjvmCWeM9ySYrnvogA==}
+    engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.5.0
 
@@ -7042,10 +7062,10 @@ snapshots:
 
   '@poppinss/exception@1.2.3': {}
 
-  '@querry-kit/nuxt@0.2.9(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
+  '@querry-kit/nuxt@0.2.9(@vueuse/core@15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@15.0.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
     dependencies:
-      '@vueuse/core': 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
-      '@vueuse/router': 14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
+      '@vueuse/core': 15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))
+      '@vueuse/router': 15.0.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
       axios: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       qs: 6.17.1
       vue: 3.5.44(@typescript/typescript6@6.0.2)
@@ -8077,6 +8097,13 @@ snapshots:
       '@vueuse/shared': 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
       vue: 3.5.44(@typescript/typescript6@6.0.2)
 
+  '@vueuse/core@15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 15.0.0
+      '@vueuse/shared': 15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))
+      vue: 3.5.44(@typescript/typescript6@6.0.2)
+
   '@vueuse/integrations@14.4.0(axios@1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(fuse.js@7.5.0)(vue@3.5.44(@typescript/typescript6@6.0.2))':
     dependencies:
       '@vueuse/core': 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
@@ -8090,9 +8117,11 @@ snapshots:
 
   '@vueuse/metadata@14.4.0': {}
 
-  '@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
+  '@vueuse/metadata@15.0.0': {}
+
+  '@vueuse/router@15.0.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
     dependencies:
-      '@vueuse/shared': 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
+      '@vueuse/shared': 15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))
       vue: 3.5.44(@typescript/typescript6@6.0.2)
       vue-router: 5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2))
 
@@ -8104,6 +8133,10 @@ snapshots:
       - vue
 
   '@vueuse/shared@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))':
+    dependencies:
+      vue: 3.5.44(@typescript/typescript6@6.0.2)
+
+  '@vueuse/shared@15.0.0(vue@3.5.44(@typescript/typescript6@6.0.2))':
     dependencies:
       vue: 3.5.44(@typescript/typescript6@6.0.2)
 

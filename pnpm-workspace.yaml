@@ -31,3 +31,11 @@ minimumReleaseAgeExclude:
 
 patchedDependencies:
   braces@3.0.3: patches/braces@3.0.3.patch
+
+# These exact tooling combinations pass typechecking, coverage tests and package builds.
+peerDependencyRules:
+  allowedVersions:
+    '@nuxt/module-builder@1.0.3>typescript': '6.0.2'
+    'tsconfck@3.1.6>typescript': '6.0.2'
+    'unbuild@3.6.1>typescript': '6.0.2'
+    'mkdist@2.4.1>vue-sfc-transformer': '0.2.5'

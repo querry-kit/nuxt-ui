@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         node-version: [24.22.1, 26.13.0]
+        vueuse-version: [14.4.0, 15.0.0]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,12 +34,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install VueUse compatibility fixture
+        run: pnpm add -D @vueuse/core@${{ matrix.vueuse-version }} @vueuse/router@${{ matrix.vueuse-version }} --ignore-scripts --no-frozen-lockfile
+
+      - name: Check supported VueUse types and package build
+        run: |
+          pnpm typecheck
+          pnpm build
+
       - name: Run tests with coverage
         run: pnpm test:coverage
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-report
+          name: coverage-report-node-${{ matrix.node-version }}-vueuse-${{ matrix.vueuse-version }}
           path: coverage
           if-no-files-found: error
