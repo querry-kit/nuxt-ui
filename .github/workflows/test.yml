@@ -35,7 +35,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install VueUse compatibility fixture
-        run: pnpm add -D @vueuse/core@${{ matrix.vueuse-version }} @vueuse/router@${{ matrix.vueuse-version }} --ignore-scripts --no-frozen-lockfile
+        run: pnpm add -D @vueuse/core@${{ matrix.vueuse-version }} @vueuse/router@${{ matrix.vueuse-version }} --ignore-scripts
 
       - name: Check supported VueUse types and package build
         run: |
