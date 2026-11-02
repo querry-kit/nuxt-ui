@@ -61,7 +61,7 @@
   "peerDependencies": {
     "@nuxt/ui": "^4.0.0",
     "@querry-kit/nuxt": "^0.2.0",
-    "@vueuse/core": "^14.4.0",
+    "@vueuse/core": "^14.4.0 || ^15.0.0",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"
   },
@@ -71,7 +71,7 @@
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.6.3",
     "@nuxt/ui": "^4.12.0",
-    "@querry-kit/nuxt": "^0.2.8",
+    "@querry-kit/nuxt": "^0.2.9",
     "@types/node": "^26.6.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-vue": "^6.0.10",
@@ -91,7 +91,9 @@
     "vite": "^8.3.5",
     "vitest": "^5.0.5",
     "vue": "^3.5.44",
-    "vue-tsc": "3.3.13"
+    "vue-tsc": "3.3.13",
+    "@vueuse/core": "^15.0.0",
+    "@vueuse/router": "^15.0.0"
   },
   "engines": {
     "node": ">=24"
