@@ -10,7 +10,7 @@ overrides:
   devalue@>=5.1.0 <=5.9.2: 5.9.4
   esbuild@0.27.7: 0.28.2
   qs@<6.16.0: ^6.16.0
-  serialize-javascript@>=7.1.1 <7.1.2: 7.1.2
+  serialize-javascript@>=7.1.1 <7.1.4: 7.1.4
   shell-quote@>=1.8.4 <1.11.0: 1.12.0
   simple-git@>=3.15.0 <4.0.1: 4.0.2
   source-map-js@>=1.0.0 <1.2.2: 1.2.2
@@ -48,8 +48,8 @@ importers:
         specifier: ^4.12.0
         version: 4.12.0(4e8ecda6612a2de1d9ffa5143c74958b)
       '@querry-kit/nuxt':
-        specifier: ^0.2.8
-        version: 0.2.8(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
+        specifier: ^0.2.9
+        version: 0.2.9(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
       '@types/node':
         specifier: ^26.6.6
         version: 26.6.6
@@ -1118,8 +1118,8 @@ packages:
   '@poppinss/exception@1.2.3':
     resolution: {integrity: sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==}
 
-  '@querry-kit/nuxt@0.2.8':
-    resolution: {integrity: sha512-ez1k+nR2p474eGWMRFnH9bc06GF0oLI8I4vv5JaTX0MV5vG5ddVtaDC45iq8Q+xshacFX6fRYejCXVeff/fDbw==}
+  '@querry-kit/nuxt@0.2.9':
+    resolution: {integrity: sha512-K2QeAHk8cXKkAB/nUiMCcnzgUqqT0ny4jsc1jPdKkfpp7Jk27s50wyMhsolgBmRpGSRVJ5tvmlP3xQiZD904WA==}
     engines: {node: '>=24'}
     peerDependencies:
       '@vueuse/core': ^14.3.0
@@ -4638,8 +4638,8 @@ packages:
     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
     engines: {node: '>= 18'}
 
-  serialize-javascript@7.1.2:
-    resolution: {integrity: sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==}
+  serialize-javascript@7.1.4:
+    resolution: {integrity: sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==}
     engines: {node: '>=20.0.0'}
 
   seroval@1.7.6:
@@ -7042,7 +7042,7 @@ snapshots:
 
   '@poppinss/exception@1.2.3': {}
 
-  '@querry-kit/nuxt@0.2.8(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
+  '@querry-kit/nuxt@0.2.9(@vueuse/core@14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2)))(@vueuse/router@14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2)))(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))':
     dependencies:
       '@vueuse/core': 14.4.0(vue@3.5.44(@typescript/typescript6@6.0.2))
       '@vueuse/router': 14.4.0(vue-router@5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.44(@typescript/typescript6@6.0.2)))(vue@3.5.44(@typescript/typescript6@6.0.2))
@@ -7166,7 +7166,7 @@ snapshots:
 
   '@rollup/plugin-terser@1.0.2(rollup@4.67.4)':
     dependencies:
-      serialize-javascript: 7.1.2
+      serialize-javascript: 7.1.4
       smob: 1.6.2
       terser: 5.51.2
     optionalDependencies:
@@ -10651,7 +10651,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serialize-javascript@7.1.2: {}
+  serialize-javascript@7.1.4: {}
 
   seroval@1.7.6: {}
 
