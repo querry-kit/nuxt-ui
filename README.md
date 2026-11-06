@@ -235,3 +235,7 @@ All labels live under `querrykit.table.grouping` for host i18n. `texts.grouping`
 `trigger`, `up`, `down`, `remove`, `add`, `expanded`, and `collapsed` using existing
 component/app-config/default precedence. Field labels and null-value labels are
 application-owned; use the same locale as the rest of the table.
+
+## Nuxt package compatibility
+
+The table controls support `@querry-kit/nuxt` 0.2.x and 1.x. Use the 1.x package for `useGroupedTable`; existing controls remain compatible with 0.2.x consumers on the supported Node.js runtime.
