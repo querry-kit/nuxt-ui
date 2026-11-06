@@ -16,6 +16,7 @@ jobs:
       matrix:
         node-version: [26.13.0]
         vueuse-version: [14.4.0, 15.0.0]
+        querry-kit-version: [0.2.10, 1.0.0]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install VueUse compatibility fixture
-        run: pnpm add -D @vueuse/core@${{ matrix.vueuse-version }} @vueuse/router@${{ matrix.vueuse-version }} --ignore-scripts
+      - name: Install VueUse and Query Kit compatibility fixtures
+        run: pnpm add -D @querry-kit/nuxt@${{ matrix.querry-kit-version }} @vueuse/core@${{ matrix.vueuse-version }} @vueuse/router@${{ matrix.vueuse-version }} --ignore-scripts
 
       - name: Check supported VueUse types and package build
         run: |
@@ -48,6 +49,6 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-report-node-${{ matrix.node-version }}-vueuse-${{ matrix.vueuse-version }}
+          name: coverage-report-node-${{ matrix.node-version }}-vueuse-${{ matrix.vueuse-version }}-querry-kit-${{ matrix.querry-kit-version }}
           path: coverage
           if-no-files-found: error
