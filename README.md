@@ -177,3 +177,9 @@ TanStack Table is not a direct peer dependency of this package. Table controls u
 ## Development toolchain
 
 Use Node.js 26.13.0 LTS and the package manager pinned in `package.json`. This release requires Node.js 26.13.0 or newer and no longer supports Node.js 24. Upgrade application runtimes and CI before updating the package. Builds use TypeScript 7; ESLint and compiler-API consumers use the TypeScript 6 compatibility package. Dependency overrides, where present, pin security fixes for transitive packages; validate tests and documentation builds when changing them.
+
+### Dependency maintenance
+
+Development and type checks use Nuxt 4.6.4, Vue 3.5.45, Vite 8.3.6, and the exact `vue-tsc` 3.3.14 pin. Vitest and its V8 coverage provider are updated together to 5.1.0. VueUse 14 and 15 remain supported.
+
+Dependency refreshes retain pnpm 11.28.9, the existing TypeScript 6/7 split, and security overrides. Candidates published less than 24 hours ago are deferred; dependency major migrations are outside this update.
