@@ -1,5 +1,21 @@
 # @querry-kit/nuxt-ui
 
+## 4.0.0
+
+### Major Changes
+
+- 9e4f642: Require Node.js 26.13.0 or newer and drop Node.js 24 support. Upgrade application runtimes and CI before updating.
+
+### Minor Changes
+
+- 4aa0d69: Add ordered grouping controls, accessible group headers and lazy-load actions.
+- 732df4d: Declare compatibility with the Nuxt package 1.x for grouped tables.
+
+### Patch Changes
+
+- 9e4f642: Refresh compatible dependencies and the lockfile while preserving the TypeScript compatibility toolchain and security overrides.
+- 4aa0d69: Keep grouping documentation aligned with the current Node.js 26 baseline.
+
 ## 3.3.10
 
 ### Patch Changes
