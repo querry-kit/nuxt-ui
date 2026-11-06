@@ -11,3 +11,12 @@ export { default as QTableToolbar } from './components/table/toolbar/index.vue';
 export type { TableIconKey, TableIconOverrides, TableIcons } from './icons';
 export type { TableTextKey, TableTextOverrides, TableTexts } from './texts';
 export * from './types/table';
+
+/** Server-backed grouping UI building block. */
+export { default as QTableGrouping } from './components/table/grouping/index.vue';
+
+/** Server-backed grouping UI building block. */
+export { default as QTableGroup } from './components/table/group/index.vue';
+
+/** Server-backed grouping UI building block. */
+export { default as QTableGroupLoadMore } from './components/table/group/load-more.vue';

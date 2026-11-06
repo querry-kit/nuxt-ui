@@ -1,5 +1,14 @@
 /** Default Iconify names used by the table controls. */
 export const defaultTableIcons = {
+  grouping: {
+    trigger: 'i-tabler-list-tree',
+    up: 'i-tabler-chevron-up',
+    down: 'i-tabler-chevron-down',
+    remove: 'i-tabler-x',
+    add: 'i-tabler-plus',
+    expanded: 'i-tabler-chevron-down',
+    collapsed: 'i-tabler-chevron-right',
+  },
   search: { input: 'i-tabler-search' },
   sorting: {
     trigger: 'i-tabler-arrows-sort',
@@ -33,6 +42,13 @@ export const defaultTableIcons = {
 export type TableIcons = typeof defaultTableIcons;
 
 export type TableIconKey =
+  | 'grouping.trigger'
+  | 'grouping.up'
+  | 'grouping.down'
+  | 'grouping.remove'
+  | 'grouping.add'
+  | 'grouping.expanded'
+  | 'grouping.collapsed'
   | 'search.input'
   | 'sorting.trigger'
   | 'sorting.header'
