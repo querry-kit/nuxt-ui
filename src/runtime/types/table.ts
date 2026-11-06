@@ -15,6 +15,8 @@ export type { TableIconKey, TableIconOverrides, TableIcons } from '../icons';
 export type SortingState = SortingRule[];
 /** A selectable field in the sorting control. */
 export type SortingField = QueryKitSortingField<{ disabled?: boolean }>;
+/** A selectable scalar grouping field, sharing the field-control metadata contract. */
+export type GroupingField = SortingField;
 
 /** Editor variants supported by the filtering control. */
 export const FilterFieldType = {

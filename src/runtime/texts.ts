@@ -1,5 +1,21 @@
 /** English fallback strings used when neither `texts` nor host-app i18n provides a value. */
 export const defaultTableTexts = {
+  grouping: {
+    title: 'Group by',
+    field: 'Select grouping field',
+    add: 'Add grouping',
+    remove: 'Remove grouping',
+    clear: 'Clear grouping',
+    moveUp: 'Move group up',
+    moveDown: 'Move group down',
+    count: '{count} items',
+    loading: 'Loading group…',
+    error: 'Unable to load group.',
+    retry: 'Retry',
+    loadMore: 'Load more',
+    empty: 'No items',
+    null: 'No value',
+  },
   search: { placeholder: 'Search' },
   sorting: {
     title: 'Sort',
@@ -29,6 +45,20 @@ export const defaultTableTexts = {
 } as const;
 
 export type TableTextKey =
+  | 'grouping.title'
+  | 'grouping.field'
+  | 'grouping.add'
+  | 'grouping.remove'
+  | 'grouping.clear'
+  | 'grouping.moveUp'
+  | 'grouping.moveDown'
+  | 'grouping.count'
+  | 'grouping.loading'
+  | 'grouping.error'
+  | 'grouping.retry'
+  | 'grouping.loadMore'
+  | 'grouping.empty'
+  | 'grouping.null'
   | 'search.placeholder'
   | 'sorting.title'
   | 'sorting.field'

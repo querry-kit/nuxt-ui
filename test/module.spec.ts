@@ -16,6 +16,17 @@ describe('Nuxt module registration', () => {
   it('registers collision-safe components by default', async () => {
     const module = await import('../src/module');
     (module.default as any).setup({ autoImports: true });
+    for (const [name, path] of [
+      ['QTableGrouping', 'grouping/index.vue'],
+      ['QTableGroup', 'group/index.vue'],
+      ['QTableGroupLoadMore', 'group/load-more.vue'],
+    ]) {
+      expect(addComponent).toHaveBeenCalledWith({
+        name,
+        filePath: `/module/runtime/components/table/${path}`,
+        priority: 0,
+      });
+    }
     expect(addComponent).toHaveBeenCalledWith({
       name: 'QTableFiltering',
       filePath: '/module/runtime/components/table/filtering/index.vue',

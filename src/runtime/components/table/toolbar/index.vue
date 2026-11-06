@@ -20,7 +20,14 @@
   </DefineSearch>
 
   <DefineOptions>
-    <slot name="options" :sorting="sorting" :filtering="filtering" :column-order="columnOrder">
+    <slot name="options" :sorting="sorting" :filtering="filtering" :grouping="grouping" :column-order="columnOrder">
+      <QTableGrouping
+        v-if="groupableFields?.length && grouping"
+        v-model:grouping="grouping"
+        :fields="groupableFields"
+        :texts="texts"
+        :icons="icons"
+      />
       <QTableSorting
         v-if="sortableFields?.length && sorting"
         v-model:sorting="sorting"
@@ -100,6 +107,7 @@ import type {
   Filtering,
   SortingField,
   SortingState,
+  GroupingField,
 } from '../../../types/table';
 
 const mounted = useMounted();
@@ -112,6 +120,7 @@ const [DefineOptions, Options] = createReusableTemplate();
 const props = defineProps<{
   breadcrumbItems?: Array<Record<string, unknown>>;
   sortableFields?: SortingField[];
+  groupableFields?: GroupingField[];
   filterFields?: FilterField[];
   columnDefinitions?: ColumnDefinition[];
   searchPlaceholder?: string;
@@ -124,6 +133,7 @@ const props = defineProps<{
 }>();
 const search = defineModel<string | undefined>('search');
 const sorting = defineModel<SortingState>('sorting');
+const grouping = defineModel<string[]>('grouping');
 const filtering = defineModel<Filtering>('filtering');
 const columnOrder = defineModel<string[]>('columnOrder');
 const invisibleColumns = defineModel<string[]>('invisibleColumns');

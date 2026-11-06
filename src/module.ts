@@ -32,6 +32,21 @@ const querryKitNuxtUiModule: NuxtModule<QuerryKitNuxtUiOptions> = defineNuxtModu
     const resolver = createResolver(import.meta.url);
     if (options.autoImports) {
       addComponent({
+        name: 'QTableGroupLoadMore',
+        filePath: resolver.resolve('runtime/components/table/group/load-more.vue'),
+        priority: 0,
+      });
+      addComponent({
+        name: 'QTableGroup',
+        filePath: resolver.resolve('runtime/components/table/group/index.vue'),
+        priority: 0,
+      });
+      addComponent({
+        name: 'QTableGrouping',
+        filePath: resolver.resolve('runtime/components/table/grouping/index.vue'),
+        priority: 0,
+      });
+      addComponent({
         name: 'QTableFiltering',
         filePath: resolver.resolve('runtime/components/table/filtering/index.vue'),
         priority: 0,
