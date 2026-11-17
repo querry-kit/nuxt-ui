@@ -9,7 +9,11 @@
         :start="rowStart"
         :end="rowEnd"
       >
+        <span v-if="infinite && !grouped" class="text-muted text-sm">
+          {{ t('pagination.loaded', { count: loadedItems, total: totalItems }) }}
+        </span>
         <PaginationSummary
+          v-else-if="!grouped"
           :total-items="totalItems"
           :start="rowStart"
           :end="rowEnd"
@@ -18,15 +22,17 @@
         />
       </slot>
     </div>
-    <div class="flex items-center gap-1.5" :class="ui?.right">
+    <div class="flex flex-wrap items-center gap-1.5" :class="ui?.right">
       <slot name="page-size" :items-per-page="itemsPerPage" :set-items-per-page="setItemsPerPage">
         <PaginationPageSize
+          v-if="pageSizes.length"
           :items-per-page="itemsPerPage"
           :items="pageSizeItems"
           :set-items-per-page="setItemsPerPage"
         />
       </slot>
       <slot
+        v-if="!infinite && !grouped"
         name="pagination"
         :page="page"
         :page-count="pageCount"
@@ -36,19 +42,36 @@
         :last="last"
       >
         <PaginationControls
+          :disabled="loading"
           :page="page"
           :items-per-page="itemsPerPage"
           :total-items="totalItems"
           :set-page="(value) => (page = value)"
         />
       </slot>
+      <USelect v-if="loadingMode" v-model="loadingMode" :aria-label="t('pagination.mode')" :items="modeItems" />
+      <template v-if="infinite && !grouped">
+        <span v-if="error" class="sr-only" role="alert">{{ t('pagination.error') }}</span>
+        <UButton
+          v-if="hasMore || error"
+          variant="ghost"
+          :label="t(error ? 'pagination.retry' : 'pagination.loadMore')"
+          :loading="loading"
+          :disabled="loading"
+          @click="requestMore"
+        />
+        <span v-if="loading" class="sr-only" role="status">{{ t('pagination.loading') }}</span>
+      </template>
       <slot name="right" :page="page" :page-count="pageCount" />
     </div>
+    <span v-if="infinite && !grouped" ref="sentinel" class="block h-px w-full" aria-hidden="true" />
   </footer>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue';
+
+import { useTableI18n } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
 import PaginationPageSize from './page-size.vue';
@@ -62,26 +85,72 @@ const props = withDefaults(
     summary?: string;
     texts?: TableTextOverrides;
     shortcuts?: boolean;
+    /** Shows the mode switch and page size for a grouped table. Leaf controls are rendered separately. */
+    grouped?: boolean;
+    /** Loaded row count for the flat infinite-scroll summary. */
+    loadedItems?: number;
+    /** Whether the flat table has another batch of rows. */
+    hasMore?: boolean;
+    /** Whether a row request is pending. */
+    loading?: boolean;
+    /** A failed flat infinite-scroll request, enabling manual retry. */
+    error?: unknown;
     ui?: { root?: string; left?: string; right?: string };
   }>(),
-  { totalItems: 0, pageSizes: () => [1, 2, 10, 25, 50, 100], shortcuts: true },
+  { totalItems: 0, pageSizes: () => [1, 2, 10, 25, 50, 100], shortcuts: true, loadedItems: 0 },
 );
 const page = defineModel<number>('page', { required: true });
 const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
+const loadingMode = defineModel<'pagination' | 'infinite'>('loadingMode');
+const emit = defineEmits<{ 'load-more': [] }>();
+const sentinel = useTemplateRef<HTMLElement>('sentinel');
+const t = useTableI18n(props.texts);
+const modeItems = computed(() => [
+  { value: 'pagination', label: t('pagination.paginated') },
+  { value: 'infinite', label: t('pagination.infinite') },
+]);
+const infinite = computed(() => loadingMode.value === 'infinite');
+const canAutoLoad = computed(() => infinite.value && !props.grouped && props.hasMore && !props.loading && !props.error);
 const pageCount = computed(() => Math.max(1, Math.ceil(props.totalItems / itemsPerPage.value)));
-const rowStart = computed(() => (props.totalItems === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1));
-const rowEnd = computed(() => Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems));
+const rowStart = computed(() => {
+  if (infinite.value) return props.loadedItems ? 1 : 0;
+  return props.totalItems === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1;
+});
+const rowEnd = computed(() =>
+  infinite.value ? props.loadedItems : Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems),
+);
 const pageSizeItems = computed(() => props.pageSizes.map((value) => ({ value, label: String(value) })));
+/** Requests the first page in pagination mode. */
 const first = () => (page.value = 1);
+/** Requests the previous page, stopping at the first page. */
 const previous = () => (page.value = Math.max(1, page.value - 1));
+/** Requests the next page, stopping at the last page. */
 const next = () => (page.value = Math.min(pageCount.value, page.value + 1));
+/** Requests the last page in pagination mode. */
 const last = () => (page.value = pageCount.value);
+/**
+ * Updates the page size and keeps numbered pagination within the new page range.
+ * @param {number} value New page size.
+ */
 const setItemsPerPage = (value: number) => {
   itemsPerPage.value = value;
-  page.value = Math.min(page.value, Math.max(1, Math.ceil(props.totalItems / value)));
+  if (!infinite.value && !props.grouped)
+    page.value = Math.min(page.value, Math.max(1, Math.ceil(props.totalItems / value)));
 };
+/**
+ * Handles global shortcuts for a footer that presents numbered pages.
+ * @param {KeyboardEvent} event Candidate keyboard shortcut.
+ */
 const onKeydown = (event: KeyboardEvent) => {
-  if (!canHandleTableShortcut(event) || !props.shortcuts || !event.shiftKey) return;
+  if (
+    infinite.value ||
+    props.grouped ||
+    props.loading ||
+    !canHandleTableShortcut(event) ||
+    !props.shortcuts ||
+    !event.shiftKey
+  )
+    return;
   if (event.ctrlKey && event.key === 'ArrowLeft') first();
   else if (event.ctrlKey && event.key === 'ArrowRight') last();
   else if (event.key === 'ArrowLeft') previous();
@@ -89,6 +158,35 @@ const onKeydown = (event: KeyboardEvent) => {
   else return;
   event.preventDefault();
 };
+
+/** Requests another batch or a retry from the application. */
+const requestMore = () => {
+  if (infinite.value && !props.grouped && !props.loading && (props.hasMore || props.error)) emit('load-more');
+};
+
+watch(
+  [sentinel, canAutoLoad, () => props.loadedItems],
+  ([element, enabled], _, onCleanup) => {
+    if (!element || !enabled || typeof IntersectionObserver === 'undefined') return;
+    let active = true;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!active || !canAutoLoad.value || !entries.some((entry) => entry.isIntersecting)) return;
+        active = false;
+        observer.disconnect();
+        requestMore();
+      },
+      { rootMargin: '0px 0px 160px 0px' },
+    );
+    observer.observe(element);
+    onCleanup(() => {
+      active = false;
+      observer.disconnect();
+    });
+  },
+  { flush: 'post' },
+);
+
 onMounted(() => document.addEventListener('keydown', onKeydown));
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>

@@ -141,7 +141,7 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 | `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/sorting)        |
 | `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)    |
 | `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
-| `QTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)  |
+| `QTablePagination` | Renders a footer with optional pagination and infinite-scroll switching. | [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)  |
 
 Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
 
@@ -153,6 +153,14 @@ Public component types such as `FilterField`, `FilterFieldType`, `SortingState`,
 - [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)
 - [Column Options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options)
 - [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)
+
+Bind `v-model:loading-mode` to opt in to the footer switch. For a flat table, pass
+`loaded-items`, `has-more`, `loading`, and `error`, then handle `@load-more` for
+automatic loading, keyboard-accessible loading, and retry. In a grouped table,
+set `grouped` on the global footer and place numbered footers or
+`QTableGroupLoadMore` inside each expanded leaf. Disable global shortcuts on
+leaf footers with `:shortcuts="false"`. Pass `:page-sizes="[]"` when the page size
+is controlled by the global footer.
 - [Types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types)
 
 ## 🛠 Development

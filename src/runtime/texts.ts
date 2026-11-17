@@ -43,7 +43,17 @@ export const defaultTableTexts = {
     center: 'Unpin',
     visibility: 'Toggle column visibility',
   },
-  pagination: { summary: 'Showing {start}–{end} of {total}' },
+  pagination: {
+    summary: 'Showing {start}–{end} of {total}',
+    mode: 'Row loading mode',
+    paginated: 'Pagination',
+    infinite: 'Infinite scroll',
+    loaded: 'Loaded {count} of {total}',
+    loadMore: 'Load more',
+    loading: 'Loading rows…',
+    error: 'Unable to load rows.',
+    retry: 'Retry',
+  },
 } as const;
 
 export type TableTextKey =
@@ -82,7 +92,15 @@ export type TableTextKey =
   | 'options.right'
   | 'options.center'
   | 'options.visibility'
-  | 'pagination.summary';
+  | 'pagination.summary'
+  | 'pagination.mode'
+  | 'pagination.paginated'
+  | 'pagination.infinite'
+  | 'pagination.loaded'
+  | 'pagination.loadMore'
+  | 'pagination.loading'
+  | 'pagination.error'
+  | 'pagination.retry';
 
 export type TableTexts = typeof defaultTableTexts;
 type DeepTextOverrides<Value> = {
