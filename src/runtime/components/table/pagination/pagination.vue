@@ -4,6 +4,7 @@
     :items-per-page="itemsPerPage"
     :total="totalItems"
     :disabled="disabled"
+    :ui="{ list: 'flex-wrap' }"
     @update:page="setPage"
   />
 </template>

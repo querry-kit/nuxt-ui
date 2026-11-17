@@ -87,6 +87,13 @@ describe('QTablePagination', () => {
     try {
       await wrapper.vm.$nextTick();
       expect(wrapper.text()).toContain('Loaded 10 of 42');
+      const selector = wrapper.findAllComponents({ name: 'USelect' })[1]!;
+      await selector.vm.$emit('update:open', true);
+      observers[0]!.deliver(true);
+      expect(wrapper.emitted('load-more')).toBeUndefined();
+      await selector.vm.$emit('update:open', false);
+      expect(observers).toHaveLength(2);
+      observers.shift();
       observers[0]!.deliver(false);
       expect(wrapper.emitted('load-more')).toBeUndefined();
       observers[0]!.deliver(true);

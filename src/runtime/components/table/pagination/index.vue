@@ -22,7 +22,7 @@
         />
       </slot>
     </div>
-    <div class="flex flex-wrap items-center gap-1.5" :class="ui?.right">
+    <div class="flex min-w-0 flex-wrap items-center gap-1.5" :class="ui?.right">
       <slot name="page-size" :items-per-page="itemsPerPage" :set-items-per-page="setItemsPerPage">
         <PaginationPageSize
           v-if="pageSizes.length"
@@ -49,7 +49,14 @@
           :set-page="(value) => (page = value)"
         />
       </slot>
-      <USelect v-if="loadingMode" v-model="loadingMode" :aria-label="t('pagination.mode')" :items="modeItems" />
+      <USelect
+        v-if="loadingMode"
+        v-model="loadingMode"
+        v-model:open="modeOpen"
+        :aria-label="t('pagination.mode')"
+        :content="{ position: 'popper' }"
+        :items="modeItems"
+      />
       <template v-if="infinite && !grouped">
         <span v-if="error" class="sr-only" role="alert">{{ t('pagination.error') }}</span>
         <UButton
@@ -69,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
@@ -102,6 +109,7 @@ const props = withDefaults(
 const page = defineModel<number>('page', { required: true });
 const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
 const loadingMode = defineModel<'pagination' | 'infinite'>('loadingMode');
+const modeOpen = ref(false);
 const emit = defineEmits<{ 'load-more': [] }>();
 const sentinel = useTemplateRef<HTMLElement>('sentinel');
 const t = useTableI18n(props.texts);
@@ -110,7 +118,9 @@ const modeItems = computed(() => [
   { value: 'infinite', label: t('pagination.infinite') },
 ]);
 const infinite = computed(() => loadingMode.value === 'infinite');
-const canAutoLoad = computed(() => infinite.value && !props.grouped && props.hasMore && !props.loading && !props.error);
+const canAutoLoad = computed(
+  () => infinite.value && !props.grouped && props.hasMore && !props.loading && !props.error && !modeOpen.value,
+);
 const pageCount = computed(() => Math.max(1, Math.ceil(props.totalItems / itemsPerPage.value)));
 const rowStart = computed(() => {
   if (infinite.value) return props.loadedItems ? 1 : 0;
