@@ -11,8 +11,11 @@ const stubs = {
     template: '<button :disabled="disabled" v-bind="$attrs">{{ label }}<slot /></button>',
   },
   UPopover: { template: '<div><slot/><slot name="content"/></div>' },
+  USeparator: true,
   USelect: { name: 'USelect', props: ['modelValue', 'items'], emits: ['update:modelValue'], template: '<select />' },
   UDashboardToolbar: { template: '<div><slot name="left"/><slot name="right"/></div>' },
+  UIcon: true,
+  VueDraggable: { name: 'VueDraggable', template: '<ol><slot /></ol>' },
   QTableGrouping: true,
 };
 
@@ -31,26 +34,32 @@ describe('server-backed grouping controls', () => {
     });
     expect(wrapper.findComponent({ name: 'USelect' }).props('items')).toHaveLength(2);
     await wrapper.findComponent({ name: 'USelect' }).vm.$emit('update:modelValue', 'status');
-    await wrapper.find('[aria-label="Add grouping"]').trigger('click');
+    await wrapper.get('form').trigger('submit');
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['status']]);
     await wrapper.setProps({ grouping: ['status', 'category'] });
-    await wrapper.findAll('[aria-label="Move group down"]')[0]!.trigger('click');
+    expect(wrapper.get('[aria-label="Add grouping"]').attributes('disabled')).toBeDefined();
+    expect(wrapper.findAll('.drag-handle')).toHaveLength(2);
+    await wrapper.get('[aria-label="Reorder Status"]').trigger('keydown', { key: 'ArrowDown' });
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['category', 'status']]);
-    await wrapper.findAll('[aria-label="Move group up"]')[1]!.trigger('click');
+    await wrapper.get('[aria-label="Reorder Status"]').trigger('keydown', { key: 'ArrowUp' });
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['status', 'category']]);
+    await wrapper.get('[aria-label="Reorder Status"]').trigger('keydown', { key: 'ArrowUp' });
+    expect(wrapper.emitted('update:grouping')).toHaveLength(3);
     await wrapper.find('[aria-label="Remove grouping"]').trigger('click');
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['category']]);
-    await wrapper
-      .findAll('button')
-      .find((button) => button.text() === 'Clear grouping')!
-      .trigger('click');
+    const clear = wrapper.get('[aria-label="Clear grouping"]');
+    expect(clear.element.parentElement?.querySelector('h3')?.textContent).toContain('Group by');
+    await clear.trigger('click');
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([[]]);
-    (wrapper.vm as unknown as { move: (index: number, direction: number) => void }).move(0, -1);
     await wrapper.setProps({ grouping: ['unknown'], fields: [{ value: 'status', label: 'Status' }] });
+    expect(wrapper.find('.drag-handle').exists()).toBe(false);
     expect(wrapper.text()).toContain('unknown');
     await wrapper.findComponent({ name: 'USelect' }).vm.$emit('update:modelValue', 'invalid');
-    await wrapper.find('[aria-label="Add grouping"]').trigger('click');
+    await wrapper.get('form').trigger('submit');
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([[]]);
+    await wrapper.setProps({ grouping: ['status', 'category'] });
+    await wrapper.findComponent({ name: 'VueDraggable' }).vm.$emit('update:modelValue', ['category', 'status']);
+    expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['category', 'status']]);
     wrapper.unmount();
   });
 
@@ -111,6 +120,8 @@ describe('server-backed grouping controls', () => {
     expect(wrapper.findComponent({ name: 'QTableGrouping' }).exists()).toBe(true);
     await wrapper.findComponent({ name: 'QTableGrouping' }).vm.$emit('update:grouping', ['status']);
     expect(wrapper.emitted('update:grouping')).toEqual([[['status']]]);
+    await wrapper.setProps({ groupableFields: [] });
+    expect(wrapper.findComponent({ name: 'QTableGrouping' }).exists()).toBe(false);
     wrapper.unmount();
   });
 });

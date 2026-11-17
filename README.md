@@ -188,9 +188,12 @@ Dependency refreshes retain pnpm 11.28.9, the existing TypeScript 6/7 split, and
 
 Use `QTableGrouping` with `v-model:grouping` (an ordered string array) and
 `fields` (`{ value, label, disabled? }[]`). Selected and disabled fields are excluded
-from the add selector. Arrow buttons reorder levels; remove and clear actions emit
-new state. The control does not fetch data. `QTableToolbar` accepts the same model
-and `groupableFields` for optional integration.
+from the add selector. Select a field and submit the form to append it.
+The form stays visible and is disabled when no fields are available.
+Reorder levels by dragging their handles or focusing a
+handle and pressing Up or Down. Use the clear button in the header to remove all
+levels. `QTableToolbar`
+shows the control when it receives the grouping model and a nonempty `groupableFields` array.
 
 `QTableGroup` takes `label`, `count`, `expanded`, optional `loading`/`error`, `texts`,
 and `icons`. It emits `toggle` and `retry`; its default slot renders branch content.
