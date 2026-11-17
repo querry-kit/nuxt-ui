@@ -1,70 +1,78 @@
 <template>
-  <UPopover>
-    <UButton
-      variant="ghost"
-      :aria-label="t('grouping.title')"
-      :color="grouping.length ? 'primary' : 'neutral'"
-      :icon="icon('grouping.trigger')"
-    />
+  <UPopover :ui="{ content: 'qk-table-grouping-popover' }">
+    <UButton color="neutral" variant="ghost" :aria-label="t('grouping.title')" :icon="icon('grouping.trigger')" />
     <template #content>
-      <div class="min-w-64 space-y-2 p-3">
-        <slot name="header" :grouping="grouping">
-          <h3 class="text-sm font-medium">{{ t('grouping.title') }}</h3>
-        </slot>
-        <ol class="space-y-2">
+      <div class="space-y-2 p-3">
+        <div class="mb-4 flex items-center justify-between gap-2">
+          <slot name="header" :grouping="grouping">
+            <h3 class="flex items-center gap-2 text-sm font-medium">
+              <UIcon :name="icon('grouping.trigger')" />
+              {{ t('grouping.title') }}
+            </h3>
+          </slot>
+          <UButton
+            v-if="grouping.length"
+            color="error"
+            size="xs"
+            variant="outline"
+            :icon="icon('grouping.clear')"
+            :aria-label="t('grouping.clear')"
+            @click="grouping = []"
+          />
+        </div>
+        <VueDraggable v-model="grouping" class="space-y-2" tag="ol" handle=".drag-handle" :animation="150">
           <li v-for="(field, index) in grouping" :key="field" class="flex items-center gap-2">
-            <span class="min-w-0 flex-1 truncate">
-              {{ fields.find((item) => item.value === field)?.label ?? field }}
-            </span>
             <UButton
+              v-if="grouping.length > 1"
+              class="drag-handle shrink-0 cursor-grab touch-none"
+              color="neutral"
               size="xs"
               variant="ghost"
-              :aria-label="t('grouping.moveUp')"
-              :icon="icon('grouping.up')"
-              :disabled="index === 0"
-              @click="move(index, -1)"
+              aria-keyshortcuts="ArrowUp ArrowDown"
+              :icon="icon('options.drag')"
+              :aria-label="t('grouping.reorder', { field: fieldLabel(field) })"
+              @keydown.up.prevent.stop="move($event, index, -1)"
+              @keydown.down.prevent.stop="move($event, index, 1)"
             />
+            <span class="text-muted min-w-0 flex-1 truncate text-sm">{{ fieldLabel(field) }}</span>
             <UButton
-              size="xs"
-              variant="ghost"
-              :aria-label="t('grouping.moveDown')"
-              :icon="icon('grouping.down')"
-              :disabled="index === grouping.length - 1"
-              @click="move(index, 1)"
-            />
-            <UButton
-              size="xs"
-              variant="ghost"
+              color="error"
+              size="sm"
+              variant="outline"
               :aria-label="t('grouping.remove')"
               :icon="icon('grouping.remove')"
               @click="remove(field)"
             />
           </li>
-        </ol>
-        <div v-if="available.length" class="flex gap-2">
+        </VueDraggable>
+        <USeparator v-if="grouping.length" class="my-2" />
+        <form class="flex gap-2" @submit.prevent="addSelected">
           <USelect
             v-model="selected"
-            class="min-w-0 flex-1"
+            class="w-full"
+            size="sm"
             value-key="value"
             :items="available"
-            :placeholder="t('grouping.field')"
+            :placeholder="t(available.length ? 'grouping.field' : 'grouping.noFields')"
             :aria-label="t('grouping.field')"
+            :disabled="!available.length"
           />
           <UButton
+            size="sm"
+            type="submit"
             :aria-label="t('grouping.add')"
             :icon="icon('grouping.add')"
-            :disabled="!selected"
-            @click="addSelected"
+            :disabled="!selectedField"
           />
-        </div>
-        <UButton v-if="grouping.length" variant="ghost" :label="t('grouping.clear')" @click="grouping = []" />
+        </form>
       </div>
     </template>
   </UPopover>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
+import { VueDraggable } from 'vue-draggable-plus';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableTextOverrides } from '../../../texts';
@@ -84,19 +92,52 @@ const icon = useTableIcons(props.icons);
 const available = computed(() =>
   props.fields.filter((field) => !field.disabled && !grouping.value.includes(field.value)),
 );
+const selectedField = computed(() => available.value.find((field) => field.value === selected.value));
+
+/**
+ * Resolves the display label for a grouping field.
+ *
+ * @param {string} field The grouping field ID.
+ * @returns {string} The configured label or field ID.
+ */
+const fieldLabel = (field: string) => props.fields.find((item) => item.value === field)?.label ?? field;
+
+/** Adds the selected field if it is still available and clears the selection. */
 const addSelected = () => {
-  if (available.value.some((field) => field.value === selected.value))
-    grouping.value = [...grouping.value, selected.value!];
+  if (selectedField.value) grouping.value = [...grouping.value, selectedField.value.value];
   selected.value = undefined;
 };
+
+/**
+ * Removes a grouping field from the ordered selection.
+ *
+ * @param {string} field The field ID to remove.
+ */
 const remove = (field: string) => {
   grouping.value = grouping.value.filter((value) => value !== field);
 };
-const move = (index: number, direction: number) => {
+
+/**
+ * Moves a grouping field by one position and preserves focus on its handle.
+ *
+ * @param {KeyboardEvent} event The key press on the handle.
+ * @param {number} index The current field index.
+ * @param {number} direction The offset to the target index.
+ */
+const move = (event: KeyboardEvent, index: number, direction: number) => {
   const next = [...grouping.value];
   const target = index + direction;
   if (target < 0 || target >= next.length) return;
+
+  const handle = event.currentTarget as HTMLButtonElement;
   [next[index], next[target]] = [next[target]!, next[index]!];
   grouping.value = next;
+  void nextTick(() => handle.focus());
 };
 </script>
+
+<style>
+.qk-table-grouping-popover {
+  min-width: min(30rem, calc(100vw - 1rem));
+}
+</style>

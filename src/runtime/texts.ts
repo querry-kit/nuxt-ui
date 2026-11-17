@@ -3,9 +3,11 @@ export const defaultTableTexts = {
   grouping: {
     title: 'Group by',
     field: 'Select grouping field',
+    noFields: 'No grouping fields available',
     add: 'Add grouping',
     remove: 'Remove grouping',
     clear: 'Clear grouping',
+    reorder: 'Reorder {field}',
     moveUp: 'Move group up',
     moveDown: 'Move group down',
     count: '{count} items',
@@ -47,9 +49,11 @@ export const defaultTableTexts = {
 export type TableTextKey =
   | 'grouping.title'
   | 'grouping.field'
+  | 'grouping.noFields'
   | 'grouping.add'
   | 'grouping.remove'
   | 'grouping.clear'
+  | 'grouping.reorder'
   | 'grouping.moveUp'
   | 'grouping.moveDown'
   | 'grouping.count'

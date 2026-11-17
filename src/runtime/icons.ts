@@ -5,6 +5,7 @@ export const defaultTableIcons = {
     up: 'i-tabler-chevron-up',
     down: 'i-tabler-chevron-down',
     remove: 'i-tabler-x',
+    clear: 'i-tabler-cancel',
     add: 'i-tabler-plus',
     expanded: 'i-tabler-chevron-down',
     collapsed: 'i-tabler-chevron-right',
@@ -46,6 +47,7 @@ export type TableIconKey =
   | 'grouping.up'
   | 'grouping.down'
   | 'grouping.remove'
+  | 'grouping.clear'
   | 'grouping.add'
   | 'grouping.expanded'
   | 'grouping.collapsed'
