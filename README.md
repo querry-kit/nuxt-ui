@@ -170,7 +170,7 @@ pnpm build
 
 Verify visual component changes through the corresponding live demo in the central documentation.
 
-Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges.
+Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges. The development toolchain pins patched transitive versions of glob, minimatch, and node-forge.
 
 TanStack Table is not a direct peer dependency of this package. Table controls use Query Kit types; a consuming table renderer owns its TanStack version.
 
