@@ -1,5 +1,23 @@
 # @querry-kit/nuxt-ui
 
+## 4.1.0
+
+### Minor Changes
+
+- 7930ebd: Allow table toolbars to render application-owned filters inside the filter popover and include them in its active and clear states.
+- 3e00d15: Add QTableGrouped for inline server-backed group rows, branch pagination, and infinite loading.
+- 772de56: Reorder grouping fields with draggable, keyboard-accessible handles. The grouping popover adds a persistent field form, a clear button in the header, and the same responsive minimum width as the filter popover.
+- 7930ebd: Add a Reset layout button to restore the declared column order, show all columns, and clear column pinning.
+- 05eb052: Add a searchable multi-select filter with app-provided search, selected-value lookup, and selection limits.
+- 7930ebd: Allow toolbars to customize individual filter rows. Highlight active grouping and show a red reset icon only for customized column layouts.
+
+### Patch Changes
+
+- 49c65a6: Keep grouped renderer types compatible with both supported Nuxt peer versions.
+- 256c0fe: Highlight the entire group row on hover and keep the disclosure button keyboard accessible.
+- 5146417: Use patched transitive versions of glob, minimatch, and node-forge in the development toolchain.
+- 093da33: Keep group counts visible when group labels fill a fixed-width table column.
+
 ## 4.0.0
 
 ### Major Changes
