@@ -43,19 +43,18 @@
 </template>
 
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
-import type { GroupBranch, GroupPath } from '@querry-kit/nuxt';
 import { computed } from 'vue';
 import QTablePagination from '../pagination/index.vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import QTableGroupLoadMore from '../group/load-more.vue';
 
-import type { GroupedTableState } from '../../../types/grouped-table';
+import type { GroupedTableBranch, GroupedTablePath, GroupedTableState } from '../../../types/grouped-table';
 
 const { table, path, texts } = defineProps<{
   table: GroupedTableState<TItem>;
-  path: GroupPath;
-  branch: GroupBranch<TItem>;
+  path: GroupedTablePath;
+  branch: GroupedTableBranch<TItem>;
   texts?: TableTextOverrides;
 }>();
 const t = useTableI18n(texts);

@@ -272,7 +272,7 @@ application-owned; use the same locale as the rest of the table.
 
 `QTableGrouped` renders the state returned by `useGroupedTable`. Start the query with
 `table.initialize()` when the view mounts. Supply the current visible columns and use
-`available-columns` when a grouped column can be hidden in the saved layout.
+`available-columns` when a grouped column can be hidden in the saved layout. The renderer accepts the structural `GroupedTableState` interface from `@querry-kit/nuxt-ui/types`.
 
 ```vue
 <QTableGrouped

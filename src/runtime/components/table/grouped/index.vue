@@ -152,14 +152,13 @@
 
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
 import type { TableColumn, TableProps } from '@nuxt/ui';
-import type { GroupNode } from '@querry-kit/nuxt';
 import { useInfiniteScroll } from '@vueuse/core';
 import { computed, ref, useTemplateRef } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
-import type { GroupedTableColumn, GroupedTableState } from '../../../types/grouped-table';
+import type { GroupedTableColumn, GroupedTableNode, GroupedTableState } from '../../../types/grouped-table';
 import QTableGroupLoadMore from '../group/load-more.vue';
 import GroupedBranchControls from './branch-controls.vue';
 import GroupedPagination from './pagination.vue';
@@ -179,11 +178,11 @@ const props = defineProps<{
 
 const slots = defineSlots<{
   cell?: (props: { field: string; item: TItem }) => unknown;
-  'group-value'?: (props: { node: GroupNode<TItem> }) => unknown;
-  'group-cell'?: (props: { node: GroupNode<TItem>; field: string }) => unknown;
-  branch?: (props: { node: GroupNode<TItem> }) => unknown;
+  'group-value'?: (props: { node: GroupedTableNode<TItem> }) => unknown;
+  'group-cell'?: (props: { node: GroupedTableNode<TItem>; field: string }) => unknown;
+  branch?: (props: { node: GroupedTableNode<TItem> }) => unknown;
   'leading-header'?: (props: { items: TItem[] }) => unknown;
-  leading?: (props: { item?: TItem; node?: GroupNode<TItem> }) => unknown;
+  leading?: (props: { item?: TItem; node?: GroupedTableNode<TItem> }) => unknown;
   'footer-start'?: () => unknown;
   'footer-end'?: () => unknown;
 }>();
@@ -200,8 +199,8 @@ defineExpose({ focus: () => viewport.value?.focus() });
 
 type DisplayRow =
   | { kind: 'item'; key: string; item: TItem }
-  | { kind: 'group'; key: string; node: GroupNode<TItem> }
-  | { kind: 'controls'; key: string; node: GroupNode<TItem>; leaf: boolean };
+  | { kind: 'group'; key: string; node: GroupedTableNode<TItem> }
+  | { kind: 'controls'; key: string; node: GroupedTableNode<TItem>; leaf: boolean };
 
 /** Gives each item a stable key independent of the current sort, page, or parent group. */
 function itemRow(item: TItem): DisplayRow {
@@ -209,7 +208,7 @@ function itemRow(item: TItem): DisplayRow {
 }
 
 /** Puts open groups, their records, and branch controls in a single row sequence. */
-function appendGroup(rows: DisplayRow[], node: GroupNode<TItem>): void {
+function appendGroup(rows: DisplayRow[], node: GroupedTableNode<TItem>): void {
   rows.push({ kind: 'group', key: `group:${node.key}`, node });
   if (!node.expanded) return;
 
@@ -342,7 +341,7 @@ function getRowId(row: DisplayRow): string {
 }
 
 /** Makes the group value, count, and expansion state available to keyboard and screen reader users. */
-function groupLabel(node: GroupNode<TItem>): string {
+function groupLabel(node: GroupedTableNode<TItem>): string {
   return `${node.value ?? t('grouping.null')} ${t('grouping.count', { count: node.count })}`;
 }
 

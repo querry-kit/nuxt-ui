@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
-import type { GroupNode } from '@querry-kit/nuxt';
 import { useIntersectionObserver } from '@vueuse/core';
 import { ref, useTemplateRef, watch } from 'vue';
 import GroupedPagination from './pagination.vue';
@@ -21,11 +20,11 @@ import { useTableI18n } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import QTableGroupLoadMore from '../group/load-more.vue';
 
-import type { GroupedTableState } from '../../../types/grouped-table';
+import type { GroupedTableNode, GroupedTableState } from '../../../types/grouped-table';
 
 const { table, node, viewport, leaf, texts } = defineProps<{
   table: GroupedTableState<TItem>;
-  node: GroupNode<TItem>;
+  node: GroupedTableNode<TItem>;
   viewport: HTMLElement | null;
   leaf: boolean;
   texts?: TableTextOverrides;

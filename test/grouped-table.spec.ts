@@ -1,9 +1,8 @@
-import type { GroupBranch, GroupNode } from '@querry-kit/nuxt';
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { computed, reactive, ref } from 'vue';
 import QTableGrouped from '../src/runtime/components/table/grouped/index.vue';
-import type { GroupedTableState } from '../src/runtime/types/grouped-table';
+import type { GroupedTableBranch, GroupedTableNode, GroupedTableState } from '../src/runtime/types/grouped-table';
 
 const scroll = vi.hoisted(() => ({ load: undefined as (() => Promise<void>) | undefined }));
 
@@ -27,7 +26,7 @@ vi.mock('@vueuse/core', async (importOriginal) => ({
 type Item = { id: string; status: string; priority: string; title: string };
 const item = { id: '01', status: 'open', priority: 'high', title: 'First task' };
 
-function branch(): GroupBranch<Item> {
+function branch(): GroupedTableBranch<Item> {
   return { items: [], children: [], hasMore: false, loading: false, error: undefined };
 }
 
@@ -89,7 +88,7 @@ const stubs = {
 };
 
 function fixture() {
-  const open: GroupNode<Item> = {
+  const open: GroupedTableNode<Item> = {
     ...branch(),
     path: [{ field: 'status', value: 'open' }],
     key: 'open',
@@ -99,7 +98,7 @@ function fixture() {
     loaded: true,
     expanded: true,
   };
-  const high: GroupNode<Item> = {
+  const high: GroupedTableNode<Item> = {
     ...branch(),
     path: [...open.path, { field: 'priority', value: 'high' }],
     key: 'high',
