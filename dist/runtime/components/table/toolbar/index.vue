@@ -1,0 +1,183 @@
+<template>
+  <DefineBreadcrumb>
+    <slot name="breadcrumb" :items="breadcrumbItems">
+      <UBreadcrumb v-if="breadcrumbItems?.length" :items="breadcrumbItems" />
+    </slot>
+  </DefineBreadcrumb>
+
+  <DefineSearch>
+    <slot name="search" :search="search" :set-search="setSearch">
+      <UInput
+        v-if="search !== void 0"
+        class="qk-table-toolbar-search"
+        :icon="icon('search.input')"
+        :model-value="search"
+        :placeholder="searchPlaceholder ?? t('search.placeholder')"
+        :aria-label="searchPlaceholder ?? t('search.placeholder')"
+        @update:model-value="setSearch"
+      />
+    </slot>
+  </DefineSearch>
+
+  <DefineOptions>
+    <slot name="options" :sorting="sorting" :filtering="filtering" :grouping="grouping" :column-order="columnOrder">
+      <slot name="grouping" :grouping="grouping" :fields="groupableFields" :set-grouping="setGrouping">
+        <QTableGrouping
+          v-if="groupableFields?.length && grouping"
+          v-model:grouping="grouping"
+          :fields="groupableFields"
+          :texts="texts"
+          :icons="icons"
+        />
+      </slot>
+      <slot name="sorting" :sorting="sorting" :fields="sortableFields" :set-sorting="setSorting">
+        <QTableSorting
+          v-if="sortableFields?.length && sorting"
+          v-model:sorting="sorting"
+          :fields="sortableFields"
+          :shortcuts="shortcuts"
+          :texts="texts"
+          :icons="icons"
+        />
+      </slot>
+      <slot name="filtering" :filtering="filtering" :fields="filterFields" :set-filtering="setFiltering">
+        <QTableFiltering
+          v-if="filterFields?.length && filtering"
+          v-model:filtering="filtering"
+          :fields="filterFields"
+          :context-active="filterContextActive"
+          :shortcuts="shortcuts"
+          :texts="texts"
+          :icons="icons"
+          @clear="emit('clear-filters')"
+        >
+          <template v-if="$slots['filter-context']" #context>
+            <slot name="filter-context" />
+          </template>
+          <template v-if="$slots['filter-item']" #item="item">
+            <slot name="filter-item" v-bind="item" />
+          </template>
+        </QTableFiltering>
+      </slot>
+      <slot
+        name="column-options"
+        :columns="columnDefinitions"
+        :column-order="columnOrder"
+        :invisible-columns="invisibleColumns"
+        :column-pinning="columnPinning"
+        :set-column-order="setColumnOrder"
+        :set-invisible-columns="setInvisibleColumns"
+        :set-column-pinning="setColumnPinning"
+      >
+        <QTableOptions
+          v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
+          v-model:column-order="columnOrder"
+          v-model:invisible-columns="invisibleColumns"
+          v-model:column-pinning="columnPinning"
+          :columns="columnDefinitions"
+          :shortcuts="shortcuts"
+          :texts="texts"
+          :icons="icons"
+        />
+      </slot>
+    </slot>
+  </DefineOptions>
+
+  <DefineActions>
+    <slot name="new" />
+  </DefineActions>
+
+  <slot
+    name="layout"
+    :is-small="isSmall"
+    :breadcrumb="Breadcrumb"
+    :search="Search"
+    :options="Options"
+    :actions="Actions"
+  >
+    <div :class="ui?.root">
+      <template v-if="isSmall">
+        <UDashboardToolbar
+          :class="ui?.primary"
+          :ui="{ left: 'qk-table-toolbar-breadcrumb', right: 'qk-table-toolbar-actions' }"
+        >
+          <template #left>
+            <Breadcrumb />
+          </template>
+          <template #right>
+            <Actions />
+          </template>
+        </UDashboardToolbar>
+        <UDashboardToolbar class="qk-table-toolbar-scrollbar-none" :class="ui?.secondary">
+          <template #left>
+            <Search />
+          </template>
+          <template #right>
+            <Options />
+          </template>
+        </UDashboardToolbar>
+      </template>
+
+      <UDashboardToolbar v-else :class="[ui?.primary, ui?.secondary]">
+        <template #left>
+          <Breadcrumb />
+        </template>
+        <template #right>
+          <Search />
+          <Options />
+          <Actions />
+        </template>
+      </UDashboardToolbar>
+    </div>
+  </slot>
+</template>
+
+<script setup>
+import { breakpointsTailwind, createReusableTemplate, useBreakpoints, useMounted } from "@vueuse/core";
+import { computed, provide } from "vue";
+import { useTableI18n } from "../../../composables/use-table-i18n";
+import { useTableIcons } from "../../../composables/use-table-icons";
+import { toolbarSmallKey } from "./context";
+const mounted = useMounted();
+const smallBreakpoint = useBreakpoints(breakpointsTailwind).smaller("sm");
+const isSmall = computed(() => mounted.value && smallBreakpoint.value);
+provide(toolbarSmallKey, isSmall);
+const [DefineBreadcrumb, Breadcrumb] = createReusableTemplate();
+const [DefineSearch, Search] = createReusableTemplate();
+const [DefineOptions, Options] = createReusableTemplate();
+const [DefineActions, Actions] = createReusableTemplate();
+const props = defineProps({
+  breadcrumbItems: { type: Array, required: false },
+  sortableFields: { type: Array, required: false },
+  groupableFields: { type: Array, required: false },
+  filterFields: { type: Array, required: false },
+  filterContextActive: { type: Boolean, required: false },
+  columnDefinitions: { type: Array, required: false },
+  searchPlaceholder: { type: String, required: false },
+  texts: { type: null, required: false },
+  icons: { type: null, required: false },
+  shortcuts: { type: Boolean, required: false },
+  ui: { type: Object, required: false }
+});
+const emit = defineEmits(["clear-filters"]);
+const search = defineModel("search", { type: null });
+const sorting = defineModel("sorting", { type: Array });
+const grouping = defineModel("grouping", { type: Array });
+const filtering = defineModel("filtering", { type: Object });
+const columnOrder = defineModel("columnOrder", { type: Array });
+const invisibleColumns = defineModel("invisibleColumns", { type: Array });
+const columnPinning = defineModel("columnPinning", { type: Object });
+const t = useTableI18n(() => props.texts);
+const icon = useTableIcons(props.icons);
+const setSearch = (value) => search.value = value == null ? void 0 : String(value);
+const setGrouping = (value) => grouping.value = value;
+const setSorting = (value) => sorting.value = value;
+const setFiltering = (value) => filtering.value = value;
+const setColumnOrder = (value) => columnOrder.value = value;
+const setInvisibleColumns = (value) => invisibleColumns.value = value;
+const setColumnPinning = (value) => columnPinning.value = value;
+</script>
+
+<style>
+.qk-table-toolbar-breadcrumb{min-width:0;overflow-x:auto;white-space:nowrap}.qk-table-toolbar-actions{flex-shrink:0!important}.qk-table-toolbar-scrollbar-none{scrollbar-width:none}.qk-table-toolbar-scrollbar-none::-webkit-scrollbar{display:none}.qk-table-toolbar-search{max-width:8rem}@media (min-width:40rem){.qk-table-toolbar-search{max-width:10rem}}@media (min-width:48rem){.qk-table-toolbar-search{max-width:none}}
+</style>
