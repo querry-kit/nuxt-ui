@@ -9,17 +9,19 @@
         :start="rowStart"
         :end="rowEnd"
       >
-        <span v-if="infinite && !grouped" class="text-muted text-sm">
-          {{ t('pagination.loaded', { count: loadedItems, total: totalItems }) }}
-        </span>
-        <PaginationSummary
-          v-else-if="!grouped"
-          :total-items="totalItems"
-          :start="rowStart"
-          :end="rowEnd"
-          :summary="summary"
-          :texts="texts"
-        />
+        <slot v-if="!grouped" name="summary" :start="rowStart" :end="rowEnd" :total-items="totalItems">
+          <span v-if="infinite" class="text-muted text-sm">
+            {{ t('pagination.loaded', { count: formatNumber(loadedItems), total: formatNumber(totalItems) }) }}
+          </span>
+          <PaginationSummary
+            v-else
+            :total-items="totalItems"
+            :start="rowStart"
+            :end="rowEnd"
+            :summary="summary"
+            :texts="texts"
+          />
+        </slot>
       </slot>
     </div>
     <div class="flex min-w-0 flex-wrap items-center gap-1.5" :class="ui?.right">
@@ -28,6 +30,7 @@
           v-if="pageSizes.length"
           :items-per-page="itemsPerPage"
           :items="pageSizeItems"
+          :texts="texts"
           :set-items-per-page="setItemsPerPage"
         />
       </slot>
@@ -77,8 +80,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
-
-import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
 import PaginationPageSize from './page-size.vue';
@@ -112,7 +114,7 @@ const loadingMode = defineModel<'pagination' | 'infinite'>('loadingMode');
 const modeOpen = ref(false);
 const emit = defineEmits<{ 'load-more': [] }>();
 const sentinel = useTemplateRef<HTMLElement>('sentinel');
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const modeItems = computed(() => [
   { value: 'pagination', label: t('pagination.paginated') },
   { value: 'infinite', label: t('pagination.infinite') },
@@ -129,7 +131,8 @@ const rowStart = computed(() => {
 const rowEnd = computed(() =>
   infinite.value ? props.loadedItems : Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems),
 );
-const pageSizeItems = computed(() => props.pageSizes.map((value) => ({ value, label: String(value) })));
+const formatNumber = useTableNumber();
+const pageSizeItems = computed(() => props.pageSizes.map((value) => ({ value, label: formatNumber(value) })));
 /** Requests the first page in pagination mode. */
 const first = () => (page.value = 1);
 /** Requests the previous page, stopping at the first page. */

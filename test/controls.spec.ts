@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h, markRaw, nextTick } from 'vue';
 import QTableFiltering from '../src/runtime/components/table/filtering/index.vue';
+import QTableGrouping from '../src/runtime/components/table/grouping/index.vue';
 import QTableOptions from '../src/runtime/components/table/options/index.vue';
 import QTableSorting from '../src/runtime/components/table/sorting/index.vue';
 import QTableToolbar from '../src/runtime/components/table/toolbar/index.vue';
@@ -17,6 +18,19 @@ const stubs = {
   UIcon: true,
   UInput: true,
   UInputNumber: true,
+  UModal: {
+    name: 'UModal',
+    props: ['title', 'open', 'ui'],
+    emits: ['update:open'],
+    template: `<div>
+      <div @click="$emit('update:open', true)"><slot /></div>
+      <div v-if="open" role="dialog" :aria-label="title">
+        <header><slot name="actions" /></header>
+        <main><slot name="body" /></main>
+        <footer><slot name="footer" :close="() => $emit('update:open', false)" /></footer>
+      </div>
+    </div>`,
+  },
   UPopover: { name: 'UPopover', props: ['ui', 'content'], template: '<div><slot /><slot name="content" /></div>' },
   USelect: true,
   USelectMenu: true,
@@ -451,6 +465,25 @@ describe('table controls', () => {
     expect(wrapper.emitted('update:invisibleColumns')).toBeTruthy();
     expect(wrapper.emitted('update:columnOrder')?.at(-1)).toEqual([['email', 'name', 'fixed']]);
     expect(wrapper.emitted('update:columnPinning')?.at(-1)).toEqual([{ left: ['email'], right: [] }]);
+
+    await wrapper.setProps({
+      columnOrder: ['email', 'name', 'fixed'],
+      invisibleColumns: ['name'],
+      columnPinning: { left: ['email'] },
+    });
+    const reset = wrapper.get('button[aria-label="Reset layout"]');
+    expect(reset.text()).toBe('');
+    expect(reset.attributes('color')).toBe('error');
+    await reset.trigger('click');
+    expect(wrapper.emitted('update:columnOrder')?.at(-1)).toEqual([['name', 'email', 'fixed']]);
+    expect(wrapper.emitted('update:invisibleColumns')?.at(-1)).toEqual([[]]);
+    expect(wrapper.emitted('update:columnPinning')?.at(-1)).toEqual([{}]);
+    await wrapper.setProps({
+      columnOrder: ['name', 'email', 'fixed'],
+      invisibleColumns: [],
+      columnPinning: { left: [] },
+    });
+    expect(wrapper.find('button[aria-label="Reset layout"]').exists()).toBe(false);
   });
 
   it('supports pinning and unpinning from a customized column item', async () => {
@@ -546,7 +579,106 @@ describe('table controls', () => {
     expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(1);
   });
 
-  it('splits the toolbar into two rows below the small breakpoint', async () => {
+  it('marks contextual filters active and clears them from the toolbar', async () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+          filterContextActive: true,
+        },
+        slots: { 'filter-context': '<span>Project picker</span>' },
+        global: { components: { QTableFiltering }, stubs: { ...stubs, QTableFiltering: false } },
+      }),
+    );
+
+    expect(wrapper.text()).toContain('Project picker');
+    expect(wrapper.get('button[aria-label="Filter"]').attributes('color')).toBe('primary');
+    await wrapper.get('button[aria-label="Clear filters"]').trigger('click');
+    expect(wrapper.emitted('clear-filters')).toHaveLength(1);
+    await wrapper.setProps({ filterContextActive: false });
+    expect(wrapper.get('button[aria-label="Filter"]').attributes('color')).toBe('neutral');
+    expect(wrapper.find('button[aria-label="Clear filters"]').exists()).toBe(false);
+  });
+
+  it('forwards custom filter rows while retaining the default editor for other fields', () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          filtering: {
+            operator: FilteringMode.Intersect,
+            filters: [
+              { id: 'project', field: 'project', type: FilterFieldType.Boolean, value: true },
+              { id: 'active', field: 'active', type: FilterFieldType.Boolean, value: true },
+            ],
+          },
+          filterFields: [
+            { value: 'project', label: 'Project', type: FilterFieldType.Boolean },
+            { value: 'active', label: 'Active', type: FilterFieldType.Boolean },
+          ],
+        },
+        slots: {
+          'filter-item': ({ filter }) => (filter.field === 'project' ? h('span', 'Project picker') : undefined),
+        },
+        global: { components: { QTableFiltering }, stubs: { ...stubs, QTableFiltering: false } },
+      }),
+    );
+
+    expect(wrapper.text()).toContain('Project picker');
+    expect(wrapper.text()).toContain('Active');
+    expect(wrapper.findAll('button[aria-label="Remove filter"]')).toHaveLength(1);
+  });
+
+  it('rearranges the toolbar while independent control slots retain their models', async () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          grouping: [],
+          sorting: [],
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        slots: {
+          layout: ({ options, actions }) => h('nav', [h(actions), h(options)]),
+          new: () => h('span', 'Create task'),
+          grouping: ({ setGrouping }) => h('button', { onClick: () => setGrouping(['name']) }, 'Custom grouping'),
+          sorting: ({ setSorting }) =>
+            h('button', { onClick: () => setSorting([{ id: 'name', desc: true }]) }, 'Custom sorting'),
+          filtering: ({ setFiltering }) =>
+            h(
+              'button',
+              { onClick: () => setFiltering({ operator: FilteringMode.Union, filters: [] }) },
+              'Custom filtering',
+            ),
+          'column-options': ({ setColumnOrder, setInvisibleColumns, setColumnPinning }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  setColumnOrder(['active', 'name']);
+                  setInvisibleColumns(['name']);
+                  setColumnPinning({ left: ['active'] });
+                },
+              },
+              'Custom columns',
+            ),
+        },
+        global: { stubs },
+      }),
+    );
+    expect(wrapper.get('nav').text()).toContain('Create taskCustom grouping');
+    for (const button of wrapper.findAll('nav button')) await button.trigger('click');
+    expect(wrapper.emitted('update:grouping')).toEqual([[['name']]]);
+    expect(wrapper.emitted('update:sorting')).toEqual([[[{ id: 'name', desc: true }]]]);
+    expect(wrapper.emitted('update:filtering')).toEqual([[{ operator: FilteringMode.Union, filters: [] }]]);
+    expect(wrapper.emitted('update:columnOrder')).toEqual([[['active', 'name']]]);
+    expect(wrapper.emitted('update:invisibleColumns')).toEqual([[['name']]]);
+    expect(wrapper.emitted('update:columnPinning')).toEqual([[{ left: ['active'] }]]);
+  });
+
+  it('splits the toolbar and uses closable dialogs below the small breakpoint', async () => {
     const matchMedia = window.matchMedia;
     window.matchMedia = ((query: string) => ({
       matches: true,
@@ -563,6 +695,9 @@ describe('table controls', () => {
       const wrapper = track(
         mount(QTableToolbar, {
           props: {
+            grouping: ['name'],
+            groupableFields: [{ value: 'name', label: 'Name' }],
+            texts: { toolbar: { close: 'Schließen' } },
             sorting: [],
             filtering: { operator: FilteringMode.Intersect, filters: [] },
             columnOrder: ['name'],
@@ -573,7 +708,10 @@ describe('table controls', () => {
             columnDefinitions: [{ id: 'name', header: 'Name' }],
           },
           slots: { new: '<span>Create</span>' },
-          global: { stubs },
+          global: {
+            components: { QTableGrouping, QTableSorting, QTableFiltering, QTableOptions },
+            stubs: { ...stubs, QTableSorting: false, QTableFiltering: false, QTableOptions: false },
+          },
         }),
       );
       await nextTick();
@@ -581,6 +719,20 @@ describe('table controls', () => {
 
       expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(2);
       expect(wrapper.text()).toContain('Create');
+      expect(wrapper.findAllComponents({ name: 'UPopover' })).toHaveLength(0);
+      const modals = wrapper.findAllComponents({ name: 'UModal' });
+      expect(modals.map((modal) => modal.props('title'))).toEqual(['Group by', 'Sort', 'Filter', 'Table options']);
+
+      for (const title of ['Group by', 'Sort', 'Filter', 'Table options']) {
+        await wrapper.get(`button[aria-label="${title}"]`).trigger('click');
+        const dialog = wrapper.get(`[role="dialog"][aria-label="${title}"]`);
+        expect(dialog.get('header').text()).toContain(title);
+        expect(dialog.find('main').exists()).toBe(true);
+        const close = dialog.get('footer button');
+        expect(close.text()).toBe('Schließen');
+        await close.trigger('click');
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false);
+      }
     } finally {
       window.matchMedia = matchMedia;
     }

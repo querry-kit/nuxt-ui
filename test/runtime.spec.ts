@@ -8,6 +8,7 @@ describe('runtime exports', () => {
     expect(runtime.QTableGroup).toBeDefined();
     expect(runtime.QTableGroupLoadMore).toBeDefined();
     expect(runtime.QTableFiltering).toBeDefined();
+    expect(runtime.QTableFilterLookup).toBeDefined();
     expect(runtime.QTableOptions).toBeDefined();
     expect(runtime.QTablePagination).toBeDefined();
     expect(runtime.QTableSorting).toBeDefined();

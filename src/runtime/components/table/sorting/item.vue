@@ -42,7 +42,7 @@ const props = defineProps<{
   toggleDirection: () => void;
   showDragHandle: boolean;
 }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const label = computed(() => props.fields.find((field) => field.value === props.sort.id)?.label ?? props.sort.id);
 </script>

@@ -42,6 +42,11 @@ const querryKitNuxtUiModule: NuxtModule<QuerryKitNuxtUiOptions> = defineNuxtModu
         priority: 0,
       });
       addComponent({
+        name: 'QTableGrouped',
+        filePath: resolver.resolve('runtime/components/table/grouped/index.vue'),
+        priority: 0,
+      });
+      addComponent({
         name: 'QTableGrouping',
         filePath: resolver.resolve('runtime/components/table/grouping/index.vue'),
         priority: 0,
@@ -49,6 +54,11 @@ const querryKitNuxtUiModule: NuxtModule<QuerryKitNuxtUiOptions> = defineNuxtModu
       addComponent({
         name: 'QTableFiltering',
         filePath: resolver.resolve('runtime/components/table/filtering/index.vue'),
+        priority: 0,
+      });
+      addComponent({
+        name: 'QTableFilterLookup',
+        filePath: resolver.resolve('runtime/components/table/filtering/lookup.vue'),
         priority: 0,
       });
       addComponent({

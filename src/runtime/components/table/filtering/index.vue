@@ -1,63 +1,64 @@
 <template>
-  <span ref="trigger">
-    <slot name="trigger" :open="open" :toggle="toggle" :active="hasFilters">
-      <UButton
-        variant="ghost"
-        :aria-label="t('filtering.title')"
-        :color="hasFilters ? 'primary' : 'neutral'"
-        :icon="icon ?? tableIcon('filtering.trigger')"
-        @click="toggle"
-      />
-    </slot>
-  </span>
-  <UPopover
+  <ControlPanel
     v-model:open="open"
-    :reference="trigger"
-    :content="popoverContent"
-    :ui="{ content: 'qk-table-filtering-popover' }"
-    :modal="false"
+    popover-class="qk-table-filtering-popover"
+    :title="t('filtering.title')"
+    :texts="texts"
+    anchored
+    :popover-body-class="['p-2.5', ui?.content]"
+    :body-class="ui?.content"
   >
-    <template #content>
-      <div class="p-2.5" :class="ui?.content">
-        <slot name="header" :filtering="filtering" :clear="clear" :toggle-mode="toggleMode">
-          <FilteringHeader
-            :filtering="filtering"
-            :has-filters="hasFilters"
-            :texts="texts"
-            :icons="icons"
-            :clear="clear"
-            :toggle-mode="toggleMode"
-          />
-        </slot>
-        <slot name="items" :filters="filtering.filters" :remove="remove" :update="update">
-          <FilteringItems
-            :filters="filtering.filters"
-            :fields="fields"
-            :has-filters="hasFilters"
-            :remove="remove"
-            :update="update"
-          >
-            <template #item="itemProps">
-              <slot name="item" v-bind="itemProps">
-                <FilteringItem
-                  :filter="itemProps.filter"
-                  :field="itemProps.field"
-                  :texts="texts"
-                  :icons="icons"
-                  :remove="itemProps.remove"
-                  :update="itemProps.update"
-                />
-              </slot>
-            </template>
-          </FilteringItems>
-        </slot>
-        <USeparator v-if="hasFilters" class="my-2" />
-        <slot name="add" :fields="availableFields" :add="add">
-          <FilteringAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
-        </slot>
-      </div>
+    <template #trigger="{ dialog }">
+      <slot name="trigger" :open="open" :toggle="toggle" :active="hasActiveFilters">
+        <UButton
+          variant="ghost"
+          :aria-label="t('filtering.title')"
+          :color="hasActiveFilters ? 'primary' : 'neutral'"
+          :icon="icon ?? tableIcon('filtering.trigger')"
+          @click="!dialog && toggle()"
+        />
+      </slot>
     </template>
-  </UPopover>
+    <template #header>
+      <slot name="header" :filtering="filtering" :clear="clear" :toggle-mode="toggleMode">
+        <FilteringHeader
+          :filtering="filtering"
+          :has-filters="hasActiveFilters"
+          :texts="texts"
+          :icons="icons"
+          :clear="clear"
+          :toggle-mode="toggleMode"
+        />
+      </slot>
+    </template>
+    <slot name="context" />
+    <slot name="items" :filters="filtering.filters" :remove="remove" :update="update">
+      <FilteringItems
+        :filters="filtering.filters"
+        :fields="fields"
+        :has-filters="hasFilters"
+        :remove="remove"
+        :update="update"
+      >
+        <template #item="itemProps">
+          <slot name="item" v-bind="itemProps">
+            <FilteringItem
+              :filter="itemProps.filter"
+              :field="itemProps.field"
+              :texts="texts"
+              :icons="icons"
+              :remove="itemProps.remove"
+              :update="itemProps.update"
+            />
+          </slot>
+        </template>
+      </FilteringItems>
+    </slot>
+    <USeparator v-if="hasFilters" class="my-2" />
+    <slot name="add" :fields="availableFields" :add="add">
+      <FilteringAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
+    </slot>
+  </ControlPanel>
 </template>
 
 <script setup lang="ts">
@@ -66,6 +67,7 @@ import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
+import ControlPanel from '../toolbar/control-panel.vue';
 import { FilteringMode, type FilterField, type Filtering, type FilteringField } from '../../../types/table';
 import { createFilter } from '../../../utils/filtering';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
@@ -77,29 +79,29 @@ import FilteringItems from './items.vue';
 const props = withDefaults(
   defineProps<{
     fields: FilterField[];
+    /** Whether the application has an active filter in the context slot. */
+    contextActive?: boolean;
     icon?: string;
     shortcuts?: boolean;
     texts?: TableTextOverrides;
     icons?: TableIconOverrides;
     ui?: { content?: string };
   }>(),
-  { shortcuts: true },
+  { shortcuts: true, contextActive: false },
 );
 const filtering = defineModel<Filtering>('filtering', { required: true });
-const trigger = ref<HTMLElement>();
+const emit = defineEmits<{ clear: [] }>();
 const open = ref(false);
-const t = useTableI18n(props.texts);
-const popoverContent = computed(() => ({
-  align: 'start' as const,
-  side: 'bottom' as const,
-  sideOffset: 8,
-  'aria-label': t('filtering.title'),
-}));
+const t = useTableI18n(() => props.texts);
 const tableIcon = useTableIcons(props.icons);
 const hasFilters = computed(() => filtering.value.filters.length > 0);
+const hasActiveFilters = computed(() => hasFilters.value || props.contextActive);
 const availableFields = computed(() => props.fields.filter((field) => !field.disabled));
 const toggle = () => (open.value = !open.value);
-const clear = () => (filtering.value = { operator: FilteringMode.Intersect, filters: [] });
+const clear = () => {
+  filtering.value = { operator: FilteringMode.Intersect, filters: [] };
+  emit('clear');
+};
 const toggleMode = () =>
   (filtering.value = {
     ...filtering.value,

@@ -56,6 +56,13 @@ export default defineNuxtConfig({
 
 Set `autoImports` to `false` when the application registers the components itself. The package never installs, configures, or ships an i18n provider. Pass nested `texts` or `icons` props for explicit overrides, or replace display regions with the documented slots.
 
+Text overrides are reactive. Use `filtering.operatorField` and `filtering.valueField` for distinct field names, and
+`filtering.operators` and `filtering.operatorDescriptions` for operator text. Group counts and full group labels
+pass their numeric count to the host translator for plural selection. Supply `grouping.rowLabel` to control
+word order with `{label}`, `{count}`, `{formattedCount}`, and `{countLabel}`. The controls use the host's
+`$n` for display numbers when available. Set the Nuxt UI locale on `UApp` for native SelectMenu and
+Pagination messages, including the lookup search placeholder and page navigation labels.
+
 When overriding icons, install the matching Iconify collection in the host application. For example, install Lucide with `pnpm add @iconify-json/lucide` before passing `i-lucide-*` values. See [types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types) for Lucide and Tabler examples.
 
 Configure table-wide icon defaults in the host application's `app.config.ts`. A component's `icons` prop overrides this configuration, while the existing flat `icon` prop remains authoritative for an individual trigger:
@@ -115,6 +122,12 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
+Below the toolbar’s `sm` breakpoint (640 px by default), grouping, sorting, filtering, and column options open in dialogs. Only the body scrolls; the header and the footer with the Close button stay visible. Override the label with `texts.toolbar.close` or translate `querrykit.table.toolbar.close`. On wider screens, the controls open in popovers.
+
+Use the `filter-context` slot for a project selector or other application-owned filter inside the filter panel. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
+
+Use `filter-item` to customize individual filter rows. The slot receives `filter`, `field`, `remove`, and `update`. Fields without custom slot content keep their default editor.
+
 ```vue
 <QTableToolbar
   v-model:search="search"
@@ -140,10 +153,46 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 | `QTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/toolbar)  |
 | `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/sorting)        |
 | `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)    |
-| `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
+| `QTableOptions`    | Reorders, hides, pins, and resets columns.                    | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
 | `QTablePagination` | Renders a footer with optional pagination and infinite-scroll switching. | [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)  |
 
 Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
+
+### Searchable lookup filters
+
+Use `QTableFilterLookup` as the component for a `select` field. Supply a
+`FilterLookupSource` through `componentProps`. The source exposes `search(term)`
+for matching choices and `resolve(values)` for selected labels, including values
+from bookmarked filters. Each method returns `{ value, label }` choices. An empty
+search loads the initial choices.
+
+```ts
+import { QTableFilterLookup } from '#components';
+import type { FilterField } from '@querry-kit/nuxt-ui/types';
+
+const projectField = {
+  type: 'select',
+  value: 'project.id',
+  label: 'Project',
+  component: QTableFilterLookup,
+  componentProps: { source: projectLookup, maxSelections: 100 },
+} satisfies FilterField;
+```
+
+The application supplies the endpoint, field path, and optional selection limit.
+The lookup also works outside the filter toolbar with an array `v-model`, a
+`source`, and an accessible label.
+
+### Layout slots
+
+- `QTableToolbar` exposes `layout` for the full arrangement and individual `grouping`, `sorting`, `filtering`, and
+  `column-options` slots with model setters.
+- `QTableGrouping` exposes `trigger`, `header`, `clear`, `items`, `item`, and `add` with grouping actions.
+- `QTableFilterLookup` exposes `selection`, `option`, `empty`, and `error` with selection state and a retry action.
+- `QTableGrouped` exposes `column-header`, `group-toggle`, `group-count`, `loading`, `empty`, `error`,
+  `branch-controls`, `branch-error`, `group-footer`, and `pagination`. Bind the group toggle slot's `triggerProps`
+  to a native button to retain keyboard and row activation. The pagination slot receives a branch path and paging actions.
+- `QTablePagination` exposes `summary` in addition to the existing footer and navigation slots.
 
 ## 📖 Documentation
 
@@ -178,7 +227,7 @@ pnpm build
 
 Verify visual component changes through the corresponding live demo in the central documentation.
 
-Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges.
+Dependency maintenance updates manifests and the pnpm lockfile within supported version ranges. The development toolchain pins patched transitive versions of glob, minimatch, and node-forge.
 
 TanStack Table is not a direct peer dependency of this package. Table controls use Query Kit types; a consuming table renderer owns its TanStack version.
 
@@ -246,6 +295,32 @@ All labels live under `querrykit.table.grouping` for host i18n. `texts.grouping`
 `trigger`, `up`, `down`, `remove`, `add`, `expanded`, and `collapsed` using existing
 component/app-config/default precedence. Field labels and null-value labels are
 application-owned; use the same locale as the rest of the table.
+
+### Render groups as table rows
+
+`QTableGrouped` renders the state returned by `useGroupedTable`. Start the query with
+`table.initialize()` when the view mounts. Supply the current visible columns and use
+`available-columns` when a grouped column can be hidden in the saved layout. The renderer accepts the structural `GroupedTableState` interface from `@querry-kit/nuxt-ui/types`.
+
+```vue
+<QTableGrouped
+  :table="table"
+  :columns="visibleColumns"
+  :available-columns="allColumns"
+  :get-id="(item) => item.id"
+  label="Tasks"
+>
+  <template #cell="{ item, field }">{{ item[field] }}</template>
+</QTableGrouped>
+```
+
+Add the package's `dist/runtime` directory as a Tailwind `@source` in your
+application's stylesheet. Use a path relative to that stylesheet.
+
+Each column needs an `id` and `header`. The renderer handles expansion, server sorting,
+branch paging, and infinite loading. The group row provides the hover highlight. Group labels truncate as needed to leave room for the count. Use `group-value` and `group-cell` to customize group
+rows, `leading` and `leading-header` for selection controls, and `branch` with `show-branch`
+for extra content under expanded groups. The `footer-start` slot can hold a loading-mode switch.
 
 ## Nuxt package compatibility
 

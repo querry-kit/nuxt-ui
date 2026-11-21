@@ -9,6 +9,8 @@ export const defaultTableIcons = {
     add: 'i-tabler-plus',
     expanded: 'i-tabler-chevron-down',
     collapsed: 'i-tabler-chevron-right',
+    expandAll: 'i-tabler-fold-down',
+    collapseAll: 'i-tabler-fold-up',
   },
   search: { input: 'i-tabler-search' },
   sorting: {
@@ -18,6 +20,8 @@ export const defaultTableIcons = {
     add: 'i-tabler-plus',
     ascending: 'i-tabler-sort-ascending',
     descending: 'i-tabler-sort-descending',
+    columnAscending: 'i-tabler-arrow-up',
+    columnDescending: 'i-tabler-arrow-down',
     remove: 'i-tabler-x',
   },
   filtering: {
@@ -32,6 +36,7 @@ export const defaultTableIcons = {
   options: {
     trigger: 'i-tabler-adjustments',
     header: 'i-tabler-adjustments',
+    reset: 'i-tabler-restore',
     pin: 'i-tabler-pin',
     unpin: 'i-tabler-pin-off',
     drag: 'i-tabler-grip-vertical',
@@ -51,6 +56,8 @@ export type TableIconKey =
   | 'grouping.add'
   | 'grouping.expanded'
   | 'grouping.collapsed'
+  | 'grouping.expandAll'
+  | 'grouping.collapseAll'
   | 'search.input'
   | 'sorting.trigger'
   | 'sorting.header'
@@ -58,6 +65,8 @@ export type TableIconKey =
   | 'sorting.add'
   | 'sorting.ascending'
   | 'sorting.descending'
+  | 'sorting.columnAscending'
+  | 'sorting.columnDescending'
   | 'sorting.remove'
   | 'filtering.trigger'
   | 'filtering.header'
@@ -68,6 +77,7 @@ export type TableIconKey =
   | 'filtering.remove'
   | 'options.trigger'
   | 'options.header'
+  | 'options.reset'
   | 'options.pin'
   | 'options.unpin'
   | 'options.drag'

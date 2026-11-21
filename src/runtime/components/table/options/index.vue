@@ -1,55 +1,62 @@
 <template>
-  <span ref="trigger">
-    <slot name="trigger" :open="open" :toggle="toggle">
-      <UTooltip :text="t('options.title')">
+  <ControlPanel
+    v-model:open="open"
+    popover-class="qk-table-options-popover"
+    :title="t('options.title')"
+    :texts="texts"
+    anchored
+    :popover-body-class="['p-2.5', ui?.content]"
+    :body-class="ui?.content"
+  >
+    <template #trigger="{ dialog }">
+      <slot name="trigger" :open="open" :toggle="toggle">
+        <UTooltip v-if="!dialog" :text="t('options.title')">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :aria-label="t('options.title')"
+            :icon="icon ?? tableIcon('options.trigger')"
+            @click="toggle"
+          />
+        </UTooltip>
         <UButton
+          v-else
           color="neutral"
           variant="ghost"
           :aria-label="t('options.title')"
           :icon="icon ?? tableIcon('options.trigger')"
-          @click="toggle"
         />
-      </UTooltip>
-    </slot>
-  </span>
-  <UPopover
-    v-model:open="open"
-    :reference="trigger"
-    :content="popoverContent"
-    :ui="{ content: 'qk-table-options-popover' }"
-    :modal="false"
-  >
-    <template #content>
-      <div class="p-2.5" :class="ui?.content">
-        <slot name="header" :columns="orderedColumns">
-          <OptionsHeader :texts="texts" :icons="icons" />
-        </slot>
-        <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
-          <OptionsItems
-            v-model:column-order="columnOrder"
-            v-model:invisible-columns="invisibleColumns"
-            v-model:column-pinning="columnPinning"
-            :columns="columns"
-            :texts="texts"
-            :icons="icons"
-          >
-            <template #item="itemProps">
-              <slot name="item" v-bind="itemProps">
-                <OptionsItem
-                  :column="itemProps.column"
-                  :visible="itemProps.visible"
-                  :texts="texts"
-                  :icons="icons"
-                  :show-drag-handle="columns.length > 1"
-                  :toggle-visibility="itemProps.toggleVisibility"
-                />
-              </slot>
-            </template>
-          </OptionsItems>
-        </slot>
-      </div>
+      </slot>
     </template>
-  </UPopover>
+    <template #header>
+      <slot name="header" :columns="orderedColumns" :can-reset="canReset" :reset="resetLayout">
+        <OptionsHeader :can-reset="canReset" :texts="texts" :icons="icons" @reset="resetLayout" />
+      </slot>
+    </template>
+    <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
+      <OptionsItems
+        v-model:column-order="columnOrder"
+        v-model:invisible-columns="invisibleColumns"
+        v-model:column-pinning="columnPinning"
+        :columns="columns"
+        :texts="texts"
+        :icons="icons"
+      >
+        <template #item="itemProps">
+          <slot name="item" v-bind="itemProps">
+            <OptionsItem
+              :column="itemProps.column"
+              :visible="itemProps.visible"
+              :texts="texts"
+              :icons="icons"
+              :show-drag-handle="columns.length > 1"
+              :toggle-visibility="itemProps.toggleVisibility"
+            />
+          </slot>
+        </template>
+      </OptionsItems>
+    </slot>
+  </ControlPanel>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +65,7 @@ import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
+import ControlPanel from '../toolbar/control-panel.vue';
 import type { ColumnDefinition, ColumnPinning } from '../../../types/table';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
 import OptionsHeader from './header.vue';
@@ -80,22 +88,28 @@ const props = withDefaults(
 const columnOrder = defineModel<string[]>('columnOrder', { required: true });
 const invisibleColumns = defineModel<string[]>('invisibleColumns', { required: true });
 const columnPinning = defineModel<ColumnPinning>('columnPinning', { required: true });
-const t = useTableI18n(props.texts);
-const popoverContent = computed(() => ({
-  align: 'start' as const,
-  side: 'bottom' as const,
-  sideOffset: 8,
-  'aria-label': t('options.title'),
-}));
+const t = useTableI18n(() => props.texts);
 const tableIcon = useTableIcons(props.icons);
-const trigger = ref<HTMLElement>();
 const open = ref(false);
 const orderedColumns = computed(() =>
   columnOrder.value
     .map((id) => props.columns.find((column) => column.id === id))
     .filter((column): column is ColumnDefinition => Boolean(column)),
 );
+const canReset = computed(
+  () =>
+    columnOrder.value.length !== props.columns.length ||
+    props.columns.some(({ id }, index) => columnOrder.value[index] !== id) ||
+    invisibleColumns.value.length > 0 ||
+    Boolean(columnPinning.value.left?.length || columnPinning.value.right?.length),
+);
 const toggle = () => (open.value = !open.value);
+/** Restores the declared column order and clears visibility and pinning overrides. */
+const resetLayout = () => {
+  columnOrder.value = props.columns.map(({ id }) => id);
+  invisibleColumns.value = [];
+  columnPinning.value = {};
+};
 const toggleVisibility = (id: string) => {
   const column = props.columns.find((item) => item.id === id);
   if (column?.enableHiding === false) return;
