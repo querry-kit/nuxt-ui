@@ -76,3 +76,5 @@ export type Filtering = QueryKitFilteringState<FilteringField>;
 export type ColumnDefinition = { id: string; header: string; enableHiding?: boolean; disabled?: boolean };
 /** IDs pinned at the beginning or end of a table. */
 export type ColumnPinning = { left?: string[]; right?: string[] };
+
+export type { GroupedTableColumn, GroupedTableState } from './grouped-table';

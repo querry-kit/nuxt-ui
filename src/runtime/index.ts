@@ -20,3 +20,6 @@ export { default as QTableGroup } from './components/table/group/index.vue';
 
 /** Server-backed grouping UI building block. */
 export { default as QTableGroupLoadMore } from './components/table/group/load-more.vue';
+
+/** Server-backed flat and grouped table renderer. */
+export { default as QTableGrouped } from './components/table/grouped/index.vue';

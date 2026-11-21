@@ -17,6 +17,11 @@ export const defaultTableTexts = {
     loadMore: 'Load more',
     empty: 'No items',
     null: 'No value',
+    noGroups: 'No matching groups',
+    rootError: 'Could not load groups',
+    itemsError: 'Could not load items',
+    expandAll: 'Expand all groups',
+    collapseAll: 'Collapse all groups',
   },
   search: { placeholder: 'Search' },
   sorting: {
@@ -64,6 +69,11 @@ export type TableTextKey =
   | 'grouping.loadMore'
   | 'grouping.empty'
   | 'grouping.null'
+  | 'grouping.noGroups'
+  | 'grouping.rootError'
+  | 'grouping.itemsError'
+  | 'grouping.expandAll'
+  | 'grouping.collapseAll'
   | 'search.placeholder'
   | 'sorting.title'
   | 'sorting.field'

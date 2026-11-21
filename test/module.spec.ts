@@ -18,6 +18,7 @@ describe('Nuxt module registration', () => {
     (module.default as any).setup({ autoImports: true });
     for (const [name, path] of [
       ['QTableGrouping', 'grouping/index.vue'],
+      ['QTableGrouped', 'grouped/index.vue'],
       ['QTableGroup', 'group/index.vue'],
       ['QTableGroupLoadMore', 'group/load-more.vue'],
     ]) {

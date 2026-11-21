@@ -42,6 +42,11 @@ const querryKitNuxtUiModule: NuxtModule<QuerryKitNuxtUiOptions> = defineNuxtModu
         priority: 0,
       });
       addComponent({
+        name: 'QTableGrouped',
+        filePath: resolver.resolve('runtime/components/table/grouped/index.vue'),
+        priority: 0,
+      });
+      addComponent({
         name: 'QTableGrouping',
         filePath: resolver.resolve('runtime/components/table/grouping/index.vue'),
         priority: 0,
