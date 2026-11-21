@@ -40,10 +40,19 @@
         v-if="filterFields?.length && filtering"
         v-model:filtering="filtering"
         :fields="filterFields"
+        :context-active="filterContextActive"
         :shortcuts="shortcuts"
         :texts="texts"
         :icons="icons"
-      />
+        @clear="emit('clear-filters')"
+      >
+        <template v-if="$slots['filter-context']" #context>
+          <slot name="filter-context" />
+        </template>
+        <template v-if="$slots['filter-item']" #item="item">
+          <slot name="filter-item" v-bind="item" />
+        </template>
+      </QTableFiltering>
       <QTableOptions
         v-if="columnDefinitions?.length && columnOrder && invisibleColumns && columnPinning"
         v-model:column-order="columnOrder"
@@ -122,6 +131,8 @@ const props = defineProps<{
   sortableFields?: SortingField[];
   groupableFields?: GroupingField[];
   filterFields?: FilterField[];
+  /** Whether the application has an active filter in the filter-context slot. */
+  filterContextActive?: boolean;
   columnDefinitions?: ColumnDefinition[];
   searchPlaceholder?: string;
   /** Explicit text overrides. These take precedence over host-app i18n and English defaults. */
@@ -131,6 +142,7 @@ const props = defineProps<{
   shortcuts?: boolean;
   ui?: { root?: string; primary?: string; secondary?: string };
 }>();
+const emit = defineEmits<{ 'clear-filters': [] }>();
 const search = defineModel<string | undefined>('search');
 const sorting = defineModel<SortingState>('sorting');
 const grouping = defineModel<string[]>('grouping');

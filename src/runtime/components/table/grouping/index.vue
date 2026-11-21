@@ -1,6 +1,11 @@
 <template>
   <UPopover :ui="{ content: 'qk-table-grouping-popover' }">
-    <UButton color="neutral" variant="ghost" :aria-label="t('grouping.title')" :icon="icon('grouping.trigger')" />
+    <UButton
+      variant="ghost"
+      :color="grouping.length ? 'primary' : 'neutral'"
+      :aria-label="t('grouping.title')"
+      :icon="icon('grouping.trigger')"
+    />
     <template #content>
       <div class="space-y-2 p-3">
         <div class="mb-4 flex items-center justify-between gap-2">

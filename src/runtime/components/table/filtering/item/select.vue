@@ -10,6 +10,7 @@
   />
   <component
     :is="field?.component"
+    v-bind="field?.componentProps"
     class="qk-table-filtering-value"
     size="sm"
     :aria-label="label ?? filter.field"

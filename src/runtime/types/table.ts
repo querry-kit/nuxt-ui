@@ -54,6 +54,13 @@ export type FilterFieldBoolean = FilterFieldBase & { type: typeof FilterFieldTyp
 export type FilterFieldNumber = FilterFieldBase & { type: typeof FilterFieldType.Number };
 /** A labelled option for enum-style filters. */
 export type FilterChoice = { value: string | number; label: string };
+/** App-owned option requests for a searchable filter. Empty search loads the initial choices. */
+export interface FilterLookupSource {
+  /** Returns choices matching the search text. */
+  search(term: string): Promise<FilterChoice[]>;
+  /** Resolves selected values independently of the current search. */
+  resolve(values: readonly FilterChoice['value'][]): Promise<FilterChoice[]>;
+}
 /** Enum filter field with optional replacement editor component. */
 export type FilterFieldEnum = FilterFieldBase & {
   type: typeof FilterFieldType.Enum;
@@ -61,7 +68,12 @@ export type FilterFieldEnum = FilterFieldBase & {
   component?: Component;
 };
 /** Select filter field with a consumer-provided editor component. */
-export type FilterFieldSelect = FilterFieldBase & { type: typeof FilterFieldType.Select; component: Component };
+export type FilterFieldSelect = FilterFieldBase & {
+  type: typeof FilterFieldType.Select;
+  component: Component;
+  /** Additional props for the editor. The filter owns its value and update events. */
+  componentProps?: Record<string, unknown>;
+};
 /** Union of every filter-field definition accepted by the control. */
 export type FilterField = FilterFieldBoolean | FilterFieldNumber | FilterFieldEnum | FilterFieldSelect;
 /** A single Query Kit-compatible filtering instruction. */
@@ -76,3 +88,11 @@ export type Filtering = QueryKitFilteringState<FilteringField>;
 export type ColumnDefinition = { id: string; header: string; enableHiding?: boolean; disabled?: boolean };
 /** IDs pinned at the beginning or end of a table. */
 export type ColumnPinning = { left?: string[]; right?: string[] };
+
+export type {
+  GroupedTableBranch,
+  GroupedTableColumn,
+  GroupedTableNode,
+  GroupedTablePath,
+  GroupedTableState,
+} from './grouped-table';

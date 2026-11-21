@@ -451,6 +451,25 @@ describe('table controls', () => {
     expect(wrapper.emitted('update:invisibleColumns')).toBeTruthy();
     expect(wrapper.emitted('update:columnOrder')?.at(-1)).toEqual([['email', 'name', 'fixed']]);
     expect(wrapper.emitted('update:columnPinning')?.at(-1)).toEqual([{ left: ['email'], right: [] }]);
+
+    await wrapper.setProps({
+      columnOrder: ['email', 'name', 'fixed'],
+      invisibleColumns: ['name'],
+      columnPinning: { left: ['email'] },
+    });
+    const reset = wrapper.get('button[aria-label="Reset layout"]');
+    expect(reset.text()).toBe('');
+    expect(reset.attributes('color')).toBe('error');
+    await reset.trigger('click');
+    expect(wrapper.emitted('update:columnOrder')?.at(-1)).toEqual([['name', 'email', 'fixed']]);
+    expect(wrapper.emitted('update:invisibleColumns')?.at(-1)).toEqual([[]]);
+    expect(wrapper.emitted('update:columnPinning')?.at(-1)).toEqual([{}]);
+    await wrapper.setProps({
+      columnOrder: ['name', 'email', 'fixed'],
+      invisibleColumns: [],
+      columnPinning: { left: [] },
+    });
+    expect(wrapper.find('button[aria-label="Reset layout"]').exists()).toBe(false);
   });
 
   it('supports pinning and unpinning from a customized column item', async () => {
@@ -544,6 +563,56 @@ describe('table controls', () => {
     );
     expect(wrapper.text()).toContain('Create');
     expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(1);
+  });
+
+  it('marks contextual filters active and clears them from the toolbar', async () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          filterFields: [{ value: 'active', label: 'Active', type: FilterFieldType.Boolean }],
+          filterContextActive: true,
+        },
+        slots: { 'filter-context': '<span>Project picker</span>' },
+        global: { components: { QTableFiltering }, stubs: { ...stubs, QTableFiltering: false } },
+      }),
+    );
+
+    expect(wrapper.text()).toContain('Project picker');
+    expect(wrapper.get('button[aria-label="Filter"]').attributes('color')).toBe('primary');
+    await wrapper.get('button[aria-label="Clear filters"]').trigger('click');
+    expect(wrapper.emitted('clear-filters')).toHaveLength(1);
+    await wrapper.setProps({ filterContextActive: false });
+    expect(wrapper.get('button[aria-label="Filter"]').attributes('color')).toBe('neutral');
+    expect(wrapper.find('button[aria-label="Clear filters"]').exists()).toBe(false);
+  });
+
+  it('forwards custom filter rows while retaining the default editor for other fields', () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          filtering: {
+            operator: FilteringMode.Intersect,
+            filters: [
+              { id: 'project', field: 'project', type: FilterFieldType.Boolean, value: true },
+              { id: 'active', field: 'active', type: FilterFieldType.Boolean, value: true },
+            ],
+          },
+          filterFields: [
+            { value: 'project', label: 'Project', type: FilterFieldType.Boolean },
+            { value: 'active', label: 'Active', type: FilterFieldType.Boolean },
+          ],
+        },
+        slots: {
+          'filter-item': ({ filter }) => (filter.field === 'project' ? h('span', 'Project picker') : undefined),
+        },
+        global: { components: { QTableFiltering }, stubs: { ...stubs, QTableFiltering: false } },
+      }),
+    );
+
+    expect(wrapper.text()).toContain('Project picker');
+    expect(wrapper.text()).toContain('Active');
+    expect(wrapper.findAll('button[aria-label="Remove filter"]')).toHaveLength(1);
   });
 
   it('splits the toolbar into two rows below the small breakpoint', async () => {

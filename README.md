@@ -115,6 +115,10 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
+Use the `filter-context` slot for a project selector or other application-owned filter inside the popover. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
+
+Use `filter-item` to customize individual filter rows. The slot receives `filter`, `field`, `remove`, and `update`. Fields without custom slot content keep their default editor.
+
 ```vue
 <QTableToolbar
   v-model:search="search"
@@ -140,10 +144,35 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 | `QTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/toolbar)  |
 | `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/sorting)        |
 | `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)    |
-| `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
+| `QTableOptions`    | Reorders, hides, pins, and resets columns.                    | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
 | `QTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)  |
 
 Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
+
+### Searchable lookup filters
+
+Use `QTableFilterLookup` as the component for a `select` field. Supply a
+`FilterLookupSource` through `componentProps`. The source exposes `search(term)`
+for matching choices and `resolve(values)` for selected labels, including values
+from bookmarked filters. Each method returns `{ value, label }` choices. An empty
+search loads the initial choices.
+
+```ts
+import { QTableFilterLookup } from '#components';
+import type { FilterField } from '@querry-kit/nuxt-ui/types';
+
+const projectField = {
+  type: 'select',
+  value: 'project.id',
+  label: 'Project',
+  component: QTableFilterLookup,
+  componentProps: { source: projectLookup, maxSelections: 100 },
+} satisfies FilterField;
+```
+
+The application supplies the endpoint, field path, and optional selection limit.
+The lookup also works outside the filter toolbar with an array `v-model`, a
+`source`, and an accessible label.
 
 ## 📖 Documentation
 
@@ -238,6 +267,32 @@ All labels live under `querrykit.table.grouping` for host i18n. `texts.grouping`
 `trigger`, `up`, `down`, `remove`, `add`, `expanded`, and `collapsed` using existing
 component/app-config/default precedence. Field labels and null-value labels are
 application-owned; use the same locale as the rest of the table.
+
+### Render groups as table rows
+
+`QTableGrouped` renders the state returned by `useGroupedTable`. Start the query with
+`table.initialize()` when the view mounts. Supply the current visible columns and use
+`available-columns` when a grouped column can be hidden in the saved layout. The renderer accepts the structural `GroupedTableState` interface from `@querry-kit/nuxt-ui/types`.
+
+```vue
+<QTableGrouped
+  :table="table"
+  :columns="visibleColumns"
+  :available-columns="allColumns"
+  :get-id="(item) => item.id"
+  label="Tasks"
+>
+  <template #cell="{ item, field }">{{ item[field] }}</template>
+</QTableGrouped>
+```
+
+Add the package's `dist/runtime` directory as a Tailwind `@source` in your
+application's stylesheet. Use a path relative to that stylesheet.
+
+Each column needs an `id` and `header`. The renderer handles expansion, server sorting,
+branch paging, and infinite loading. The group row provides the hover highlight. Group labels truncate as needed to leave room for the count. Use `group-value` and `group-cell` to customize group
+rows, `leading` and `leading-header` for selection controls, and `branch` with `show-branch`
+for extra content under expanded groups. The `footer-start` slot can hold a loading-mode switch.
 
 ## Nuxt package compatibility
 

@@ -17,6 +17,11 @@ export const defaultTableTexts = {
     loadMore: 'Load more',
     empty: 'No items',
     null: 'No value',
+    noGroups: 'No matching groups',
+    rootError: 'Could not load groups',
+    itemsError: 'Could not load items',
+    expandAll: 'Expand all groups',
+    collapseAll: 'Collapse all groups',
   },
   search: { placeholder: 'Search' },
   sorting: {
@@ -34,9 +39,12 @@ export const defaultTableTexts = {
     clear: 'Clear filters',
     remove: 'Remove filter',
     mode: 'Toggle filter mode',
+    lookupPlaceholder: 'Select options',
+    lookupError: 'Options could not be loaded.',
   },
   options: {
     title: 'Table options',
+    reset: 'Reset layout',
     pin: 'Pin column',
     left: 'Pin left',
     right: 'Pin right',
@@ -63,6 +71,11 @@ export type TableTextKey =
   | 'grouping.loadMore'
   | 'grouping.empty'
   | 'grouping.null'
+  | 'grouping.noGroups'
+  | 'grouping.rootError'
+  | 'grouping.itemsError'
+  | 'grouping.expandAll'
+  | 'grouping.collapseAll'
   | 'search.placeholder'
   | 'sorting.title'
   | 'sorting.field'
@@ -76,7 +89,10 @@ export type TableTextKey =
   | 'filtering.clear'
   | 'filtering.remove'
   | 'filtering.mode'
+  | 'filtering.lookupPlaceholder'
+  | 'filtering.lookupError'
   | 'options.title'
+  | 'options.reset'
   | 'options.pin'
   | 'options.left'
   | 'options.right'

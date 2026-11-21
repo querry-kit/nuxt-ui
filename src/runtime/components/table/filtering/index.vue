@@ -1,10 +1,10 @@
 <template>
   <span ref="trigger">
-    <slot name="trigger" :open="open" :toggle="toggle" :active="hasFilters">
+    <slot name="trigger" :open="open" :toggle="toggle" :active="hasActiveFilters">
       <UButton
         variant="ghost"
         :aria-label="t('filtering.title')"
-        :color="hasFilters ? 'primary' : 'neutral'"
+        :color="hasActiveFilters ? 'primary' : 'neutral'"
         :icon="icon ?? tableIcon('filtering.trigger')"
         @click="toggle"
       />
@@ -22,13 +22,14 @@
         <slot name="header" :filtering="filtering" :clear="clear" :toggle-mode="toggleMode">
           <FilteringHeader
             :filtering="filtering"
-            :has-filters="hasFilters"
+            :has-filters="hasActiveFilters"
             :texts="texts"
             :icons="icons"
             :clear="clear"
             :toggle-mode="toggleMode"
           />
         </slot>
+        <slot name="context" />
         <slot name="items" :filters="filtering.filters" :remove="remove" :update="update">
           <FilteringItems
             :filters="filtering.filters"
@@ -77,15 +78,18 @@ import FilteringItems from './items.vue';
 const props = withDefaults(
   defineProps<{
     fields: FilterField[];
+    /** Whether the application has an active filter in the context slot. */
+    contextActive?: boolean;
     icon?: string;
     shortcuts?: boolean;
     texts?: TableTextOverrides;
     icons?: TableIconOverrides;
     ui?: { content?: string };
   }>(),
-  { shortcuts: true },
+  { shortcuts: true, contextActive: false },
 );
 const filtering = defineModel<Filtering>('filtering', { required: true });
+const emit = defineEmits<{ clear: [] }>();
 const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(props.texts);
@@ -97,9 +101,13 @@ const popoverContent = computed(() => ({
 }));
 const tableIcon = useTableIcons(props.icons);
 const hasFilters = computed(() => filtering.value.filters.length > 0);
+const hasActiveFilters = computed(() => hasFilters.value || props.contextActive);
 const availableFields = computed(() => props.fields.filter((field) => !field.disabled));
 const toggle = () => (open.value = !open.value);
-const clear = () => (filtering.value = { operator: FilteringMode.Intersect, filters: [] });
+const clear = () => {
+  filtering.value = { operator: FilteringMode.Intersect, filters: [] };
+  emit('clear');
+};
 const toggleMode = () =>
   (filtering.value = {
     ...filtering.value,
