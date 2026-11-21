@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { computed, reactive, ref } from 'vue';
+import { computed, h, reactive, ref } from 'vue';
 import QTableGrouped from '../src/runtime/components/table/grouped/index.vue';
 import type { GroupedTableBranch, GroupedTableNode, GroupedTableState } from '../src/runtime/types/grouped-table';
 
@@ -32,7 +32,7 @@ function branch(): GroupedTableBranch<Item> {
 
 const stubs = {
   UTable: {
-    props: ['data', 'columns', 'getRowId', 'meta', 'sorting'],
+    props: ['data', 'columns', 'getRowId', 'meta', 'sorting', 'loading'],
     emits: ['update:sorting'],
     methods: {
       sortState(index: number) {
@@ -53,6 +53,8 @@ const stubs = {
           </tr>
         </thead>
         <tbody>
+          <tr v-if="loading"><td><slot name="loading" /></td></tr>
+          <tr v-else-if="!data.length"><td><slot name="empty" /></td></tr>
           <tr v-for="entry in data" :key="getRowId(entry)" :class="meta.class.tr({ original: entry })">
             <td v-for="column in columns" :key="column.id"
               :class="column.meta?.class?.td({ row: { original: entry } })"
@@ -264,6 +266,108 @@ describe('QTableGrouped', () => {
     await flushPromises();
     await wrapper.get('[role="alert"] button').trigger('click');
     expect(table.loadItemsPage).toHaveBeenCalledWith([], 3);
+    wrapper.unmount();
+  });
+
+  it('uses custom headers, disclosure, branch errors, pagination and grouped footer', async () => {
+    const { table, high } = fixture();
+    high.expanded = true;
+    high.error = new Error('page failed');
+    const wrapper = mount(QTableGrouped<Item>, {
+      props: {
+        table,
+        columns: [
+          { id: 'priority', header: 'Priority' },
+          { id: 'status', header: 'Status' },
+        ],
+        getId: (row) => row.id,
+        label: 'Tasks',
+      },
+      slots: {
+        'column-header': ({ label, toggleSort }) => h('button', { onClick: toggleSort }, `Sort ${label}`),
+        'group-toggle': ({ triggerProps, node }) => h('button', triggerProps, `Custom ${node.value}`),
+        'branch-error': ({ retry }) => h('button', { onClick: retry }, 'Retry branch'),
+        'group-footer': ({ toggleAll, loadMore }) =>
+          h('footer', [
+            h('button', { onClick: toggleAll }, 'Open groups'),
+            h('button', { onClick: loadMore }, 'More groups'),
+          ]),
+        pagination: ({ path, page, setPage, setItemsPerPage }) =>
+          h(
+            'button',
+            {
+              onClick: () => {
+                setPage(page + 1);
+                setItemsPerPage(5);
+              },
+            },
+            path.length ? 'Next branch page' : 'Next root page',
+          ),
+      },
+      global: { stubs },
+    });
+    expect(wrapper.text()).toContain('Custom high');
+    await wrapper.get('button[aria-label="high 6 items"]').trigger('click');
+    expect(table.toggleGroup).toHaveBeenCalledWith(high.path);
+    for (const name of ['Sort Priority', 'Retry branch', 'Next branch page', 'Open groups', 'More groups']) {
+      const button = wrapper.findAll('button').find((item) => item.text() === name)!;
+      await button.trigger('click');
+    }
+    expect(table.sorting.value).toEqual([{ id: 'priority', desc: false }]);
+    expect(table.loadItemsPage).toHaveBeenCalledWith(high.path, 3);
+    expect(table.loadItemsPage).toHaveBeenCalledWith(high.path, 2);
+    expect(table.itemsPerPage.value).toBe(5);
+    expect(table.setAllGroupsExpanded).toHaveBeenCalledWith(true);
+    expect(table.loadMoreGroups).toHaveBeenCalledWith();
+    table.grouping.value = [];
+    await flushPromises();
+    expect(wrapper.text()).toContain('Next root page');
+    wrapper.unmount();
+  });
+
+  it('exposes counts and request states, and keeps the end slot in the flat footer', async () => {
+    const { table } = fixture();
+    const wrapper = mount(QTableGrouped<Item>, {
+      props: {
+        table,
+        columns: [
+          { id: 'status', header: 'Status' },
+          { id: 'priority', header: 'Priority' },
+        ],
+        getId: (row) => row.id,
+        label: 'Tasks',
+      },
+      slots: {
+        'group-count': ({ label }) => h('em', `Count ${label}`),
+        'branch-controls': ({ node, load }) => h('button', { onClick: load }, `More ${node.key}`),
+        'footer-end': () => h('span', 'Footer action'),
+        error: ({ label, retry }) => h('button', { onClick: retry }, label),
+        loading: ({ label }) => h('span', `Loading slot ${label}`),
+        empty: ({ label }) => h('span', `Empty slot ${label}`),
+      },
+      global: { stubs },
+    });
+    expect(wrapper.get('em').text()).toBe('Count 8');
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text() === 'More open')!
+      .trigger('click');
+    expect(table.loadMoreGroups).toHaveBeenCalledWith(table.groups.value[0]!.path);
+    table.grouping.value = [];
+    table.root.items = [];
+    table.root.error = new Error('Failed');
+    table.root.loading = true;
+    await flushPromises();
+    expect(wrapper.text()).toContain('Footer action');
+    expect(wrapper.text()).toContain('Loading slot');
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text() === 'Could not load items')!
+      .trigger('click');
+    expect(table.loadItemsPage).toHaveBeenCalledWith([], 3);
+    table.root.loading = false;
+    await flushPromises();
+    expect(wrapper.text()).toContain('Empty slot No items');
     wrapper.unmount();
   });
 });

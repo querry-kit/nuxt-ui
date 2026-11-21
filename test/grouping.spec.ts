@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { h } from 'vue';
 import QTableGroup from '../src/runtime/components/table/group/index.vue';
 import QTableGroupLoadMore from '../src/runtime/components/table/group/load-more.vue';
 import QTableGrouping from '../src/runtime/components/table/grouping/index.vue';
@@ -10,7 +11,12 @@ const stubs = {
     props: ['label', 'disabled', 'loading', 'icon'],
     template: '<button :disabled="disabled" v-bind="$attrs">{{ label }}<slot /></button>',
   },
-  UPopover: { template: '<div><slot/><slot name="content"/></div>' },
+  UPopover: {
+    name: 'UPopover',
+    props: ['open'],
+    emits: ['update:open'],
+    template: '<div><slot/><slot name="content"/></div>',
+  },
   USeparator: true,
   USelect: { name: 'USelect', props: ['modelValue', 'items'], emits: ['update:modelValue'], template: '<select />' },
   UDashboardToolbar: { template: '<div><slot name="left"/><slot name="right"/></div>' },
@@ -60,6 +66,45 @@ describe('server-backed grouping controls', () => {
     await wrapper.setProps({ grouping: ['status', 'category'] });
     await wrapper.findComponent({ name: 'VueDraggable' }).vm.$emit('update:modelValue', ['category', 'status']);
     expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([['category', 'status']]);
+    wrapper.unmount();
+  });
+
+  it('exposes grouping actions to custom trigger, items, and field picker', async () => {
+    const wrapper = mount(QTableGrouping, {
+      props: {
+        grouping: ['status'],
+        fields: [
+          { value: 'status', label: 'Status' },
+          { value: 'priority', label: 'Priority' },
+        ],
+      },
+      slots: {
+        trigger: ({ open, setOpen }) => h('button', { onClick: () => setOpen(!open), 'aria-expanded': open }, 'Groups'),
+        items: ({ grouping, setGrouping }) => h('button', { onClick: () => setGrouping([]) }, grouping.join(',')),
+        add: ({ add }) =>
+          h(
+            'button',
+            {
+              onClick: () => {
+                add('status');
+                add('priority');
+              },
+            },
+            'Add priority',
+          ),
+      },
+      global: { stubs },
+    });
+    const [trigger, items, add] = wrapper.findAll('button').filter((button) => button.text());
+    await trigger!.trigger('click');
+    expect(trigger!.attributes('aria-expanded')).toBe('true');
+    wrapper.getComponent({ name: 'UPopover' }).vm.$emit('update:open', false);
+    await wrapper.vm.$nextTick();
+    expect(trigger!.attributes('aria-expanded')).toBe('false');
+    await add!.trigger('click');
+    expect(wrapper.emitted('update:grouping')).toEqual([[['status', 'priority']]]);
+    await items!.trigger('click');
+    expect(wrapper.emitted('update:grouping')?.at(-1)).toEqual([[]]);
     wrapper.unmount();
   });
 

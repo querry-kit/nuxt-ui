@@ -1,13 +1,29 @@
 <template>
+  <DefineBranchFooter v-slot="{ node, leaf }">
+    <GroupedBranchControls :table="table" :node="node" :viewport="viewport" :leaf="leaf" :texts="texts">
+      <slot name="branch" :node="node" />
+      <template v-if="slots['branch-controls']" #controls="controls">
+        <slot name="branch-controls" v-bind="controls" />
+      </template>
+      <template v-if="slots['branch-error']" #error="error">
+        <slot name="branch-error" v-bind="error" />
+      </template>
+      <template v-if="slots.pagination" #pagination="pagination">
+        <slot name="pagination" v-bind="pagination" />
+      </template>
+    </GroupedBranchControls>
+  </DefineBranchFooter>
+
   <div class="flex min-h-0 min-w-0 flex-1 flex-col">
-    <UAlert
-      v-if="root.error"
-      class="m-4 shrink-0"
-      color="error"
-      variant="soft"
-      :title="grouping.length ? t('grouping.rootError') : t('grouping.itemsError')"
-      :actions="[{ label: t('grouping.retry'), onClick: retry }]"
-    />
+    <slot v-if="root.error" name="error" :error="root.error" :label="errorLabel" :retry="retry">
+      <UAlert
+        class="m-4 shrink-0"
+        color="error"
+        variant="soft"
+        :title="errorLabel"
+        :actions="[{ label: t('grouping.retry'), onClick: retry }]"
+      />
+    </slot>
     <div
       ref="viewport"
       class="@container min-h-0 flex-1 overflow-auto [scrollbar-gutter:stable]"
@@ -19,7 +35,7 @@
       <UTable
         v-model:sorting="sorting"
         sticky
-        :empty="grouping.length ? t('grouping.noGroups') : t('grouping.empty')"
+        :empty="emptyLabel"
         :data="rows"
         :columns="slots.leading ? [leadingColumn, ...displayColumns] : displayColumns"
         :column-pinning="displayPinning"
@@ -41,20 +57,21 @@
             .join(' '),
         }"
       >
+        <template v-if="slots.loading" #loading>
+          <slot
+            name="loading"
+            :grouped="Boolean(grouping.length)"
+            :label="t(grouping.length ? 'grouping.loading' : 'grouping.itemsLoading')"
+          />
+        </template>
+        <template v-if="slots.empty" #empty>
+          <slot name="empty" :grouped="Boolean(grouping.length)" :label="emptyLabel" />
+        </template>
         <template v-if="slots['leading-header']" #grouped-leading-header>
           <slot name="leading-header" :items="visibleItems" />
         </template>
         <template v-if="slots.leading" #grouped-leading-cell="{ row }">
-          <GroupedBranchControls
-            v-if="row.original.kind === 'controls'"
-            :table="table"
-            :node="row.original.node"
-            :viewport="viewport"
-            :leaf="row.original.leaf"
-            :texts="texts"
-          >
-            <slot name="branch" :node="row.original.node" />
-          </GroupedBranchControls>
+          <BranchFooter v-if="row.original.kind === 'controls'" :node="row.original.node" :leaf="row.original.leaf" />
           <slot
             v-else
             name="leading"
@@ -63,52 +80,59 @@
           />
         </template>
         <template v-for="item in displayColumns" :key="item.id" #[`${item.id}-header`]="{ column }">
-          <UButton
-            v-if="column.getCanSort()"
-            class="text-highlighted p-0 font-semibold"
-            color="neutral"
-            variant="ghost"
-            :label="String(item.header)"
-            :trailing-icon="sortIcon(column.getIsSorted())"
-            @click="column.getToggleSortingHandler()?.($event)"
-          />
-          <template v-else>
-            {{ item.header }}
-          </template>
+          <slot
+            name="column-header"
+            :field="item.id"
+            :label="item.header"
+            :sort="column.getIsSorted()"
+            :toggle-sort="column.getToggleSortingHandler()"
+          >
+            <UButton
+              v-if="column.getCanSort()"
+              class="text-highlighted p-0 font-semibold"
+              color="neutral"
+              variant="ghost"
+              :label="String(item.header)"
+              :trailing-icon="sortIcon(column.getIsSorted())"
+              @click="column.getToggleSortingHandler()?.($event)"
+            />
+            <template v-else>
+              {{ item.header }}
+            </template>
+          </slot>
         </template>
         <template v-for="column in displayColumns" :key="column.id" #[`${column.id}-cell`]="{ row }">
-          <GroupedBranchControls
+          <BranchFooter
             v-if="row.original.kind === 'controls' && !slots.leading && column.id === orderedColumns[0]?.id"
-            :table="table"
             :node="row.original.node"
-            :viewport="viewport"
             :leaf="row.original.leaf"
-            :texts="texts"
-          >
-            <slot name="branch" :node="row.original.node" />
-          </GroupedBranchControls>
+          />
           <template v-else-if="row.original.kind === 'group'">
-            <button
+            <slot
               v-if="column.id === row.original.node.field"
-              type="button"
-              class="text-default focus-visible:outline-primary inline-flex max-w-full cursor-pointer items-center gap-1 rounded-md py-1 text-xs font-medium focus-visible:outline-2"
-              data-group-toggle
-              :aria-expanded="row.original.node.expanded"
-              :aria-label="groupLabel(row.original.node)"
-              @click="table.toggleGroup(row.original.node.path)"
+              name="group-toggle"
+              :node="row.original.node"
+              :trigger-props="groupToggleProps(row.original.node)"
             >
-              <UIcon
-                class="size-4 shrink-0"
-                aria-hidden="true"
-                :name="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
-              />
-              <span class="min-w-0 truncate">
-                <slot name="group-value" :node="row.original.node">
-                  {{ row.original.node.value ?? t('grouping.null') }}
+              <button
+                class="text-default focus-visible:outline-primary inline-flex max-w-full cursor-pointer items-center gap-1 rounded-md py-1 text-xs font-medium focus-visible:outline-2"
+                v-bind="groupToggleProps(row.original.node)"
+              >
+                <UIcon
+                  class="size-4 shrink-0"
+                  aria-hidden="true"
+                  :name="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
+                />
+                <span class="min-w-0 truncate">
+                  <slot name="group-value" :node="row.original.node">
+                    {{ row.original.node.value ?? t('grouping.null') }}
+                  </slot>
+                </span>
+                <slot name="group-count" :node="row.original.node" :label="formatNumber(row.original.node.count)">
+                  <span class="text-muted shrink-0 tabular-nums">{{ formatNumber(row.original.node.count) }}</span>
                 </slot>
-              </span>
-              <span class="text-muted shrink-0 tabular-nums">{{ row.original.node.count }}</span>
-            </button>
+              </button>
+            </slot>
             <slot v-else name="group-cell" :node="row.original.node" :field="column.id" />
           </template>
           <slot
@@ -122,43 +146,64 @@
         </template>
       </UTable>
     </div>
-    <footer v-if="grouping.length" class="border-default flex flex-wrap items-center gap-3 border-t px-4 py-3">
-      <slot name="footer-start" />
-      <UTooltip :text="bulkGroupLabel">
-        <UButton
-          color="neutral"
-          size="sm"
-          variant="ghost"
-          :icon="allGroupsExpanded ? icon('grouping.collapseAll') : icon('grouping.expandAll')"
-          :aria-label="bulkGroupLabel"
-          :disabled="!groups.length || root.loading"
-          :loading="changingGroups"
-          @click="toggleAllGroups"
+    <slot
+      v-if="grouping.length"
+      name="group-footer"
+      :expanded="allGroupsExpanded"
+      :loading="root.loading || changingGroups"
+      :has-more="root.hasMore && !root.error"
+      :toggle-all="toggleAllGroups"
+      :load-more="loadGroups"
+    >
+      <footer class="border-default flex flex-wrap items-center gap-3 border-t px-4 py-3">
+        <slot name="footer-start" />
+        <UTooltip :text="bulkGroupLabel">
+          <UButton
+            color="neutral"
+            size="sm"
+            variant="ghost"
+            :icon="allGroupsExpanded ? icon('grouping.collapseAll') : icon('grouping.expandAll')"
+            :aria-label="bulkGroupLabel"
+            :disabled="!groups.length || root.loading"
+            :loading="changingGroups"
+            @click="toggleAllGroups"
+          />
+        </UTooltip>
+        <QTableGroupLoadMore
+          :texts="texts"
+          :has-more="root.hasMore && !root.error && !changingGroups"
+          :loading="root.loading"
+          @load="loadGroups"
         />
-      </UTooltip>
-      <QTableGroupLoadMore
-        :texts="texts"
-        :has-more="root.hasMore && !root.error && !changingGroups"
-        :loading="root.loading"
-        @load="loadGroups"
-      />
-      <slot name="footer-end" />
-    </footer>
+        <slot name="footer-end" />
+      </footer>
+    </slot>
     <GroupedPagination v-else :table="table" :branch="root" :path="[]" :texts="texts">
       <slot name="footer-start" />
+      <template v-if="slots['footer-end']" #end>
+        <slot name="footer-end" />
+      </template>
+      <template v-if="slots.pagination" #pagination="pagination">
+        <slot name="pagination" v-bind="pagination" />
+      </template>
     </GroupedPagination>
   </div>
 </template>
 
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
 import type { TableColumn, TableProps } from '@nuxt/ui';
-import { useInfiniteScroll } from '@vueuse/core';
-import { computed, ref, useTemplateRef } from 'vue';
-import { useTableI18n } from '../../../composables/use-table-i18n';
+import { createReusableTemplate, useInfiniteScroll } from '@vueuse/core';
+import { computed, ref, useTemplateRef, type ButtonHTMLAttributes } from 'vue';
+import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
-import type { GroupedTableColumn, GroupedTableNode, GroupedTableState } from '../../../types/grouped-table';
+import type {
+  GroupedTableColumn,
+  GroupedTableNode,
+  GroupedTableState,
+  GroupedTablePaginationSlot,
+} from '../../../types/grouped-table';
 import QTableGroupLoadMore from '../group/load-more.vue';
 import GroupedBranchControls from './branch-controls.vue';
 import GroupedPagination from './pagination.vue';
@@ -176,8 +221,31 @@ const props = defineProps<{
   icons?: TableIconOverrides;
 }>();
 
+type GroupTriggerProps = ButtonHTMLAttributes & { 'data-group-toggle': string };
+
 const slots = defineSlots<{
   cell?: (props: { field: string; item: TItem }) => unknown;
+  'column-header'?: (props: {
+    field: string;
+    label: string;
+    sort: false | 'asc' | 'desc';
+    toggleSort?: (event: unknown) => void;
+  }) => unknown;
+  'group-toggle'?: (props: { node: GroupedTableNode<TItem>; triggerProps: GroupTriggerProps }) => unknown;
+  'group-count'?: (props: { node: GroupedTableNode<TItem>; label: string }) => unknown;
+  error?: (props: { error: unknown; label: string; retry: () => void }) => unknown;
+  loading?: (props: { grouped: boolean; label: string }) => unknown;
+  empty?: (props: { grouped: boolean; label: string }) => unknown;
+  'branch-controls'?: (props: { node: GroupedTableNode<TItem>; leaf: boolean; load: () => Promise<void> }) => unknown;
+  'branch-error'?: (props: { node: GroupedTableNode<TItem>; error: unknown; retry: () => Promise<void> }) => unknown;
+  'group-footer'?: (props: {
+    expanded: boolean;
+    loading: boolean;
+    hasMore: boolean;
+    toggleAll: () => Promise<void>;
+    loadMore: () => void;
+  }) => unknown;
+  pagination?: (props: GroupedTablePaginationSlot) => unknown;
   'group-value'?: (props: { node: GroupedTableNode<TItem> }) => unknown;
   'group-cell'?: (props: { node: GroupedTableNode<TItem>; field: string }) => unknown;
   branch?: (props: { node: GroupedTableNode<TItem> }) => unknown;
@@ -189,9 +257,13 @@ const slots = defineSlots<{
 
 const { table } = props;
 const { root, groups, allGroupsExpanded, grouping, loadingMode, sorting, columnPinning } = table;
+const [DefineBranchFooter, BranchFooter] = createReusableTemplate<{ node: GroupedTableNode<TItem>; leaf: boolean }>();
 const viewport = useTemplateRef('viewport');
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
+const formatNumber = useTableNumber();
 const icon = useTableIcons(props.icons);
+const emptyLabel = computed(() => t(grouping.value.length ? 'grouping.noGroups' : 'grouping.empty'));
+const errorLabel = computed(() => t(grouping.value.length ? 'grouping.rootError' : 'grouping.itemsError'));
 const changingGroups = ref(false);
 const bulkGroupLabel = computed(() => t(allGroupsExpanded.value ? 'grouping.collapseAll' : 'grouping.expandAll'));
 
@@ -216,7 +288,14 @@ function appendGroup(rows: DisplayRow[], node: GroupedTableNode<TItem>): void {
   if (leaf) rows.push(...node.items.map(itemRow));
   else for (const child of node.children) appendGroup(rows, child);
 
-  if (leaf || node.hasMore || node.loading || node.error || (props.showBranch && slots.branch)) {
+  if (
+    leaf ||
+    node.hasMore ||
+    node.loading ||
+    node.error ||
+    slots['branch-controls'] ||
+    (props.showBranch && slots.branch)
+  ) {
     rows.push({ kind: 'controls', key: `controls:${node.key}`, node, leaf });
   }
 }
@@ -342,7 +421,27 @@ function getRowId(row: DisplayRow): string {
 
 /** Makes the group value, count, and expansion state available to keyboard and screen reader users. */
 function groupLabel(node: GroupedTableNode<TItem>): string {
-  return `${node.value ?? t('grouping.null')} ${t('grouping.count', { count: node.count })}`;
+  const values = { count: node.count, formattedCount: formatNumber(node.count) };
+  return t(
+    'grouping.rowLabel',
+    {
+      ...values,
+      label: String(node.value ?? t('grouping.null')),
+      countLabel: t('grouping.count', values, node.count),
+    },
+    node.count,
+  );
+}
+
+/** Connects native and custom disclosure buttons to row and keyboard activation. */
+function groupToggleProps(node: GroupedTableNode<TItem>): GroupTriggerProps {
+  return {
+    type: 'button',
+    'data-group-toggle': '',
+    'aria-expanded': node.expanded,
+    'aria-label': groupLabel(node),
+    onClick: () => void table.toggleGroup(node.path),
+  };
 }
 
 /** Makes the entire group row activate the same disclosure button used by the keyboard. */

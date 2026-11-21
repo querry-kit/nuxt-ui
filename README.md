@@ -56,6 +56,13 @@ export default defineNuxtConfig({
 
 Set `autoImports` to `false` when the application registers the components itself. The package never installs, configures, or ships an i18n provider. Pass nested `texts` or `icons` props for explicit overrides, or replace display regions with the documented slots.
 
+Text overrides are reactive. Use `filtering.operatorField` and `filtering.valueField` for distinct field names, and
+`filtering.operators` and `filtering.operatorDescriptions` for operator text. Group counts and full group labels
+pass their numeric count to the host translator for plural selection. Supply `grouping.rowLabel` to control
+word order with `{label}`, `{count}`, `{formattedCount}`, and `{countLabel}`. The controls use the host's
+`$n` for display numbers when available. Set the Nuxt UI locale on `UApp` for native SelectMenu and
+Pagination messages, including the lookup search placeholder and page navigation labels.
+
 When overriding icons, install the matching Iconify collection in the host application. For example, install Lucide with `pnpm add @iconify-json/lucide` before passing `i-lucide-*` values. See [types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types) for Lucide and Tabler examples.
 
 Configure table-wide icon defaults in the host application's `app.config.ts`. A component's `icons` prop overrides this configuration, while the existing flat `icon` prop remains authoritative for an individual trigger:
@@ -115,7 +122,9 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
-Use the `filter-context` slot for a project selector or other application-owned filter inside the popover. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
+Below the toolbar’s `sm` breakpoint (640 px by default), grouping, sorting, filtering, and column options open in dialogs. Only the body scrolls; the header and the footer with the Close button stay visible. Override the label with `texts.toolbar.close` or translate `querrykit.table.toolbar.close`. On wider screens, the controls open in popovers.
+
+Use the `filter-context` slot for a project selector or other application-owned filter inside the filter panel. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
 
 Use `filter-item` to customize individual filter rows. The slot receives `filter`, `field`, `remove`, and `update`. Fields without custom slot content keep their default editor.
 
@@ -173,6 +182,17 @@ const projectField = {
 The application supplies the endpoint, field path, and optional selection limit.
 The lookup also works outside the filter toolbar with an array `v-model`, a
 `source`, and an accessible label.
+
+### Layout slots
+
+- `QTableToolbar` exposes `layout` for the full arrangement and individual `grouping`, `sorting`, `filtering`, and
+  `column-options` slots with model setters.
+- `QTableGrouping` exposes `trigger`, `header`, `clear`, `items`, `item`, and `add` with grouping actions.
+- `QTableFilterLookup` exposes `selection`, `option`, `empty`, and `error` with selection state and a retry action.
+- `QTableGrouped` exposes `column-header`, `group-toggle`, `group-count`, `loading`, `empty`, `error`,
+  `branch-controls`, `branch-error`, `group-footer`, and `pagination`. Bind the group toggle slot's `triggerProps`
+  to a native button to retain keyboard and row activation. The pagination slot receives a branch path and paging actions.
+- `QTablePagination` exposes `summary` in addition to the existing footer and navigation slots.
 
 ## 📖 Documentation
 

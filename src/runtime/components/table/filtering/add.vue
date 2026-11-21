@@ -33,7 +33,7 @@ const props = defineProps<{
   icons?: TableIconOverrides;
   add: (id: string) => void;
 }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const selected = ref<string>();
 const addSelected = () => {

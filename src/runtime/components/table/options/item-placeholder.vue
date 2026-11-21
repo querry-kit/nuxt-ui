@@ -30,7 +30,7 @@ const props = defineProps<{
   texts?: TableTextOverrides;
   icons?: TableIconOverrides;
 }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const isLeft = computed(() => props.side === 'left');
 const isRight = computed(() => props.side === 'right');

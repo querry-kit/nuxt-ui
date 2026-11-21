@@ -4,18 +4,21 @@
     v-if="filter.type === FilterFieldType.Boolean"
     :filter="filter"
     :label="field?.label ?? filter.field"
+    :texts="texts"
     :update="update"
   />
   <FilteringItemNumber
     v-else-if="filter.type === FilterFieldType.Number"
     :filter="filter"
     :label="field?.label ?? filter.field"
+    :texts="texts"
     :update="update"
   />
   <FilteringItemSelect
     v-else-if="field?.type === FilterFieldType.Select"
     :filter="filter"
     :label="field?.label ?? filter.field"
+    :texts="texts"
     :field="field as FilterFieldSelect | undefined"
     :update="update"
   />
@@ -23,6 +26,7 @@
     v-else
     :filter="filter"
     :label="field?.label ?? filter.field"
+    :texts="texts"
     :field="field as FilterFieldEnum | undefined"
     :update="update"
   />
@@ -61,6 +65,6 @@ const props = defineProps<{
   remove: () => void;
   update: (patch: Partial<FilteringField>) => void;
 }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 </script>
