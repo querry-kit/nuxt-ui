@@ -88,25 +88,27 @@
             <slot name="branch" :node="row.original.node" />
           </GroupedBranchControls>
           <template v-else-if="row.original.kind === 'group'">
-            <UButton
+            <button
               v-if="column.id === row.original.node.field"
-              class="max-w-full gap-1 px-0"
-              color="neutral"
-              variant="ghost"
-              size="xs"
+              type="button"
+              class="text-default focus-visible:outline-primary inline-flex max-w-full cursor-pointer items-center gap-1 rounded-md py-1 text-xs font-medium focus-visible:outline-2"
               data-group-toggle
               :aria-expanded="row.original.node.expanded"
               :aria-label="groupLabel(row.original.node)"
-              :icon="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
               @click="table.toggleGroup(row.original.node.path)"
             >
+              <UIcon
+                class="size-4 shrink-0"
+                aria-hidden="true"
+                :name="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
+              />
               <span class="min-w-0 truncate">
                 <slot name="group-value" :node="row.original.node">
                   {{ row.original.node.value ?? t('grouping.null') }}
                 </slot>
               </span>
               <span class="text-muted shrink-0 tabular-nums">{{ row.original.node.count }}</span>
-            </UButton>
+            </button>
             <slot v-else name="group-cell" :node="row.original.node" :field="column.id" />
           </template>
           <slot

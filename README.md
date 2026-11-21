@@ -265,7 +265,7 @@ Add the package's `dist/runtime` directory as a Tailwind `@source` in your
 application's stylesheet. Use a path relative to that stylesheet.
 
 Each column needs an `id` and `header`. The renderer handles expansion, server sorting,
-branch paging, and infinite loading. Group labels truncate as needed to leave room for the count. Use `group-value` and `group-cell` to customize group
+branch paging, and infinite loading. The group row provides the hover highlight. Group labels truncate as needed to leave room for the count. Use `group-value` and `group-cell` to customize group
 rows, `leading` and `leading-header` for selection controls, and `branch` with `show-branch`
 for extra content under expanded groups. The `footer-start` slot can hold a loading-mode switch.
 
