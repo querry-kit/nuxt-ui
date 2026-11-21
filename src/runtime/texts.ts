@@ -39,6 +39,8 @@ export const defaultTableTexts = {
     clear: 'Clear filters',
     remove: 'Remove filter',
     mode: 'Toggle filter mode',
+    lookupPlaceholder: 'Select options',
+    lookupError: 'Options could not be loaded.',
   },
   options: {
     title: 'Table options',
@@ -87,6 +89,8 @@ export type TableTextKey =
   | 'filtering.clear'
   | 'filtering.remove'
   | 'filtering.mode'
+  | 'filtering.lookupPlaceholder'
+  | 'filtering.lookupError'
   | 'options.title'
   | 'options.reset'
   | 'options.pin'

@@ -149,6 +149,31 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 
 Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
 
+### Searchable lookup filters
+
+Use `QTableFilterLookup` as the component for a `select` field. Supply a
+`FilterLookupSource` through `componentProps`. The source exposes `search(term)`
+for matching choices and `resolve(values)` for selected labels, including values
+from bookmarked filters. Each method returns `{ value, label }` choices. An empty
+search loads the initial choices.
+
+```ts
+import { QTableFilterLookup } from '#components';
+import type { FilterField } from '@querry-kit/nuxt-ui/types';
+
+const projectField = {
+  type: 'select',
+  value: 'project.id',
+  label: 'Project',
+  component: QTableFilterLookup,
+  componentProps: { source: projectLookup, maxSelections: 100 },
+} satisfies FilterField;
+```
+
+The application supplies the endpoint, field path, and optional selection limit.
+The lookup also works outside the filter toolbar with an array `v-model`, a
+`source`, and an accessible label.
+
 ## 📖 Documentation
 
 - [Getting Started](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/guide/getting-started)

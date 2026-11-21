@@ -1,5 +1,7 @@
 /** Query Kit-compatible filtering popover. */
 export { default as QTableFiltering } from './components/table/filtering/index.vue';
+/** Searchable multi-select with application-provided option requests. */
+export { default as QTableFilterLookup } from './components/table/filtering/lookup.vue';
 /** Column visibility, pinning and ordering popover. */
 export { default as QTableOptions } from './components/table/options/index.vue';
 /** Page-size selector and page navigation footer. */

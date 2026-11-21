@@ -19,6 +19,7 @@ describe('Nuxt module registration', () => {
     for (const [name, path] of [
       ['QTableGrouping', 'grouping/index.vue'],
       ['QTableGrouped', 'grouped/index.vue'],
+      ['QTableFilterLookup', 'filtering/lookup.vue'],
       ['QTableGroup', 'group/index.vue'],
       ['QTableGroupLoadMore', 'group/load-more.vue'],
     ]) {

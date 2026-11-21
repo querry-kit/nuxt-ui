@@ -57,6 +57,11 @@ const querryKitNuxtUiModule: NuxtModule<QuerryKitNuxtUiOptions> = defineNuxtModu
         priority: 0,
       });
       addComponent({
+        name: 'QTableFilterLookup',
+        filePath: resolver.resolve('runtime/components/table/filtering/lookup.vue'),
+        priority: 0,
+      });
+      addComponent({
         name: 'QTableOptions',
         filePath: resolver.resolve('runtime/components/table/options/index.vue'),
         priority: 0,
