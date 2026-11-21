@@ -181,6 +181,17 @@ The application supplies the endpoint, field path, and optional selection limit.
 The lookup also works outside the filter toolbar with an array `v-model`, a
 `source`, and an accessible label.
 
+### Layout slots
+
+- `QTableToolbar` exposes `layout` for the full arrangement and individual `grouping`, `sorting`, `filtering`, and
+  `column-options` slots with model setters.
+- `QTableGrouping` exposes `trigger`, `header`, `clear`, `items`, `item`, and `add` with grouping actions.
+- `QTableFilterLookup` exposes `selection`, `option`, `empty`, and `error` with selection state and a retry action.
+- `QTableGrouped` exposes `column-header`, `group-toggle`, `group-count`, `loading`, `empty`, `error`,
+  `branch-controls`, `branch-error`, `group-footer`, and `pagination`. Bind the group toggle slot's `triggerProps`
+  to a native button to retain keyboard and row activation. The pagination slot receives a branch path and paging actions.
+- `QTablePagination` exposes `summary` in addition to the existing footer and navigation slots.
+
 ## 📖 Documentation
 
 - [Getting Started](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/guide/getting-started)

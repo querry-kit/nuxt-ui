@@ -93,6 +93,7 @@ export type {
   GroupedTableBranch,
   GroupedTableColumn,
   GroupedTableNode,
+  GroupedTablePaginationSlot,
   GroupedTablePath,
   GroupedTableState,
 } from './grouped-table';

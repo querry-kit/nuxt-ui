@@ -13,6 +13,7 @@ export const defaultTableTexts = {
     count: '{formattedCount} items',
     rowLabel: '{label} {countLabel}',
     loading: 'Loading group…',
+    itemsLoading: 'Loading items…',
     error: 'Unable to load group.',
     retry: 'Retry',
     loadMore: 'Load more',

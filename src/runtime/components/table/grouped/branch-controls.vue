@@ -1,14 +1,22 @@
 <template>
   <div ref="controls" class="sticky left-0 w-[100cqw]">
-    <div v-if="node.error" role="alert" class="text-error flex items-center gap-2 px-4 py-2 text-sm">
-      <span>{{ t('grouping.error') }}</span>
-      <UButton size="xs" variant="ghost" :label="t('grouping.retry')" @click="load" />
-    </div>
-    <template v-if="!node.error || (leaf && node.items.length)">
-      <slot />
-      <GroupedPagination v-if="leaf" :texts="texts" :table="table" :path="node.path" :branch="node" />
-      <QTableGroupLoadMore v-else :texts="texts" :has-more="node.hasMore" :loading="node.loading" @load="load" />
-    </template>
+    <slot name="controls" :node="node" :leaf="leaf" :load="load">
+      <slot v-if="node.error" name="error" :node="node" :error="node.error" :retry="load">
+        <div role="alert" class="text-error flex items-center gap-2 px-4 py-2 text-sm">
+          <span>{{ t('grouping.error') }}</span>
+          <UButton size="xs" variant="ghost" :label="t('grouping.retry')" @click="load" />
+        </div>
+      </slot>
+      <template v-if="!node.error || (leaf && node.items.length)">
+        <slot />
+        <GroupedPagination v-if="leaf" :texts="texts" :table="table" :path="node.path" :branch="node">
+          <template v-if="$slots.pagination" #pagination="pagination">
+            <slot name="pagination" v-bind="pagination" />
+          </template>
+        </GroupedPagination>
+        <QTableGroupLoadMore v-else :texts="texts" :has-more="node.hasMore" :loading="node.loading" @load="load" />
+      </template>
+    </slot>
   </div>
 </template>
 

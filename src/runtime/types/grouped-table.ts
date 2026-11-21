@@ -54,3 +54,19 @@ export interface GroupedTableState<TItem> {
   getItemPage(path?: GroupedTablePath): { page: number; totalItems: number; requestedPage?: number };
   loadItemsPage(path: GroupedTablePath, page: number): Promise<void>;
 }
+
+/** State and actions exposed by the grouped renderer's pagination slot. */
+export interface GroupedTablePaginationSlot {
+  path: GroupedTablePath;
+  page: number;
+  totalItems: number;
+  itemsPerPage: number;
+  loadedItems: number;
+  loading: boolean;
+  error: unknown;
+  infinite: boolean;
+  hasMore: boolean;
+  setPage: (page: number) => void;
+  setItemsPerPage: (size: number) => void;
+  loadMore: () => void;
+}

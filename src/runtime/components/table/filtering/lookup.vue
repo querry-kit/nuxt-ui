@@ -7,14 +7,32 @@
     :model-value="selection"
     :placeholder="t('filtering.lookupPlaceholder')"
     :items="items"
-    :loading="results.loading.value || selected.loading.value"
+    :loading="loading"
     multiple
     ignore-filter
     @update:model-value="update"
-  />
-  <span v-if="results.error.value || selected.error.value" role="status" class="text-error text-sm">
-    {{ t('filtering.lookupError') }}
-  </span>
+  >
+    <template v-if="$slots.selection" #default="{ open }">
+      <slot name="selection" :selection="selection" :items="items" :open="open" :update="update" />
+    </template>
+    <template v-if="$slots.option" #item="{ item, index }">
+      <slot name="option" :item="item" :index="index" :selected="selection.includes(item.value)" />
+    </template>
+    <template v-if="$slots.empty" #empty="{ searchTerm }">
+      <slot name="empty" :search-term="searchTerm" :loading="loading" />
+    </template>
+  </USelectMenu>
+  <slot
+    v-if="results.error.value || selected.error.value"
+    name="error"
+    :retry="retry"
+    :search-error="results.error.value"
+    :selection-error="selected.error.value"
+  >
+    <span role="status" class="text-error text-sm">
+      {{ t('filtering.lookupError') }}
+    </span>
+  </slot>
 </template>
 
 <script setup lang="ts">
@@ -31,8 +49,26 @@ const props = defineProps<{
   maxSelections?: number;
   texts?: TableTextOverrides;
 }>();
+type LookupOption = FilterChoice & { disabled: boolean };
+
+defineSlots<{
+  selection?: (props: {
+    selection: FilterChoice['value'][];
+    items: LookupOption[];
+    open: boolean;
+    update: (values: FilterChoice['value'][]) => void;
+  }) => unknown;
+  option?: (props: { item: LookupOption; index: number; selected: boolean }) => unknown;
+  empty?: (props: { searchTerm: string; loading: boolean }) => unknown;
+  error?: (props: { retry: () => void; searchError: boolean; selectionError: boolean }) => unknown;
+}>();
+
 const selection = defineModel<FilterChoice['value'][]>({ required: true });
 const search = ref('');
+const retries = ref(0);
+const retry = () => {
+  retries.value++;
+};
 const t = useTableI18n(() => props.texts);
 
 /** Loads each lookup independently and discards responses after a newer request or unmount. */
@@ -45,7 +81,7 @@ function load<T>(
   const error = ref(false);
   onMounted(() =>
     watch(
-      [input, () => props.source],
+      [input, () => props.source, retries],
       async ([value, source], _, onCleanup) => {
         let current = true;
         onCleanup(() => (current = false));
@@ -71,6 +107,7 @@ function load<T>(
 
 const results = load(refDebounced(search, 250), (source, term) => source.search(term));
 const selected = load(selection, (source, ids) => (ids.length ? source.resolve(ids) : []));
+const loading = computed(() => results.loading.value || selected.loading.value);
 const limit = computed(() => props.maxSelections ?? Infinity);
 const items = computed(() => {
   const byValue = new Map<FilterChoice['value'], FilterChoice>();

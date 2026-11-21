@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { h, nextTick } from 'vue';
 import QTableFilterLookup from '../src/runtime/components/table/filtering/lookup.vue';
 import type { FilterChoice } from '../src/runtime/types/table';
 
@@ -17,7 +17,11 @@ const stubs = {
       searchTerm: String,
     },
     emits: ['update:modelValue', 'update:searchTerm'],
-    template: '<button />',
+    template: `<div>
+      <slot :open="true" />
+      <slot v-if="items?.length" name="item" :item="items[0]" :index="0" />
+      <slot v-else name="empty" :search-term="searchTerm" />
+    </div>`,
   },
 };
 
@@ -104,6 +108,32 @@ describe('QTableFilterLookup', () => {
       { value: 'x', label: 'Selected', disabled: false },
       { value: 'fresh', label: 'fresh', disabled: false },
     ]);
+    wrapper.unmount();
+  });
+
+  it('renders custom selection, option, empty, and retry slots', async () => {
+    const search = vi
+      .fn<() => Promise<FilterChoice[]>>()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValueOnce([{ value: 'it', label: 'Italy' }]);
+    const wrapper = mount(QTableFilterLookup, {
+      props: { modelValue: [], source: { search, resolve: async () => [] } },
+      slots: {
+        selection: ({ open }) => h('span', open ? 'Open countries' : 'Countries'),
+        option: ({ item }) => h('span', `Country ${item.label}`),
+        empty: () => h('span', 'Empty countries'),
+        error: ({ retry, searchError }) =>
+          h('button', { onClick: retry }, searchError ? 'Retry search' : 'Retry selection'),
+      },
+      global: { stubs },
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain('Empty countries');
+    expect(wrapper.text()).toContain('Open countries');
+    await wrapper.get('button').trigger('click');
+    await flushPromises();
+    expect(wrapper.text()).toContain('Country Italy');
+    expect(wrapper.text()).not.toContain('Retry search');
     wrapper.unmount();
   });
 });

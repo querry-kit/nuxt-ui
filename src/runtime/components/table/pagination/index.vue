@@ -9,13 +9,15 @@
         :start="rowStart"
         :end="rowEnd"
       >
-        <PaginationSummary
-          :total-items="totalItems"
-          :start="rowStart"
-          :end="rowEnd"
-          :summary="summary"
-          :texts="texts"
-        />
+        <slot name="summary" :start="rowStart" :end="rowEnd" :total-items="totalItems">
+          <PaginationSummary
+            :total-items="totalItems"
+            :start="rowStart"
+            :end="rowEnd"
+            :summary="summary"
+            :texts="texts"
+          />
+        </slot>
       </slot>
     </div>
     <div class="flex items-center gap-1.5" :class="ui?.right">

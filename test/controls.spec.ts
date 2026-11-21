@@ -615,6 +615,55 @@ describe('table controls', () => {
     expect(wrapper.findAll('button[aria-label="Remove filter"]')).toHaveLength(1);
   });
 
+  it('rearranges the toolbar while independent control slots retain their models', async () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        props: {
+          grouping: [],
+          sorting: [],
+          filtering: { operator: FilteringMode.Intersect, filters: [] },
+          columnOrder: ['name'],
+          invisibleColumns: [],
+          columnPinning: {},
+        },
+        slots: {
+          layout: ({ options, actions }) => h('nav', [h(actions), h(options)]),
+          new: () => h('span', 'Create task'),
+          grouping: ({ setGrouping }) => h('button', { onClick: () => setGrouping(['name']) }, 'Custom grouping'),
+          sorting: ({ setSorting }) =>
+            h('button', { onClick: () => setSorting([{ id: 'name', desc: true }]) }, 'Custom sorting'),
+          filtering: ({ setFiltering }) =>
+            h(
+              'button',
+              { onClick: () => setFiltering({ operator: FilteringMode.Union, filters: [] }) },
+              'Custom filtering',
+            ),
+          'column-options': ({ setColumnOrder, setInvisibleColumns, setColumnPinning }) =>
+            h(
+              'button',
+              {
+                onClick: () => {
+                  setColumnOrder(['active', 'name']);
+                  setInvisibleColumns(['name']);
+                  setColumnPinning({ left: ['active'] });
+                },
+              },
+              'Custom columns',
+            ),
+        },
+        global: { stubs },
+      }),
+    );
+    expect(wrapper.get('nav').text()).toContain('Create taskCustom grouping');
+    for (const button of wrapper.findAll('nav button')) await button.trigger('click');
+    expect(wrapper.emitted('update:grouping')).toEqual([[['name']]]);
+    expect(wrapper.emitted('update:sorting')).toEqual([[[{ id: 'name', desc: true }]]]);
+    expect(wrapper.emitted('update:filtering')).toEqual([[{ operator: FilteringMode.Union, filters: [] }]]);
+    expect(wrapper.emitted('update:columnOrder')).toEqual([[['active', 'name']]]);
+    expect(wrapper.emitted('update:invisibleColumns')).toEqual([[['name']]]);
+    expect(wrapper.emitted('update:columnPinning')).toEqual([[{ left: ['active'] }]]);
+  });
+
   it('splits the toolbar into two rows below the small breakpoint', async () => {
     const matchMedia = window.matchMedia;
     window.matchMedia = ((query: string) => ({
