@@ -21,8 +21,8 @@
   >
     <template #content>
       <div class="p-2.5" :class="ui?.content">
-        <slot name="header" :columns="orderedColumns">
-          <OptionsHeader :texts="texts" :icons="icons" />
+        <slot name="header" :columns="orderedColumns" :can-reset="canReset" :reset="resetLayout">
+          <OptionsHeader :can-reset="canReset" :texts="texts" :icons="icons" @reset="resetLayout" />
         </slot>
         <slot name="items" :columns="orderedColumns" :move="move" :toggle-visibility="toggleVisibility" :pin="pin">
           <OptionsItems
@@ -95,7 +95,20 @@ const orderedColumns = computed(() =>
     .map((id) => props.columns.find((column) => column.id === id))
     .filter((column): column is ColumnDefinition => Boolean(column)),
 );
+const canReset = computed(
+  () =>
+    columnOrder.value.length !== props.columns.length ||
+    props.columns.some(({ id }, index) => columnOrder.value[index] !== id) ||
+    invisibleColumns.value.length > 0 ||
+    Boolean(columnPinning.value.left?.length || columnPinning.value.right?.length),
+);
 const toggle = () => (open.value = !open.value);
+/** Restores the declared column order and clears visibility and pinning overrides. */
+const resetLayout = () => {
+  columnOrder.value = props.columns.map(({ id }) => id);
+  invisibleColumns.value = [];
+  columnPinning.value = {};
+};
 const toggleVisibility = (id: string) => {
   const column = props.columns.find((item) => item.id === id);
   if (column?.enableHiding === false) return;

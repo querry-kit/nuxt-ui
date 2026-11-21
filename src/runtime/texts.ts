@@ -37,6 +37,7 @@ export const defaultTableTexts = {
   },
   options: {
     title: 'Table options',
+    reset: 'Reset layout',
     pin: 'Pin column',
     left: 'Pin left',
     right: 'Pin right',
@@ -77,6 +78,7 @@ export type TableTextKey =
   | 'filtering.remove'
   | 'filtering.mode'
   | 'options.title'
+  | 'options.reset'
   | 'options.pin'
   | 'options.left'
   | 'options.right'

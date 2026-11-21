@@ -32,6 +32,7 @@ export const defaultTableIcons = {
   options: {
     trigger: 'i-tabler-adjustments',
     header: 'i-tabler-adjustments',
+    reset: 'i-tabler-restore',
     pin: 'i-tabler-pin',
     unpin: 'i-tabler-pin-off',
     drag: 'i-tabler-grip-vertical',
@@ -68,6 +69,7 @@ export type TableIconKey =
   | 'filtering.remove'
   | 'options.trigger'
   | 'options.header'
+  | 'options.reset'
   | 'options.pin'
   | 'options.unpin'
   | 'options.drag'

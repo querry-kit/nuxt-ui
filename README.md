@@ -115,6 +115,10 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
+Use the `filter-context` slot for a project selector or other application-owned filter inside the popover. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
+
+Use `filter-item` to customize individual filter rows. The slot receives `filter`, `field`, `remove`, and `update`. Fields without custom slot content keep their default editor.
+
 ```vue
 <QTableToolbar
   v-model:search="search"
@@ -140,7 +144,7 @@ See [types, text, and icon customization](https://querry-kit.github.io/querry-ki
 | `QTableToolbar`    | Combines breadcrumb, search, create actions and controls.     | [Table toolbar](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/toolbar)  |
 | `QTableSorting`    | Manages ordered sorting with ascending/descending directions. | [Sorting](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/sorting)        |
 | `QTableFiltering`  | Edits Query Kit-compatible `AND`/`OR` filtering state.        | [Filtering](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/filtering)    |
-| `QTableOptions`    | Reorders, hides and pins columns.                             | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
+| `QTableOptions`    | Reorders, hides, pins, and resets columns.                    | [Column options](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/options) |
 | `QTablePagination` | Renders a standalone, page-based API footer.                  | [Pagination](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/components/pagination)  |
 
 Public component types such as `FilterField`, `FilterFieldType`, `SortingState`, `Filtering`, `ColumnDefinition` and `ColumnPinning` are exported from `@querry-kit/nuxt-ui/types`. Query state contracts remain compatible with `@querry-kit/nuxt`.
