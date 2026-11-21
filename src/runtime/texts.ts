@@ -67,7 +67,18 @@ export const defaultTableTexts = {
     center: 'Unpin',
     visibility: 'Toggle column visibility',
   },
-  pagination: { summary: 'Showing {start}–{end} of {total}', pageSize: 'Items per page' },
+  pagination: {
+    pageSize: 'Items per page',
+    summary: 'Showing {start}–{end} of {total}',
+    mode: 'Row loading mode',
+    paginated: 'Pagination',
+    infinite: 'Infinite scroll',
+    loaded: 'Loaded {count} of {total}',
+    loadMore: 'Load more',
+    loading: 'Loading rows…',
+    error: 'Unable to load rows.',
+    retry: 'Retry',
+  },
 } as const;
 
 type TextPaths<T> = {
