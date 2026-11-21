@@ -1,56 +1,56 @@
 <template>
-  <span ref="trigger">
-    <slot name="trigger" :open="open" :toggle="toggle" :active="hasSorting">
-      <UButton
-        variant="ghost"
-        :aria-label="t('sorting.title')"
-        :color="hasSorting ? 'primary' : 'neutral'"
-        :icon="icon ?? tableIcon('sorting.trigger')"
-        @click="toggle"
-      />
-    </slot>
-  </span>
-  <UPopover
+  <ControlPanel
     v-model:open="open"
-    :reference="trigger"
-    :content="popoverContent"
-    :ui="{ content: 'qk-table-sorting-popover' }"
-    :modal="false"
+    popover-class="qk-table-sorting-popover"
+    :title="t('sorting.title')"
+    :texts="texts"
+    anchored
+    :popover-body-class="['p-2.5', ui?.content]"
+    :body-class="ui?.content"
   >
-    <template #content>
-      <div class="p-2.5" :class="ui?.content">
-        <slot name="header" :sorting="sorting" :clear="clear">
-          <SortingHeader :has-sorting="hasSorting" :texts="texts" :icons="icons" :clear="clear" />
-        </slot>
-        <slot name="items" :sorting="sorting" :remove="remove" :toggle-direction="toggleDirection" :move="move">
-          <SortingItems
-            v-model:sorting="sorting"
-            :has-sorting="hasSorting"
-            :remove="remove"
-            :toggle-direction="toggleDirection"
-          >
-            <template #item="itemProps">
-              <slot name="item" v-bind="itemProps">
-                <SortingItem
-                  :sort="itemProps.sort"
-                  :fields="fields"
-                  :texts="texts"
-                  :icons="icons"
-                  :remove="itemProps.remove"
-                  :toggle-direction="itemProps.toggleDirection"
-                  :show-drag-handle="itemProps.showDragHandle"
-                />
-              </slot>
-            </template>
-          </SortingItems>
-        </slot>
-        <USeparator v-if="hasSorting && availableFields.length" class="my-2" />
-        <slot name="add" :available-fields="availableFields" :add="add">
-          <SortingAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
-        </slot>
-      </div>
+    <template #trigger="{ dialog }">
+      <slot name="trigger" :open="open" :toggle="toggle" :active="hasSorting">
+        <UButton
+          variant="ghost"
+          :aria-label="t('sorting.title')"
+          :color="hasSorting ? 'primary' : 'neutral'"
+          :icon="icon ?? tableIcon('sorting.trigger')"
+          @click="!dialog && toggle()"
+        />
+      </slot>
     </template>
-  </UPopover>
+    <template #header>
+      <slot name="header" :sorting="sorting" :clear="clear">
+        <SortingHeader :has-sorting="hasSorting" :texts="texts" :icons="icons" :clear="clear" />
+      </slot>
+    </template>
+    <slot name="items" :sorting="sorting" :remove="remove" :toggle-direction="toggleDirection" :move="move">
+      <SortingItems
+        v-model:sorting="sorting"
+        :has-sorting="hasSorting"
+        :remove="remove"
+        :toggle-direction="toggleDirection"
+      >
+        <template #item="itemProps">
+          <slot name="item" v-bind="itemProps">
+            <SortingItem
+              :sort="itemProps.sort"
+              :fields="fields"
+              :texts="texts"
+              :icons="icons"
+              :remove="itemProps.remove"
+              :toggle-direction="itemProps.toggleDirection"
+              :show-drag-handle="itemProps.showDragHandle"
+            />
+          </slot>
+        </template>
+      </SortingItems>
+    </slot>
+    <USeparator v-if="hasSorting && availableFields.length" class="my-2" />
+    <slot name="add" :available-fields="availableFields" :add="add">
+      <SortingAdd :fields="availableFields" :texts="texts" :icons="icons" :add="add" />
+    </slot>
+  </ControlPanel>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +59,7 @@ import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
+import ControlPanel from '../toolbar/control-panel.vue';
 import type { SortingField, SortingState } from '../../../types/table';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
 import SortingAdd from './add.vue';
@@ -78,15 +79,8 @@ const props = withDefaults(
   { shortcuts: true },
 );
 const sorting = defineModel<SortingState>('sorting', { required: true });
-const trigger = ref<HTMLElement>();
 const open = ref(false);
 const t = useTableI18n(() => props.texts);
-const popoverContent = computed(() => ({
-  align: 'start' as const,
-  side: 'bottom' as const,
-  sideOffset: 8,
-  'aria-label': t('sorting.title'),
-}));
 const tableIcon = useTableIcons(props.icons);
 const hasSorting = computed(() => sorting.value.length > 0);
 const availableFields = computed(() =>

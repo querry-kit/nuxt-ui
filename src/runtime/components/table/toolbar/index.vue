@@ -134,7 +134,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, createReusableTemplate, useBreakpoints, useMounted } from '@vueuse/core';
-import { computed } from 'vue';
+import { computed, provide } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
@@ -149,9 +149,12 @@ import type {
   GroupingField,
 } from '../../../types/table';
 
+import { toolbarSmallKey } from './context';
+
 const mounted = useMounted();
 const smallBreakpoint = useBreakpoints(breakpointsTailwind).smaller('sm');
 const isSmall = computed(() => mounted.value && smallBreakpoint.value);
+provide(toolbarSmallKey, isSmall);
 const [DefineBreadcrumb, Breadcrumb] = createReusableTemplate();
 const [DefineSearch, Search] = createReusableTemplate();
 const [DefineOptions, Options] = createReusableTemplate();

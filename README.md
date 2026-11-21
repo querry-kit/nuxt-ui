@@ -122,7 +122,9 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
-Use the `filter-context` slot for a project selector or other application-owned filter inside the popover. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
+Below the toolbar’s `sm` breakpoint (640 px by default), grouping, sorting, filtering, and column options open in dialogs. Only the body scrolls; the header and the footer with the Close button stay visible. Override the label with `texts.toolbar.close` or translate `querrykit.table.toolbar.close`. On wider screens, the controls open in popovers.
+
+Use the `filter-context` slot for a project selector or other application-owned filter inside the filter panel. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
 
 Use `filter-item` to customize individual filter rows. The slot receives `filter`, `field`, `remove`, and `update`. Fields without custom slot content keep their default editor.
 
