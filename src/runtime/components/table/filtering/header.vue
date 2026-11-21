@@ -41,6 +41,6 @@ const props = defineProps<{
   clear: () => void;
   toggleMode: () => void;
 }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 </script>

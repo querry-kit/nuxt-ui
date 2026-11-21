@@ -107,7 +107,7 @@
                   {{ row.original.node.value ?? t('grouping.null') }}
                 </slot>
               </span>
-              <span class="text-muted shrink-0 tabular-nums">{{ row.original.node.count }}</span>
+              <span class="text-muted shrink-0 tabular-nums">{{ formatNumber(row.original.node.count) }}</span>
             </button>
             <slot v-else name="group-cell" :node="row.original.node" :field="column.id" />
           </template>
@@ -154,7 +154,7 @@
 import type { TableColumn, TableProps } from '@nuxt/ui';
 import { useInfiniteScroll } from '@vueuse/core';
 import { computed, ref, useTemplateRef } from 'vue';
-import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
@@ -190,7 +190,8 @@ const slots = defineSlots<{
 const { table } = props;
 const { root, groups, allGroupsExpanded, grouping, loadingMode, sorting, columnPinning } = table;
 const viewport = useTemplateRef('viewport');
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
+const formatNumber = useTableNumber();
 const icon = useTableIcons(props.icons);
 const changingGroups = ref(false);
 const bulkGroupLabel = computed(() => t(allGroupsExpanded.value ? 'grouping.collapseAll' : 'grouping.expandAll'));
@@ -342,7 +343,16 @@ function getRowId(row: DisplayRow): string {
 
 /** Makes the group value, count, and expansion state available to keyboard and screen reader users. */
 function groupLabel(node: GroupedTableNode<TItem>): string {
-  return `${node.value ?? t('grouping.null')} ${t('grouping.count', { count: node.count })}`;
+  const values = { count: node.count, formattedCount: formatNumber(node.count) };
+  return t(
+    'grouping.rowLabel',
+    {
+      ...values,
+      label: String(node.value ?? t('grouping.null')),
+      countLabel: t('grouping.count', values, node.count),
+    },
+    node.count,
+  );
 }
 
 /** Makes the entire group row activate the same disclosure button used by the keyboard. */

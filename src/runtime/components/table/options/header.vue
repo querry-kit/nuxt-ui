@@ -26,7 +26,7 @@ import type { TableTextOverrides } from '../../../texts';
 
 const props = defineProps<{ canReset: boolean; texts?: TableTextOverrides; icons?: TableIconOverrides }>();
 const emit = defineEmits<{ reset: [] }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const heading = useTemplateRef('heading');
 

@@ -80,7 +80,7 @@ const props = withDefaults(
 const sorting = defineModel<SortingState>('sorting', { required: true });
 const trigger = ref<HTMLElement>();
 const open = ref(false);
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const popoverContent = computed(() => ({
   align: 'start' as const,
   side: 'bottom' as const,

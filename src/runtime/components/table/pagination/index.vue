@@ -23,6 +23,7 @@
         <PaginationPageSize
           :items-per-page="itemsPerPage"
           :items="pageSizeItems"
+          :texts="texts"
           :set-items-per-page="setItemsPerPage"
         />
       </slot>
@@ -49,6 +50,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
+import { useTableNumber } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
 import PaginationPageSize from './page-size.vue';
@@ -71,7 +73,8 @@ const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
 const pageCount = computed(() => Math.max(1, Math.ceil(props.totalItems / itemsPerPage.value)));
 const rowStart = computed(() => (props.totalItems === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1));
 const rowEnd = computed(() => Math.min(rowStart.value - 1 + itemsPerPage.value, props.totalItems));
-const pageSizeItems = computed(() => props.pageSizes.map((value) => ({ value, label: String(value) })));
+const formatNumber = useTableNumber();
+const pageSizeItems = computed(() => props.pageSizes.map((value) => ({ value, label: formatNumber(value) })));
 const first = () => (page.value = 1);
 const previous = () => (page.value = Math.max(1, page.value - 1));
 const next = () => (page.value = Math.min(pageCount.value, page.value + 1));

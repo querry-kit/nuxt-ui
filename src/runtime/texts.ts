@@ -10,7 +10,8 @@ export const defaultTableTexts = {
     reorder: 'Reorder {field}',
     moveUp: 'Move group up',
     moveDown: 'Move group down',
-    count: '{count} items',
+    count: '{formattedCount} items',
+    rowLabel: '{label} {countLabel}',
     loading: 'Loading group…',
     error: 'Unable to load group.',
     retry: 'Retry',
@@ -41,6 +42,19 @@ export const defaultTableTexts = {
     mode: 'Toggle filter mode',
     lookupPlaceholder: 'Select options',
     lookupError: 'Options could not be loaded.',
+    operatorField: 'Operator for {field}',
+    valueField: '{field}',
+    operators: { in: '∈', notIn: '∉', equals: '=', not: '≠', gt: '>', gte: '≥', lt: '<', lte: '≤' },
+    operatorDescriptions: {
+      in: 'Is one of',
+      notIn: 'Is not one of',
+      equals: 'Equals',
+      not: 'Does not equal',
+      gt: 'Greater than',
+      gte: 'Greater than or equal to',
+      lt: 'Less than',
+      lte: 'Less than or equal to',
+    },
   },
   options: {
     title: 'Table options',
@@ -51,54 +65,15 @@ export const defaultTableTexts = {
     center: 'Unpin',
     visibility: 'Toggle column visibility',
   },
-  pagination: { summary: 'Showing {start}–{end} of {total}' },
+  pagination: { summary: 'Showing {start}–{end} of {total}', pageSize: 'Items per page' },
 } as const;
 
-export type TableTextKey =
-  | 'grouping.title'
-  | 'grouping.field'
-  | 'grouping.noFields'
-  | 'grouping.add'
-  | 'grouping.remove'
-  | 'grouping.clear'
-  | 'grouping.reorder'
-  | 'grouping.moveUp'
-  | 'grouping.moveDown'
-  | 'grouping.count'
-  | 'grouping.loading'
-  | 'grouping.error'
-  | 'grouping.retry'
-  | 'grouping.loadMore'
-  | 'grouping.empty'
-  | 'grouping.null'
-  | 'grouping.noGroups'
-  | 'grouping.rootError'
-  | 'grouping.itemsError'
-  | 'grouping.expandAll'
-  | 'grouping.collapseAll'
-  | 'search.placeholder'
-  | 'sorting.title'
-  | 'sorting.field'
-  | 'sorting.add'
-  | 'sorting.clear'
-  | 'sorting.remove'
-  | 'sorting.toggle'
-  | 'filtering.title'
-  | 'filtering.field'
-  | 'filtering.add'
-  | 'filtering.clear'
-  | 'filtering.remove'
-  | 'filtering.mode'
-  | 'filtering.lookupPlaceholder'
-  | 'filtering.lookupError'
-  | 'options.title'
-  | 'options.reset'
-  | 'options.pin'
-  | 'options.left'
-  | 'options.right'
-  | 'options.center'
-  | 'options.visibility'
-  | 'pagination.summary';
+type TextPaths<T> = {
+  [Key in keyof T & string]: T[Key] extends string ? Key : `${Key}.${TextPaths<T[Key]>}`;
+}[keyof T & string];
+
+/** Dot-delimited keys under the host application's querrykit.table namespace. */
+export type TableTextKey = TextPaths<TableTexts>;
 
 export type TableTexts = typeof defaultTableTexts;
 type DeepTextOverrides<Value> = {

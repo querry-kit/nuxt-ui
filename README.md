@@ -56,6 +56,13 @@ export default defineNuxtConfig({
 
 Set `autoImports` to `false` when the application registers the components itself. The package never installs, configures, or ships an i18n provider. Pass nested `texts` or `icons` props for explicit overrides, or replace display regions with the documented slots.
 
+Text overrides are reactive. Use `filtering.operatorField` and `filtering.valueField` for distinct field names, and
+`filtering.operators` and `filtering.operatorDescriptions` for operator text. Group counts and full group labels
+pass their numeric count to the host translator for plural selection. Supply `grouping.rowLabel` to control
+word order with `{label}`, `{count}`, `{formattedCount}`, and `{countLabel}`. The controls use the host's
+`$n` for display numbers when available. Set the Nuxt UI locale on `UApp` for native SelectMenu and
+Pagination messages, including the lookup search placeholder and page navigation labels.
+
 When overriding icons, install the matching Iconify collection in the host application. For example, install Lucide with `pnpm add @iconify-json/lucide` before passing `i-lucide-*` values. See [types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types) for Lucide and Tabler examples.
 
 Configure table-wide icon defaults in the host application's `app.config.ts`. A component's `icons` prop overrides this configuration, while the existing flat `icon` prop remains authoritative for an individual trigger:

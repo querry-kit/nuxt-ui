@@ -20,9 +20,9 @@
       >
         {{
           t('pagination.summary', {
-            start: scrolling ? Number(branch.items.length > 0) : start,
-            end: scrolling ? branch.items.length : end,
-            total: totalItems,
+            start: formatNumber(scrolling ? Number(branch.items.length > 0) : start),
+            end: formatNumber(scrolling ? branch.items.length : end),
+            total: formatNumber(totalItems),
           })
         }}
       </p>
@@ -45,7 +45,7 @@
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
 import { computed } from 'vue';
 import QTablePagination from '../pagination/index.vue';
-import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import QTableGroupLoadMore from '../group/load-more.vue';
 
@@ -57,7 +57,8 @@ const { table, path, texts } = defineProps<{
   branch: GroupedTableBranch<TItem>;
   texts?: TableTextOverrides;
 }>();
-const t = useTableI18n(texts);
+const formatNumber = useTableNumber();
+const t = useTableI18n(() => texts);
 const { loadingMode, itemsPerPage } = table;
 const scrolling = computed(/** Uses the shared row loading mode. */ () => loadingMode.value === 'infinite');
 const totalItems = computed(

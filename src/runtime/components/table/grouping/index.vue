@@ -92,7 +92,7 @@ const props = defineProps<{
 }>();
 const grouping = defineModel<string[]>('grouping', { required: true });
 const selected = ref<string>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const available = computed(() =>
   props.fields.filter((field) => !field.disabled && !grouping.value.includes(field.value)),

@@ -16,5 +16,5 @@ import type { TableTextOverrides } from '../../../texts';
 /** Load-more/retry action for either child groups or leaf records. */
 const props = defineProps<{ hasMore: boolean; loading?: boolean; error?: unknown; texts?: TableTextOverrides }>();
 const emit = defineEmits<{ load: [] }>();
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 </script>

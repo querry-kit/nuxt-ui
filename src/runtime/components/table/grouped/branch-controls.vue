@@ -29,7 +29,7 @@ const { table, node, viewport, leaf, texts } = defineProps<{
   leaf: boolean;
   texts?: TableTextOverrides;
 }>();
-const t = useTableI18n(texts);
+const t = useTableI18n(() => texts);
 const controls = useTemplateRef('controls');
 const visible = ref(false);
 useIntersectionObserver(

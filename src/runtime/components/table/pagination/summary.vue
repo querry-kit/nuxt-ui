@@ -3,16 +3,16 @@
     {{
       summary ??
       t('pagination.summary', {
-        start,
-        end,
-        total: totalItems,
+        start: formatNumber(start),
+        end: formatNumber(end),
+        total: formatNumber(totalItems),
       })
     }}
   </span>
 </template>
 
 <script setup lang="ts">
-import { useTableI18n } from '../../../composables/use-table-i18n';
+import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 
 const props = defineProps<{
@@ -22,5 +22,6 @@ const props = defineProps<{
   summary?: string;
   texts?: TableTextOverrides;
 }>();
-const t = useTableI18n(props.texts);
+const formatNumber = useTableNumber();
+const t = useTableI18n(() => props.texts);
 </script>

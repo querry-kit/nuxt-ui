@@ -92,7 +92,7 @@ const filtering = defineModel<Filtering>('filtering', { required: true });
 const emit = defineEmits<{ clear: [] }>();
 const trigger = ref<HTMLElement>();
 const open = ref(false);
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const popoverContent = computed(() => ({
   align: 'start' as const,
   side: 'bottom' as const,

@@ -33,7 +33,7 @@ const props = defineProps<{
 }>();
 const selection = defineModel<FilterChoice['value'][]>({ required: true });
 const search = ref('');
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 
 /** Loads each lookup independently and discards responses after a newer request or unmount. */
 function load<T>(

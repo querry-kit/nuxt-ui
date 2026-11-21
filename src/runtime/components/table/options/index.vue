@@ -80,7 +80,7 @@ const props = withDefaults(
 const columnOrder = defineModel<string[]>('columnOrder', { required: true });
 const invisibleColumns = defineModel<string[]>('invisibleColumns', { required: true });
 const columnPinning = defineModel<ColumnPinning>('columnPinning', { required: true });
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const popoverContent = computed(() => ({
   align: 'start' as const,
   side: 'bottom' as const,

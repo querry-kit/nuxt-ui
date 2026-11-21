@@ -150,7 +150,7 @@ const filtering = defineModel<Filtering>('filtering');
 const columnOrder = defineModel<string[]>('columnOrder');
 const invisibleColumns = defineModel<string[]>('invisibleColumns');
 const columnPinning = defineModel<ColumnPinning>('columnPinning');
-const t = useTableI18n(props.texts);
+const t = useTableI18n(() => props.texts);
 const icon = useTableIcons(props.icons);
 const setSearch = (value: string | number | undefined) => (search.value = value == null ? undefined : String(value));
 </script>
