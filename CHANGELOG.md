@@ -1,5 +1,19 @@
 # @querry-kit/nuxt-ui
 
+## 4.2.0
+
+### Minor Changes
+
+- 293e51a: Add scoped layout slots for toolbar controls, grouping, lookup choices, and grouped table regions while preserving the default layouts.
+- ee008f3: Localize filter operators, grouped row labels, and pagination names, and keep explicit text overrides reactive.
+- cde7768: Add an optional footer switch between pagination and infinite scroll, with automatic flat-row loading and accessible load and retry controls.
+
+### Patch Changes
+
+- 875d27a: Open table toolbar controls in dialogs on small screens, with a scrollable body, fixed header and footer, and a localized close button.
+- 695c24d: Refresh and verify compatible Nuxt UI and development dependencies.
+- 8800fc6: Keep loading mode selection and page navigation reachable at narrow widths and after appending rows.
+
 ## 4.1.0
 
 ### Minor Changes
