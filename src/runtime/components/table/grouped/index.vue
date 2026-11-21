@@ -90,6 +90,7 @@
           <template v-else-if="row.original.kind === 'group'">
             <UButton
               v-if="column.id === row.original.node.field"
+              class="max-w-full gap-1 px-0"
               color="neutral"
               variant="ghost"
               size="xs"
@@ -99,10 +100,12 @@
               :icon="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
               @click="table.toggleGroup(row.original.node.path)"
             >
-              <slot name="group-value" :node="row.original.node">
-                {{ row.original.node.value ?? t('grouping.null') }}
-              </slot>
-              <span class="text-muted tabular-nums">{{ row.original.node.count }}</span>
+              <span class="min-w-0 truncate">
+                <slot name="group-value" :node="row.original.node">
+                  {{ row.original.node.value ?? t('grouping.null') }}
+                </slot>
+              </span>
+              <span class="text-muted shrink-0 tabular-nums">{{ row.original.node.count }}</span>
             </UButton>
             <slot v-else name="group-cell" :node="row.original.node" :field="column.id" />
           </template>
