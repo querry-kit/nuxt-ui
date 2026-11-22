@@ -1,5 +1,7 @@
 # @querry-kit/nuxt-ui <!-- omit in toc -->
 
+> **This repository has moved.** Source, issues and pull requests are now maintained in the [Querry Kit monorepo](https://github.com/querry-kit/querry-kit/tree/main/packages/nuxt-ui). This repository is retained for historical links and releases.
+
 [![npm](https://img.shields.io/npm/v/%40querry-kit%2Fnuxt-ui?label=npm&logo=npm&logoColor=white&style=for-the-badge)](https://www.npmjs.com/package/@querry-kit/nuxt-ui)
 [![npm downloads](https://img.shields.io/npm/dm/%40querry-kit%2Fnuxt-ui?label=downloads&logo=npm&logoColor=white&style=for-the-badge)](https://www.npmjs.com/package/@querry-kit/nuxt-ui)
 [![license](https://img.shields.io/npm/l/%40querry-kit%2Fnuxt-ui?label=license&style=for-the-badge)](LICENSE)
