@@ -122,6 +122,10 @@ pnpm add @querry-kit/nuxt-ui
 
 `QTableToolbar` composes a breadcrumb, search input, create action and table controls. It does not own table data or perform filtering itself: applications bind the models they need and receive immutable replacement values.
 
+Pass `:selected-count="selectedIds.size"` to show a separate selection toolbar below the controls when the count is positive. It shows the total on the left and the contents of `#bulk-actions="{ selectedCount }"` on the right. Keep creation in `#new`.
+
+Below `sm`, search appears as a magnifier button. Click it or press **Shift+/** to type; Escape or moving focus away collapses the field and keeps the search active.
+
 Below the toolbar’s `sm` breakpoint (640 px by default), grouping, sorting, filtering, and column options open in dialogs. Only the body scrolls; the header and the footer with the Close button stay visible. Override the label with `texts.toolbar.close` or translate `querrykit.table.toolbar.close`. On wider screens, the controls open in popovers.
 
 Use the `filter-context` slot for a project selector or other application-owned filter inside the filter panel. Bind `filter-context-active` to its active state and handle `clear-filters` to reset it.
@@ -142,7 +146,7 @@ Use `filter-item` to customize individual filter rows. The slot receives `filter
 />
 ```
 
-Use `:shortcuts="false"` on an individual component to disable its keyboard listener. The toolbar and individual controls can also be customized through slots without duplicating their state logic.
+Toolbar shortcuts are enabled by default: **Shift+G** groups, **Shift+F** filters, **Shift+S** sorts, **Shift+O** opens table options, **Shift+N** activates the create action, and **Shift+/** focuses search. Set `:shortcuts="false"` on the toolbar or an individual panel to opt out. A single button or link in `#new` works automatically; when the slot has multiple actions, mark the create trigger with `data-qk-new`.
 
 See [types, text, and icon customization](https://querry-kit.github.io/querry-kit/docs/nuxt-ui/api/types) for the complete key list, examples, and slot customization.
 
@@ -192,7 +196,7 @@ The lookup also works outside the filter toolbar with an array `v-model`, a
 - `QTableGrouped` exposes `column-header`, `group-toggle`, `group-count`, `loading`, `empty`, `error`,
   `branch-controls`, `branch-error`, `group-footer`, and `pagination`. Bind the group toggle slot's `triggerProps`
   to a native button to retain keyboard and row activation. The pagination slot receives a branch path and paging actions.
-- `QTablePagination` exposes `summary` in addition to the existing footer and navigation slots.
+- `QTablePagination` shows `summary` when it fits beside the controls. Use `start` for controls that must stay visible in the single-line footer.
 
 ## 📖 Documentation
 
@@ -237,7 +241,7 @@ Use Node.js 26.13.0 LTS and the package manager pinned in `package.json`. This r
 
 ### Dependency maintenance
 
-Development and type checks use Nuxt 4.6.4, Vue 3.5.45, Vite 8.3.6, and the exact `vue-tsc` 3.3.14 pin. Vitest and its V8 coverage provider are updated together to 5.1.0. VueUse 14 and 15 remain supported.
+Development and type checks use Nuxt 4.6.4, Vue 3.5.46, Vite 8.3.8, and the exact `vue-tsc` 3.3.14 pin. Vitest and its V8 coverage provider use 5.1.1. VueUse 14 and 15 remain supported.
 
 Dependency refreshes retain pnpm 11.28.9, the existing TypeScript 6/7 split, and security overrides. Candidates published less than 24 hours ago are deferred; dependency major migrations are outside this update.
 
@@ -318,7 +322,7 @@ Add the package's `dist/runtime` directory as a Tailwind `@source` in your
 application's stylesheet. Use a path relative to that stylesheet.
 
 Each column needs an `id` and `header`. The renderer handles expansion, server sorting,
-branch paging, and infinite loading. The group row provides the hover highlight. Group labels truncate as needed to leave room for the count. Use `group-value` and `group-cell` to customize group
+branch paging, and infinite loading. The group row provides the hover highlight. From 640 px, group columns stay pinned on the left in grouping order, after the optional selection column. Below 640 px, group columns scroll horizontally. Labels and counts can wrap instead of being cut off. Use `group-value` and `group-cell` to customize group
 rows, `leading` and `leading-header` for selection controls, and `branch` with `show-branch`
 for extra content under expanded groups. The `footer-start` slot can hold a loading-mode switch.
 

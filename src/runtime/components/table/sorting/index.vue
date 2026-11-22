@@ -10,13 +10,16 @@
   >
     <template #trigger="{ dialog }">
       <slot name="trigger" :open="open" :toggle="toggle" :active="hasSorting">
-        <UButton
-          variant="ghost"
-          :aria-label="t('sorting.title')"
-          :color="hasSorting ? 'primary' : 'neutral'"
-          :icon="icon ?? tableIcon('sorting.trigger')"
-          @click="!dialog && toggle()"
-        />
+        <UTooltip :text="t('sorting.title')" :kbds="shortcuts ? ['Shift', 'S'] : undefined" :disabled="open">
+          <UButton
+            variant="ghost"
+            :aria-label="t('sorting.title')"
+            :aria-keyshortcuts="shortcuts ? 'Shift+S' : undefined"
+            :color="hasSorting ? 'primary' : 'neutral'"
+            :icon="icon ?? tableIcon('sorting.trigger')"
+            @click="!dialog && toggle()"
+          />
+        </UTooltip>
       </slot>
     </template>
     <template #header>
@@ -54,14 +57,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import ControlPanel from '../toolbar/control-panel.vue';
 import type { SortingField, SortingState } from '../../../types/table';
-import { canHandleTableShortcut } from '../../../utils/keyboard';
+import { useTableShortcut } from '../../../composables/use-table-shortcut';
 import SortingAdd from './add.vue';
 import SortingHeader from './header.vue';
 import SortingItem from './item.vue';
@@ -100,14 +103,13 @@ const move = (from: number, to: number) => {
   if (item) next.splice(to, 0, item);
   sorting.value = next;
 };
-const onKeydown = (event: KeyboardEvent) => {
-  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 's') {
-    event.preventDefault();
+useTableShortcut(
+  's',
+  () => props.shortcuts,
+  () => {
     toggle();
-  }
-};
-onMounted(() => document.addEventListener('keydown', onKeydown));
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
+  },
+);
 </script>
 
 <style>

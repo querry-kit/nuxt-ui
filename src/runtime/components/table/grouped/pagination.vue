@@ -23,11 +23,10 @@
       :shortcuts="!scrolling && !path.length"
       :ui="{
         root: path.length ? 'shrink-0 gap-2! py-1!' : 'shrink-0',
-        right: 'min-w-0 max-w-full flex-wrap [&_[data-slot=list]]:flex-wrap',
       }"
     >
-      <template #left="{ start, end }">
-        <slot />
+      <template v-if="$slots.default" #start><slot /></template>
+      <template #summary="{ start, end }">
         <p
           class="text-muted"
           aria-live="polite"
@@ -47,7 +46,6 @@
         <QTableGroupLoadMore
           v-if="scrolling"
           :texts="texts"
-          :size="path.length ? 'sm' : undefined"
           :has-more="branch.hasMore && !branch.error"
           :loading="branch.loading"
           @load="loadMore"

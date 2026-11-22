@@ -1,6 +1,7 @@
 <template>
   <slot v-if="hasMore || error" :has-more="hasMore" :loading="loading" :error="error" :load="load" :attrs="$attrs">
     <UButton
+      size="sm"
       v-bind="$attrs"
       variant="ghost"
       :loading="loading"

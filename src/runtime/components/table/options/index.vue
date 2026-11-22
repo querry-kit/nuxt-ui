@@ -10,22 +10,16 @@
   >
     <template #trigger="{ dialog }">
       <slot name="trigger" :open="open" :toggle="toggle">
-        <UTooltip v-if="!dialog" :text="t('options.title')">
+        <UTooltip :text="t('options.title')" :kbds="shortcuts ? ['Shift', 'O'] : undefined" :disabled="open">
           <UButton
             color="neutral"
             variant="ghost"
             :aria-label="t('options.title')"
+            :aria-keyshortcuts="shortcuts ? 'Shift+O' : undefined"
             :icon="icon ?? tableIcon('options.trigger')"
-            @click="toggle"
+            @click="!dialog && toggle()"
           />
         </UTooltip>
-        <UButton
-          v-else
-          color="neutral"
-          variant="ghost"
-          :aria-label="t('options.title')"
-          :icon="icon ?? tableIcon('options.trigger')"
-        />
       </slot>
     </template>
     <template #header>
@@ -60,14 +54,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
 import type { TableTextOverrides } from '../../../texts';
 import ControlPanel from '../toolbar/control-panel.vue';
 import type { ColumnDefinition, ColumnPinning } from '../../../types/table';
-import { canHandleTableShortcut } from '../../../utils/keyboard';
+import { useTableShortcut } from '../../../composables/use-table-shortcut';
 import OptionsHeader from './header.vue';
 import OptionsItem from './item.vue';
 import OptionsItems from './items.vue';
@@ -130,14 +124,13 @@ const move = (from: number, to: number) => {
   if (item) next.splice(to, 0, item);
   columnOrder.value = next;
 };
-const onKeydown = (event: KeyboardEvent) => {
-  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'o') {
-    event.preventDefault();
+useTableShortcut(
+  'o',
+  () => props.shortcuts,
+  () => {
     toggle();
-  }
-};
-onMounted(() => document.addEventListener('keydown', onKeydown));
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
+  },
+);
 </script>
 
 <style>

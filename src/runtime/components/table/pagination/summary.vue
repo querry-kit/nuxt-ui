@@ -1,5 +1,5 @@
 <template>
-  <span v-if="totalItems" class="text-muted hidden text-sm sm:block">
+  <span v-if="totalItems" class="text-muted text-sm">
     {{
       summary ??
       t('pagination.summary', {

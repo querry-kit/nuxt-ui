@@ -26,7 +26,7 @@ export const defaultTableTexts = {
     collapseAll: 'Collapse all groups',
   },
   search: { placeholder: 'Search' },
-  toolbar: { close: 'Close' },
+  toolbar: { close: 'Close', selection: 'Selection', selectedCount: '{count} selected' },
   sorting: {
     title: 'Sort',
     field: 'Select field',
