@@ -1,5 +1,21 @@
 # @querry-kit/nuxt-ui
 
+## 4.3.0
+
+### Minor Changes
+
+- d492ab9: Show an expandable icon-only search button on small screens.
+- d492ab9: Enable standard keyboard shortcuts for grouping, filtering, sorting, table options, creating a record, and focusing search.
+- d492ab9: Show a separate selection toolbar with a count and a slot for bulk actions.
+
+### Patch Changes
+
+- d492ab9: Pin grouping columns on the left from 640 px, let them scroll on mobile, and wrap group values and counts instead of truncating them.
+- d492ab9: Keep pagination on one row with small controls. Show the full summary only when the footer has space for it.
+- d492ab9: Label the page-size menu and contain table errors in a padded toolbar without horizontal overflow.
+- d492ab9: Show a pointer on enabled toolbar buttons and keyboard shortcut hints in the search field and toolbar tooltips.
+- d492ab9: Build and test against Vue 3.5.46 and @querry-kit/nuxt 1.1.1.
+
 ## 4.2.0
 
 ### Minor Changes
