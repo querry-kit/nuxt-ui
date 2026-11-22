@@ -1,11 +1,12 @@
 <template>
   <USelect
-    class="w-24"
+    class="w-16"
     size="sm"
     value-key="value"
     :aria-label="t('pagination.pageSize')"
     :model-value="itemsPerPage"
-    :items="items"
+    :items="[{ type: 'label', label: t('pagination.pageSize') }, ...items]"
+    :ui="{ content: 'min-w-32' }"
     @update:model-value="(value: number | string) => setItemsPerPage(Number(value))"
   />
 </template>

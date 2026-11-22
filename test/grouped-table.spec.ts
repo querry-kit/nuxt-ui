@@ -32,7 +32,8 @@ function branch(): GroupedTableBranch<Item> {
 
 const stubs = {
   UTable: {
-    props: ['data', 'columns', 'getRowId', 'meta', 'sorting', 'loading'],
+    name: 'UTable',
+    props: ['data', 'columns', 'columnPinning', 'getRowId', 'meta', 'sorting', 'loading'],
     emits: ['update:sorting'],
     methods: {
       sortState(index: number) {
@@ -154,6 +155,10 @@ describe('QTableGrouped', () => {
       global: { stubs },
     });
     expect(wrapper.find('[aria-label="open 8 items"]').exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'UTable' }).props('columnPinning')).toEqual({
+      left: ['status', 'priority', 'title'],
+      right: [],
+    });
     expect(wrapper.text()).not.toContain('First task');
     await wrapper
       .get('[aria-label="high 6 items"]')
@@ -189,6 +194,10 @@ describe('QTableGrouped', () => {
 
     table.grouping.value = [];
     await flushPromises();
+    expect(wrapper.findComponent({ name: 'UTable' }).props('columnPinning')).toEqual({
+      left: ['title'],
+      right: ['status'],
+    });
     expect(wrapper.text()).toContain('First task');
     await wrapper.get('[role="alert"] button').trigger('click');
     expect(table.loadMoreItems).toHaveBeenCalledWith([]);
@@ -199,10 +208,12 @@ describe('QTableGrouped', () => {
     const { table, high } = fixture();
     high.expanded = true;
     high.hasMore = true;
+    table.columnPinning.value.left = [];
     table.root.hasMore = true;
     const wrapper = mount(QTableGrouped<Item>, {
       props: {
         table,
+        flexibleColumn: 'title',
         columns: [
           { id: 'status', header: 'Status' },
           { id: 'priority', header: 'Priority' },
@@ -221,6 +232,11 @@ describe('QTableGrouped', () => {
       attachTo: document.body,
     });
     expect(wrapper.text()).toContain('1 visible');
+    expect(wrapper.findComponent({ name: 'UTable' }).props('columnPinning').left).toEqual([
+      'grouped-leading',
+      'status',
+      'priority',
+    ]);
     expect(wrapper.text()).toContain('Extra open');
     expect(wrapper.text()).toContain('Extra high');
     expect(wrapper.find('td[colspan="4"]').exists()).toBe(true);

@@ -17,6 +17,7 @@ const stubs = {
   },
   UIcon: true,
   UInput: true,
+  UKbd: { props: ['value'], template: '<kbd>{{ value }}</kbd>' },
   UInputNumber: true,
   UModal: {
     name: 'UModal',
@@ -60,6 +61,96 @@ afterEach(() => {
 });
 
 describe('table controls', () => {
+  it('shows a separate selection toolbar only while records are selected', async () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        slots: {
+          new: () => h('button', 'Create'),
+          'bulk-actions': ({ selectedCount }) => h('button', `Export ${selectedCount}`),
+        },
+        global: { stubs },
+      }),
+    );
+    const selector = '[role="toolbar"][aria-label="Selection"]';
+    expect(wrapper.find(selector).exists()).toBe(false);
+    await wrapper.setProps({ selectedCount: 246 });
+    expect(wrapper.get(selector).get('[role="status"]').text()).toBe('246 selected');
+    expect(wrapper.get(selector).get('button').text()).toBe('Export 246');
+    expect(wrapper.get(selector).text()).not.toContain('Create');
+    await wrapper.setProps({ selectedCount: 1 });
+    expect(wrapper.get(selector).get('button').text()).toBe('Export 1');
+    await wrapper.setProps({ selectedCount: 0 });
+    expect(wrapper.find(selector).exists()).toBe(false);
+  });
+
+  it('focuses search and activates only the intended create action by default', async () => {
+    let clicks = 0;
+    const wrapper = track(
+      mount(QTableToolbar, {
+        attachTo: document.body,
+        props: { search: '' },
+        slots: {
+          new: () => h('button', { onClick: () => clicks++ }, 'Create'),
+        },
+        global: { stubs: { ...stubs, UInput: { template: '<div><input /><slot name="trailing" /></div>' } } },
+      }),
+    );
+    const press = (key: string, target: EventTarget = document, extra: KeyboardEventInit = {}) =>
+      target.dispatchEvent(
+        new KeyboardEvent('keydown', { key, shiftKey: true, bubbles: true, cancelable: true, ...extra }),
+      );
+    expect(press('N')).toBe(false);
+    expect(clicks).toBe(1);
+    expect(press('?', document, { ctrlKey: true })).toBe(true);
+    expect(press('?')).toBe(false);
+    const input = wrapper.get('input').element;
+    expect(wrapper.findAll('kbd').map((key) => key.text())).toEqual(['Shift', '/']);
+    expect(document.activeElement).toBe(input);
+    await wrapper.get('input').trigger('keydown', { key: 'Escape' });
+    expect(document.activeElement).toBe(input);
+    expect(press('N', input)).toBe(true);
+    input.blur();
+    expect(press('/')).toBe(false);
+    await wrapper.setProps({ shortcuts: false });
+    expect(wrapper.find('kbd').exists()).toBe(false);
+    expect(press('N')).toBe(true);
+    expect(press('?')).toBe(true);
+    expect(clicks).toBe(1);
+  });
+
+  it('does not guess among multiple actions or claim shortcuts for missing or disabled controls', () => {
+    const wrapper = track(
+      mount(QTableToolbar, {
+        slots: { new: () => [h('button', 'Delete'), h('button', 'Create')] },
+        global: { stubs },
+      }),
+    );
+    const press = (key: string) =>
+      document.dispatchEvent(new KeyboardEvent('keydown', { key, shiftKey: true, cancelable: true }));
+    expect(press('/')).toBe(true);
+    expect(press('N')).toBe(true);
+    const create = wrapper.findAll('button')[1]!.element;
+    create.dataset.qkNew = '';
+    create.disabled = true;
+    expect(press('N')).toBe(true);
+    create.disabled = false;
+    let clicked = false;
+    create.onclick = () => {
+      clicked = true;
+    };
+    expect(press('N')).toBe(false);
+    expect(clicked).toBe(true);
+  });
+
+  it('handles Shift+G on a standalone grouping control unless opted out', async () => {
+    const wrapper = track(mount(QTableGrouping, { props: { grouping: [], fields: [] }, global: { stubs } }));
+    const press = () =>
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'G', shiftKey: true, cancelable: true }));
+    expect(press()).toBe(false);
+    await wrapper.setProps({ shortcuts: false });
+    expect(press()).toBe(true);
+  });
+
   it('sets minimum widths on the toolbar control popovers', () => {
     const sorting = track(
       mount(QTableSorting, {
@@ -698,6 +789,7 @@ describe('table controls', () => {
             grouping: ['name'],
             groupableFields: [{ value: 'name', label: 'Name' }],
             texts: { toolbar: { close: 'Schließen' } },
+            search: 'report',
             sorting: [],
             filtering: { operator: FilteringMode.Intersect, filters: [] },
             columnOrder: ['name'],
@@ -710,7 +802,13 @@ describe('table controls', () => {
           slots: { new: '<span>Create</span>' },
           global: {
             components: { QTableGrouping, QTableSorting, QTableFiltering, QTableOptions },
-            stubs: { ...stubs, QTableSorting: false, QTableFiltering: false, QTableOptions: false },
+            stubs: {
+              ...stubs,
+              UInput: { template: '<input />' },
+              QTableSorting: false,
+              QTableFiltering: false,
+              QTableOptions: false,
+            },
           },
         }),
       );
@@ -718,6 +816,14 @@ describe('table controls', () => {
       await nextTick();
 
       expect(wrapper.findAllComponents({ name: 'UDashboardToolbar' })).toHaveLength(2);
+      expect(wrapper.find('input[aria-label="Search"]').exists()).toBe(false);
+      await wrapper.get('button[aria-label="Search"]').trigger('click');
+      await wrapper.get('input[aria-label="Search"]').trigger('keydown', { key: 'Escape' });
+      expect(wrapper.find('button[aria-label="Search"]').exists()).toBe(true);
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: '?', shiftKey: true, cancelable: true }));
+      await nextTick();
+      await wrapper.get('input[aria-label="Search"]').trigger('blur');
+      expect(wrapper.find('button[aria-label="Search"]').exists()).toBe(true);
       expect(wrapper.text()).toContain('Create');
       expect(wrapper.findAllComponents({ name: 'UPopover' })).toHaveLength(0);
       const modals = wrapper.findAllComponents({ name: 'UModal' });

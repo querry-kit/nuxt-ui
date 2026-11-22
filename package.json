@@ -71,7 +71,7 @@
     "@nuxt/module-builder": "^1.0.4",
     "@nuxt/schema": "^4.6.4",
     "@nuxt/ui": "^4.13.0",
-    "@querry-kit/nuxt": "^1.1.0",
+    "@querry-kit/nuxt": "^1.1.1",
     "@types/node": "^26.6.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-vue": "^6.0.11",

@@ -15,15 +15,17 @@
   </DefineBranchFooter>
 
   <div class="flex min-h-0 min-w-0 flex-1 flex-col">
-    <slot v-if="root.error" name="error" :error="root.error" :label="errorLabel" :retry="retry">
-      <UAlert
-        class="m-4 shrink-0"
-        color="error"
-        variant="soft"
-        :title="errorLabel"
-        :actions="[{ label: t('grouping.retry'), onClick: retry }]"
-      />
-    </slot>
+    <UDashboardToolbar v-if="root.error" class="min-w-0 py-3">
+      <slot name="error" :error="root.error" :label="errorLabel" :retry="retry">
+        <UAlert
+          class="min-w-0"
+          color="error"
+          variant="soft"
+          :title="errorLabel"
+          :actions="[{ label: t('grouping.retry'), onClick: retry }]"
+        />
+      </slot>
+    </UDashboardToolbar>
     <div
       ref="viewport"
       class="@container min-h-0 flex-1 overflow-auto [scrollbar-gutter:stable]"
@@ -50,7 +52,10 @@
           base: [
             ui?.base,
             grouping.length
-              ? 'min-w-(--q-grouped-table-width) w-full table-fixed overflow-visible'
+              ? [
+                  'min-w-(--q-grouped-table-width) table-fixed overflow-visible',
+                  flexibleColumn ? 'w-full' : 'w-(--q-grouped-table-width)',
+                ].join(' ')
               : 'w-full overflow-visible',
           ]
             .filter(Boolean)
@@ -92,6 +97,7 @@
               class="text-highlighted p-0 font-semibold"
               color="neutral"
               variant="ghost"
+              :ui="grouping.includes(item.id) ? { label: 'whitespace-normal wrap-anywhere text-start' } : undefined"
               :label="String(item.header)"
               :trailing-icon="sortIcon(column.getIsSorted())"
               @click="column.getToggleSortingHandler()?.($event)"
@@ -115,7 +121,7 @@
               :trigger-props="groupToggleProps(row.original.node)"
             >
               <button
-                class="text-default focus-visible:outline-primary inline-flex max-w-full cursor-pointer items-center gap-1 rounded-md py-1 text-xs font-medium focus-visible:outline-2"
+                class="text-default focus-visible:outline-primary inline-flex max-w-full cursor-pointer flex-wrap items-center gap-1 rounded-md py-1 text-start text-xs font-medium focus-visible:outline-2"
                 v-bind="groupToggleProps(row.original.node)"
               >
                 <UIcon
@@ -123,7 +129,7 @@
                   aria-hidden="true"
                   :name="icon(row.original.node.expanded ? 'grouping.expanded' : 'grouping.collapsed')"
                 />
-                <span class="min-w-0 truncate">
+                <span class="max-w-full min-w-0 wrap-anywhere whitespace-normal">
                   <slot name="group-value" :node="row.original.node">
                     {{ row.original.node.value ?? t('grouping.null') }}
                   </slot>
@@ -192,7 +198,7 @@
 
 <script setup lang="ts" generic="TItem extends Record<string, unknown>">
 import type { TableColumn, TableProps } from '@nuxt/ui';
-import { createReusableTemplate, useInfiniteScroll } from '@vueuse/core';
+import { breakpointsTailwind, createReusableTemplate, useBreakpoints, useInfiniteScroll } from '@vueuse/core';
 import { computed, ref, useTemplateRef, type ButtonHTMLAttributes } from 'vue';
 import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
@@ -310,12 +316,17 @@ const rows = computed<DisplayRow[]>(
   },
 );
 const visibleItems = computed(() => rows.value.flatMap((row) => (row.kind === 'item' ? [row.item] : [])));
+const mobile = useBreakpoints(breakpointsTailwind).smaller('sm');
 const displayPinning = computed(
-  /** Lets grouping columns precede left-pinned fields without freezing the group columns on small screens. */
+  /** On small screens group columns scroll with the rows; saved pinning remains unchanged. */
   () =>
     grouping.value.length
       ? {
-          left: slots.leading ? [leadingId] : [],
+          left: [
+            ...(slots.leading ? [leadingId] : []),
+            ...(mobile.value ? [] : grouping.value),
+            ...(columnPinning.value.left ?? []).filter((id) => !grouping.value.includes(id)),
+          ],
           right: (columnPinning.value.right ?? []).filter(
             /** Keeps only non-group columns pinned at the right edge. */
             (id) => !grouping.value.includes(id),
@@ -354,8 +365,12 @@ const groupedTableWidth = computed(
     ),
 );
 const flexibleColumn = computed(() => {
-  const id = props.flexibleColumn ?? orderedColumns.value[0]?.id;
-  return id && displayPinning.value.right?.includes(id) ? grouping.value[0] : id;
+  const pinned = new Set([...displayPinning.value.left, ...(displayPinning.value.right ?? [])]);
+  return props.flexibleColumn &&
+    !pinned.has(props.flexibleColumn) &&
+    orderedColumns.value.some(({ id }) => id === props.flexibleColumn)
+    ? props.flexibleColumn
+    : orderedColumns.value.find(({ id }) => !pinned.has(id))?.id;
 });
 const leadingColumn: TableColumn<DisplayRow> = {
   id: leadingId,
@@ -381,7 +396,7 @@ const displayColumns = computed(() =>
     const { id, header, align, groupedCellClass, sortable } = column;
     const alignment = align === 'right' ? 'text-right tabular-nums' : '';
     const groupedWidth = grouping.value.length ? groupedColumnWidth(column) : undefined;
-    const cellLayout = groupedWidth ? (groupedCellClass ?? 'truncate') : '';
+    const cellLayout = groupedWidth ? (groupedCellClass ?? 'whitespace-normal wrap-anywhere') : '';
     const showControls = !slots.leading && index === 0;
     return {
       id,
@@ -393,10 +408,16 @@ const displayColumns = computed(() =>
       accessorFn: (row) => (row.kind === 'item' ? row.item[id] : undefined),
       meta: {
         class: {
-          th: alignment,
+          th: [alignment, grouping.value.includes(id) && 'bg-default!'].filter(Boolean).join(' '),
           td: ({ row }) => {
             if (row.original.kind === 'controls') return showControls ? 'static! p-0 first:pl-0' : 'hidden';
-            return [alignment, cellLayout, row.original.kind === 'group' && 'bg-inherit'].filter(Boolean).join(' ');
+            return [
+              alignment,
+              cellLayout,
+              row.original.kind === 'group' ? 'bg-inherit' : grouping.value.includes(id) && 'bg-default',
+            ]
+              .filter(Boolean)
+              .join(' ');
           },
         },
         colspan: showControls

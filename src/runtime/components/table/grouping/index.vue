@@ -9,12 +9,15 @@
   >
     <template #trigger>
       <slot name="trigger" :open="open" :active="Boolean(grouping.length)" :set-open="setOpen">
-        <UButton
-          variant="ghost"
-          :color="grouping.length ? 'primary' : 'neutral'"
-          :aria-label="t('grouping.title')"
-          :icon="icon('grouping.trigger')"
-        />
+        <UTooltip :text="t('grouping.title')" :kbds="shortcuts ? ['Shift', 'G'] : undefined" :disabled="open">
+          <UButton
+            variant="ghost"
+            :color="grouping.length ? 'primary' : 'neutral'"
+            :aria-label="t('grouping.title')"
+            :aria-keyshortcuts="shortcuts ? 'Shift+G' : undefined"
+            :icon="icon('grouping.trigger')"
+          />
+        </UTooltip>
       </slot>
     </template>
     <template #header>
@@ -105,21 +108,34 @@ import { computed, nextTick, ref } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
+import { useTableShortcut } from '../../../composables/use-table-shortcut';
 import type { TableTextOverrides } from '../../../texts';
 import ControlPanel from '../toolbar/control-panel.vue';
 import type { TableIconOverrides } from '../../../icons';
 import type { GroupingField } from '../../../types/table';
 
 /** Ordered scalar grouping control; the application owns the selected state. */
-const props = defineProps<{
-  fields: readonly GroupingField[];
-  texts?: TableTextOverrides;
-  icons?: TableIconOverrides;
-  ui?: { popover?: string; content?: string };
-}>();
+const props = withDefaults(
+  defineProps<{
+    fields: readonly GroupingField[];
+    /** Enables Shift+G on the grouping control. Defaults to true. */
+    shortcuts?: boolean;
+    texts?: TableTextOverrides;
+    icons?: TableIconOverrides;
+    ui?: { popover?: string; content?: string };
+  }>(),
+  { shortcuts: true },
+);
 const grouping = defineModel<string[]>('grouping', { required: true });
 const selected = ref<string>();
 const open = ref(false);
+useTableShortcut(
+  'g',
+  () => props.shortcuts,
+  () => {
+    open.value = !open.value;
+  },
+);
 const setOpen = (value: boolean) => (open.value = value);
 const setGrouping = (value: string[]) => (grouping.value = value);
 const clear = () => setGrouping([]);

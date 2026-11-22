@@ -1,6 +1,9 @@
 <template>
-  <footer class="border-default flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3" :class="ui?.root">
-    <div class="flex items-center gap-2" :class="ui?.left">
+  <footer
+    class="qk-pagination border-default relative flex items-center justify-between gap-2 border-t px-3 py-2"
+    :class="ui?.root"
+  >
+    <div class="flex min-w-0 flex-1 items-center gap-2" :class="ui?.left">
       <slot
         name="left"
         :page="page"
@@ -9,22 +12,31 @@
         :start="rowStart"
         :end="rowEnd"
       >
-        <slot v-if="!grouped" name="summary" :start="rowStart" :end="rowEnd" :total-items="totalItems">
-          <span v-if="infinite" class="text-muted text-sm">
-            {{ t('pagination.loaded', { count: formatNumber(loadedItems), total: formatNumber(totalItems) }) }}
-          </span>
-          <PaginationSummary
-            v-else
-            :total-items="totalItems"
-            :start="rowStart"
-            :end="rowEnd"
-            :summary="summary"
-            :texts="texts"
-          />
-        </slot>
+        <slot name="start" />
+        <div v-if="!grouped" ref="summarySpace" class="min-w-0 flex-1 overflow-hidden">
+          <div
+            ref="summaryContent"
+            class="w-max whitespace-nowrap"
+            :class="{ invisible: summaryWidth > availableWidth }"
+          >
+            <slot name="summary" :start="rowStart" :end="rowEnd" :total-items="totalItems">
+              <span v-if="infinite" class="text-muted text-sm">
+                {{ t('pagination.loaded', { count: formatNumber(loadedItems), total: formatNumber(totalItems) }) }}
+              </span>
+              <PaginationSummary
+                v-else
+                :total-items="totalItems"
+                :start="rowStart"
+                :end="rowEnd"
+                :summary="summary"
+                :texts="texts"
+              />
+            </slot>
+          </div>
+        </div>
       </slot>
     </div>
-    <div class="flex min-w-0 flex-wrap items-center gap-1.5" :class="ui?.right">
+    <div class="flex shrink-0 items-center gap-1.5" :class="ui?.right">
       <slot name="page-size" :items-per-page="itemsPerPage" :set-items-per-page="setItemsPerPage">
         <PaginationPageSize
           v-if="pageSizes.length"
@@ -64,6 +76,7 @@
         <span v-if="error" class="sr-only" role="alert">{{ t('pagination.error') }}</span>
         <UButton
           v-if="hasMore || error"
+          size="sm"
           variant="ghost"
           :label="t(error ? 'pagination.retry' : 'pagination.loadMore')"
           :loading="loading"
@@ -74,12 +87,13 @@
       </template>
       <slot name="right" :page="page" :page-count="pageCount" />
     </div>
-    <span v-if="infinite && !grouped" ref="sentinel" class="block h-px w-full" aria-hidden="true" />
+    <span v-if="infinite && !grouped" ref="sentinel" class="absolute inset-x-0 bottom-0 h-px" aria-hidden="true" />
   </footer>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useElementSize } from '@vueuse/core';
 import { useTableI18n, useTableNumber } from '../../../composables/use-table-i18n';
 import type { TableTextOverrides } from '../../../texts';
 import { canHandleTableShortcut } from '../../../utils/keyboard';
@@ -114,6 +128,8 @@ const loadingMode = defineModel<'pagination' | 'infinite'>('loadingMode');
 const modeOpen = ref(false);
 const emit = defineEmits<{ 'load-more': [] }>();
 const sentinel = useTemplateRef<HTMLElement>('sentinel');
+const { width: availableWidth } = useElementSize(useTemplateRef<HTMLElement>('summarySpace'));
+const { width: summaryWidth } = useElementSize(useTemplateRef<HTMLElement>('summaryContent'));
 const t = useTableI18n(() => props.texts);
 const modeItems = computed(() => [
   { value: 'pagination', label: t('pagination.paginated') },
@@ -203,3 +219,17 @@ watch(
 onMounted(() => document.addEventListener('keydown', onKeydown));
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
+
+<style>
+.qk-pagination {
+  container-type: inline-size;
+}
+
+@container (max-width: 28rem) {
+  .qk-pagination
+    [data-slot='list']
+    :is([data-slot='first'], [data-slot='last'], [data-slot='ellipsis'], [data-slot='item']:not([data-selected])) {
+    display: none;
+  }
+}
+</style>

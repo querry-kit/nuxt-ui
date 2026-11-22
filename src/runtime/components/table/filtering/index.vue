@@ -10,13 +10,16 @@
   >
     <template #trigger="{ dialog }">
       <slot name="trigger" :open="open" :toggle="toggle" :active="hasActiveFilters">
-        <UButton
-          variant="ghost"
-          :aria-label="t('filtering.title')"
-          :color="hasActiveFilters ? 'primary' : 'neutral'"
-          :icon="icon ?? tableIcon('filtering.trigger')"
-          @click="!dialog && toggle()"
-        />
+        <UTooltip :text="t('filtering.title')" :kbds="shortcuts ? ['Shift', 'F'] : undefined" :disabled="open">
+          <UButton
+            variant="ghost"
+            :aria-label="t('filtering.title')"
+            :aria-keyshortcuts="shortcuts ? 'Shift+F' : undefined"
+            :color="hasActiveFilters ? 'primary' : 'neutral'"
+            :icon="icon ?? tableIcon('filtering.trigger')"
+            @click="!dialog && toggle()"
+          />
+        </UTooltip>
       </slot>
     </template>
     <template #header>
@@ -62,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useTableI18n } from '../../../composables/use-table-i18n';
 import { useTableIcons } from '../../../composables/use-table-icons';
 import type { TableIconOverrides } from '../../../icons';
@@ -70,7 +73,7 @@ import type { TableTextOverrides } from '../../../texts';
 import ControlPanel from '../toolbar/control-panel.vue';
 import { FilteringMode, type FilterField, type Filtering, type FilteringField } from '../../../types/table';
 import { createFilter } from '../../../utils/filtering';
-import { canHandleTableShortcut } from '../../../utils/keyboard';
+import { useTableShortcut } from '../../../composables/use-table-shortcut';
 import FilteringAdd from './add.vue';
 import FilteringHeader from './header.vue';
 import FilteringItem from './item/index.vue';
@@ -118,14 +121,13 @@ const update = (id: string, patch: Partial<FilteringField>) =>
     ...filtering.value,
     filters: filtering.value.filters.map((filter) => (filter.id === id ? { ...filter, ...patch } : filter)),
   });
-const onKeydown = (event: KeyboardEvent) => {
-  if (canHandleTableShortcut(event) && props.shortcuts && event.shiftKey && event.key.toLowerCase() === 'f') {
-    event.preventDefault();
+useTableShortcut(
+  'f',
+  () => props.shortcuts,
+  () => {
     toggle();
-  }
-};
-onMounted(() => document.addEventListener('keydown', onKeydown));
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
+  },
+);
 </script>
 
 <style>
